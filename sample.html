@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RaiBlocksJS sample</title>
+<meta charset="utf-8">
+
+<link rel="stylesheet" media="all" href="sample.css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<!-- JS BigNumber library https://github.com/MikeMcl/bignumber.js -->
+<script type="text/javascript" src="bignumber.min.js"></script>
+<script type="text/javascript" src="rai.rpc.js"></script>
+<script type="text/javascript" src="rai.core.js"></script>
+<script type="text/javascript" src="rai.extended.js"></script>
+<script type="text/javascript" src="rai.community.js"></script>
+
+<script type="text/javascript">
+// Validate numbers input
+function validate_numbers(input) {
+    var regexp = /^[0-9]*\.?[0-9]*$/;
+    return input.match(regexp);
+}
+
+// Hide and Show history
+$(document).ready(function() {
+	$('.line').click(function() {
+		if ($('#hide_'+$(this).attr('id')).is(":visible")) { $('#hide_'+$(this).attr('id')).hide(); }
+		else { $('.hide').hide(); $('#hide_'+$(this).attr('id')).show(); }
+	});
+});
+</script>
+
+</head>
+<body>
+<div class="counters" id="version">General node version: </div>
+<div class="counters" id="block_count">Block count: </div>
+<div class="counters" id="pending_count">Pending blocks: </div>
+<div class="counters" id="frontier_count">Frontiers count: </div>
+<div class="counters" id="password">
+	<div id="password_text"></div>
+	<div id="password_input">
+		Enter password
+		<form name="password_input">
+			<input id="password_input_text" name="input" value="password">
+		</form>
+		<div id="password_input_click" class="button">Unlock</div>
+	</div>
+</div>
+
+<div class="accounts">
+<div class="line">
+	<div class="account head">Account</div>
+	<div class="balance head">Balance</div>
+</div>
+</div>
+
+<form name="send">
+	Send from: <select name="send_from" id="send_from"></select><br />
+	Send to: <input id="send_to" name="send_to" size="60"><br />
+	Amount: <input id="send_amount" name="send_amount" value="1000">
+	<select name="send_unit" id="send_unit">
+		<option value="rai">rai</option>
+		<option value="krai" selected>krai</option>
+		<option value="Mrai">Mrai</option>
+	</select>
+</form>
+<div id="send" class="button">Send</div>
+
+<!-- General page scripts -->
+<script type="text/javascript">
+
+var wallet = prompt( " Enter wallet from config.json "); // replace promt with your wallet actual number
+var host = "http://localhost:7076";
+var rai = new Rai(host);
+
+var hash_explorer = "https://raiblockscommunity.net/explorer/index.php?h=";
+var acc_explorer = "https://raiblockscommunity.net/history/index.php?acc=";
+
+// Initialization global variables
+rai.initialize();
+
+// Version
+$('#version').append(RaiBlocks.version);
+
+// Block Count
+var block_count = RaiBlocks.block_count;
+
+// Check block count from Community website
+var community = new RaiCommunity();
+var comm_summary = community.summary(); // Community summary initialization
+var block_count_check = community.block_count;
+
+$('#block_count').append(block_count);
+if (block_count != block_count_check) {
+	$('#block_count').css("color", "red");
+}
+
+
+// Frontiers count
+$('#frontier_count').append(RaiBlocks.frontier_count);
+
+// Pending Blocks
+var pending_count = rai.search_pending(wallet);
+$('#pending_count').append(pending_count);
+
+// Peers
+var peers = RaiBlocks.peers;
+console.log("Peers list");
+console.log(peers);
+
+
+// Wallet password
+var password_valid = rai.password_valid(wallet);
+
+if (password_valid == 1) {
+	$('#password_text').append("Password is empty (or already unlocked)");
+	$('#password_text').css("color", "blue");
+	$('#password_input').hide();
+}
+else {
+	$('#password_text').append("Wallet is locked");
+	$('#password_text').css("color", "red");
+}
+
+// Password enter check
+$( "#password_input_click" ).click(function() {
+	var password = $('#password_input_text')[0].value;
+	var password_enter = rai.password_enter(wallet, password);
+
+	if (password_enter == 1) {
+		$('#password_text').replaceWith("Wallet unlocked");
+		$('#password_text').css("color", "black");
+		$('#password_input').hide();
+	}
+	else {
+		alert( "Password is invalid" );
+	}
+});
+
+
+// Accounts
+var accounts_list = rai.account_list(wallet);
+
+var frontiers = RaiBlocks.frontiers;
+var accounts = []; // Accounts Array + balances
+$.each(accounts_list, function(){
+	var account_balance = rai.account_balance(this);
+	var history = rai.account_history(this);
+	accounts.push({raw_balance: account_balance, balance: rai.unit(account_balance, 'raw', 'rai'), key: this, history: history});
+});
+accounts.sort(function(a, b) {
+	return b.balance - a.balance;
+});
+console.log("Accounts array");
+console.log(accounts);
+$.each(accounts, function(){
+	var key = this.key;
+	$(".accounts").append("<div id=\"" + key + "\" class=\"line\"><div class=\"account\">" + key + "</div><div class=\"balance\">" + this.balance + "</div></div>");
+	$('#send_from').append($("<option></option>").val(key).html(key));
+	$('#send_to').val(key);
+	// History
+	$(".accounts").append("<div class=\"hide\" id=\"hide_" + this.key + "\"><table class=\"tab_" + key + " history\"><tbody></tbody></table></div>");
+	$(".tab_"+key).append("<tr><th>Type</th><th>Account</th><th>Amount</th><th>Hash</th></tr>");
+	$.each(this.history, function(){
+		$(".tab_"+key).append("<tr><td class=\"hist_type\">" + this.type + "</td><td class=\"hist_account\"><a href=\"" + acc_explorer + this.account + "\">" + this.account + "</a></td><td class=\"hist_amount\">" + rai.unit(this.amount, 'raw', 'rai') + "</td><td class=\"hist_hash\"><a href=\"" + hash_explorer + this.hash + "\">" + this.hash + "</a></td></tr>");
+	});
+});
+
+
+
+// Send sample
+$( "#send" ).click(function() {
+	var send_from = $('#send_from')[0].value;
+	var send_to = $('#send_to')[0].value;
+	var send_amount = $('#send_amount')[0].value;
+	var send_unit = $('#send_unit')[0].value;
+	
+	// Check for digits only
+	var validate_amount = validate_numbers(send_amount);
+	if (!validate_amount) {
+		alert( "Amount contains non digit characters" );
+		return false;
+	}
+	
+	// Check if trying to send more than balance
+	var raw_amount = rai.unit(send_amount, send_unit);
+	var breaking = false;
+	$.each(accounts, function(){
+		if ((this.key == send_from) && (parseInt(this.raw_balance) < parseInt(raw_amount))) {
+			alert( "Account " + send_from + " does not contain enough funds");
+			breaking = true;
+			return false;
+		}
+	});
+	
+	if (!breaking) {
+		var sending = rai.send(wallet, send_from, send_to, send_amount, send_unit);
+		prompt( " Send hash ", sending);
+	}
+	
+});
+
+</script>
+
+</body>
+</html>
