@@ -11,7 +11,7 @@ https://github.com/clemahieu/raiblocks/wiki/RPC-protocol
 * Cross-origin resource sharing prevents access from browser to node. Use plugins such as
   https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi
   https://addons.mozilla.org/ru/firefox/addon/cors-everywhere/
-* Impossible to retrieve wallet number via RPC. Replace var wallet in sample.html
+* Impossible to retrieve wallet id via RPC. Replace var wallet in sample.html
 
 Show RPC improvenment progress here:
 https://github.com/clemahieu/raiblocks/issues/29
