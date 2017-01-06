@@ -5,7 +5,7 @@ https://github.com/clemahieu/raiblocks/wiki/RPC-protocol
 * **rai.rpc.js** contains very basic RPC request tool
 * **rai.core.js** contains all RPC commands as JS functions
 * **rai.extended.js** contains some extended functions not available in current RPC implementation
-* **rai.community.js** comtains requests to RaiBlocksCommunity.net website
+* **rai.community.js** contains requests to RaiBlocksCommunity.net website
 
 # Currrent limitations
 * Cross-origin resource sharing prevents access from browser to node. Use plugins such as
