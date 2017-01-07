@@ -69,8 +69,8 @@ $(document).ready(function() {
 <script type="text/javascript">
 
 var wallet = prompt( " Enter wallet from config.json "); // replace promt with your wallet actual id
-var host = "http://localhost:7076";
-var rai = new Rai(host);
+var host = "http://localhost:7076"; // default host
+var rai = new Rai(host); // connection
 
 var hash_explorer = "https://raiblockscommunity.net/explorer/index.php?h=";
 var acc_explorer = "https://raiblockscommunity.net/history/index.php?acc=";
@@ -91,7 +91,7 @@ var block_count_check = community.block_count;
 
 $('#block_count').append(block_count);
 if (block_count != block_count_check) {
-	$('#block_count').css("color", "red");
+	$('#block_count').css("color", "red"); // if block counts from node and community doesn't match
 }
 
 
@@ -147,24 +147,25 @@ $.each(accounts_list, function(){
 	var history = rai.account_history(this);
 	accounts.push({raw_balance: account_balance, balance: rai.unit(account_balance, 'raw', 'rai'), key: this, history: history});
 });
+// Sorting accounts
 accounts.sort(function(a, b) {
 	return b.balance - a.balance;
 });
 console.log("Accounts array");
 console.log(accounts);
+// Parse HTML
 $.each(accounts, function(){
 	var key = this.key;
 	$(".accounts").append("<div id=\"" + key + "\" class=\"line\"><div class=\"account\">" + key + "</div><div class=\"balance\">" + this.balance + "</div></div>");
 	$('#send_from').append($("<option></option>").val(key).html(key));
 	$('#send_to').val(key);
-	// History
+	// History for each account
 	$(".accounts").append("<div class=\"hide\" id=\"hide_" + this.key + "\"><table class=\"tab_" + key + " history\"><tbody></tbody></table></div>");
 	$(".tab_"+key).append("<tr><th>Type</th><th>Account</th><th>Amount</th><th>Hash</th></tr>");
 	$.each(this.history, function(){
 		$(".tab_"+key).append("<tr><td class=\"hist_type\">" + this.type + "</td><td class=\"hist_account\"><a href=\"" + acc_explorer + this.account + "\">" + this.account + "</a></td><td class=\"hist_amount\">" + rai.unit(this.amount, 'raw', 'rai') + "</td><td class=\"hist_hash\"><a href=\"" + hash_explorer + this.hash + "\">" + this.hash + "</a></td></tr>");
 	});
 });
-
 
 
 // Send sample

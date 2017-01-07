@@ -1,6 +1,9 @@
 /*
-RaiBlocks extended functions in JavaScript
-
+* RaiBlocks extended functions in JavaScript
+* https://github.com/SergiySW/RaiBlocksJS
+*
+* Released under the BSD 3-Clause License
+*
 */
 
 
@@ -17,15 +20,14 @@ Rai.prototype.initialize = function() {
 }
 
 
+// Extended function, jQuery is required
 Rai.prototype.account_history = function(account, count) {
 	var rpc_request = this;
 	
 	if (typeof RaiBlocks.frontiers == 'undefined') this.initialize(); // if not initialized
 	var hash = RaiBlocks.frontiers[account];
-	var history = this.history(hash);
+	var account_history = this.history(hash);
 	var chain = this.chain(hash);
-	
-	var account_history = history;
 	
 	// Retrieve change blocks
 	$.each(chain, function( key, value ){

@@ -1,12 +1,17 @@
 /*
-RaiBlocks RPC basic functions in JavaScript
-
-https://github.com/clemahieu/raiblocks/wiki/RPC-protocol
-
+* RaiBlocks RPC basic functions in JavaScript
+* https://github.com/SergiySW/RaiBlocksJS
+*
+* Released under the BSD 3-Clause License
+*
+*
+* RPC commands full list
+* https://github.com/clemahieu/raiblocks/wiki/RPC-protocol
+*
 */
 
 
-// Extended function
+// Extended function, bignumber.js is required
 Rai.prototype.unit = function(input, input_unit, output_unit) {
 	
 	value = new BigNumber(input);

@@ -1,6 +1,12 @@
 /*
-RaiBlocks community functions in JavaScript
-
+* RaiBlocks community functions in JavaScript
+* https://github.com/SergiySW/RaiBlocksJS
+*
+* Released under the BSD 3-Clause License
+*
+*
+* RaiBlocks Community website
+* https://raiblockscommunity.net/
 */
 
 

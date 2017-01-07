@@ -1,21 +1,25 @@
 /*
-RaiBlocks RPC requests from JavaScript
-
-set 'request' as string. Samples
-	JSON.stringify({"action":"block_count"})
-	'{"action":"block_count"}'
-
-set 'url_base' as string. Mask protocol://host:port. Default value is http://localhost:7076. Samples
-	http://localhost:7076
-	https://skyhold.asuscomm.com:7077
-
-set 'async' as boolean. Default value is false
-Note: Now only sync requests are available. Async for future developments
-
-Request sample
-	var rai = new Rai();
-	var block_count = rai.rpc(JSON.stringify({"action":"block_count"}), 'http://localhost:7076', false);
-	
+* RaiBlocks RPC requests from JavaScript
+* https://github.com/SergiySW/RaiBlocksJS
+*
+* Released under the BSD 3-Clause License
+*
+*
+* set 'request' as string. Samples
+*	JSON.stringify({"action":"block_count"})
+*	'{"action":"block_count"}'
+*
+* set 'url_base' as string. Mask protocol://host:port. Default value is http://localhost:7076. Samples
+*	http://localhost:7076
+*	https://skyhold.asuscomm.com:7077
+*
+* set 'async' as boolean. Default value is false
+* Note: Now only sync requests are available. Async for future developments
+*
+* Request sample
+*	var rai = new Rai();
+*	var block_count = rai.rpc(JSON.stringify({"action":"block_count"}), 'http://localhost:7076', false);
+*	
 */
 
 function Rai(url_base) {
