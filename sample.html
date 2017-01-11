@@ -16,8 +16,8 @@
 <script type="text/javascript">
 // Validate numbers input
 function validate_numbers(input) {
-    var regexp = /^[0-9]*\.?[0-9]*$/;
-    return input.match(regexp);
+	var regexp = /^[0-9]*\.?[0-9]*$/;
+	return input.match(regexp);
 }
 
 // Hide and Show history
@@ -194,7 +194,7 @@ $( "#send" ).click(function() {
 	});
 	
 	if (!breaking) {
-		var sending = rai.send(wallet, send_from, send_to, send_amount, send_unit);
+		let sending = rai.send(wallet, send_from, send_to, send_amount, send_unit);
 		prompt( " Send hash ", sending);
 	}
 	

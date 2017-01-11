@@ -14,7 +14,7 @@
 // Extended function, bignumber.js is required
 Rai.prototype.unit = function(input, input_unit, output_unit) {
 	
-	value = new BigNumber(input);
+	var value = new BigNumber(input);
 	
 	// Step 1: to RAW
 	switch(input_unit) {
@@ -305,7 +305,6 @@ Rai.prototype.search_pending = function(wallet) {
 Rai.prototype.send = function(wallet, source, destination, amount, unit) {
 	if (typeof unit == 'undefined') { unit = 'raw'; }
 	var raw_amount = this.unit(amount, unit, 'raw');
-	console.log(raw_amount);
 	var rpc_send = this.rpc(JSON.stringify({"action":"send","wallet":wallet,"source":source,"destination":destination,"amount":raw_amount}));
 	var send = rpc_send.block;
 	return send;

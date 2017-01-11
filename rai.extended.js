@@ -34,7 +34,7 @@ Rai.prototype.account_history = function(account, count) {
 		if (account_history[key].hash !== value) {
 			var block = rpc_request.block(value);
 			if (block.type=='change') {
-				var insert = {account:block.representative, amount:0, hash:value, type:block.type};
+				let insert = {account:block.representative, amount:0, hash:value, type:block.type};
 				account_history.splice(key, 0, insert);
 			}
 		}

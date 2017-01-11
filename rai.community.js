@@ -19,7 +19,7 @@ function RaiCommunity() {
 		xhr.send(data);
 		// Synchronous
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			var json = JSON.parse(xhr.responseText);
+			let json = JSON.parse(xhr.responseText);
 			return json;
 		}
 	}

@@ -44,8 +44,16 @@ function Rai(url_base) {
 			xhr.send(request);
 			
 			if (xhr.readyState == 4 && xhr.status == 200) {
-				var json = JSON.parse(xhr.responseText);
+				let json = JSON.parse(xhr.responseText);
 				return json;
+			}
+			// draft
+			else if (xhr.readyState == 4 && xhr.status == 400) {
+				let json = JSON.parse(xhr.responseText);
+				let error = json.error;
+				alert(error);
+				console.error(error);
+				return false;
 			}
 		}
 	}
