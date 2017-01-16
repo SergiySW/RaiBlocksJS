@@ -31,7 +31,7 @@ $(document).ready(function() {
 
 </head>
 <body>
-<div class="counters" id="version">General node version: </div>
+<div class="counters" id="version"></div>
 <div class="counters" id="block_count">Block count: </div>
 <div class="counters" id="pending_count">Pending blocks: </div>
 <div class="counters" id="frontier_count">Frontiers count: </div>
@@ -79,7 +79,7 @@ var acc_explorer = "https://raiblockscommunity.net/history/index.php?acc=";
 rai.initialize();
 
 // Version
-$('#version').append(RaiBlocks.version);
+$('#version').append(rai.node_vendor());
 
 // Block Count
 var block_count = RaiBlocks.block_count;

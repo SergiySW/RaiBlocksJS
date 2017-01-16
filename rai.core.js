@@ -282,16 +282,18 @@ Rai.prototype.peers = function() {
 }
 
 
-Rai.prototype.representative = function(wallet) {
-	var rpc_representative = this.rpc(JSON.stringify({"action":"representative","wallet":wallet}));
-	var representative = rpc_representative.representative;
-	return representative;
+// draft, returns amount?
+Rai.prototype.representation = function(account) {
+	var rpc_representation = this.rpc(JSON.stringify({"action":"representation","account":account}));
+	var representation = rpc_representation.representation;
+	return representation;
 }
 
 
-Rai.prototype.representative_set = function(wallet, representative) {
-	var representative_set = this.rpc(JSON.stringify({"action":"representative_set","wallet":wallet,"representative":representative}));
-	return representative_set;
+Rai.prototype.representative = function(account) {
+	var rpc_representative = this.rpc(JSON.stringify({"action":"representative","account":account}));
+	var representative = rpc_representative.representative;
+	return representative;
 }
 
 
@@ -324,8 +326,7 @@ Rai.prototype.validate_account_number = function(account) {
 
 
 Rai.prototype.version = function() {
-	var rpc_version = this.rpc(JSON.stringify({"action":"version"}));
-	var version = rpc_version.rpc_version + '.' + rpc_version.store_version;
+	var version = this.rpc(JSON.stringify({"action":"version"}));
 	return version;
 }
 
@@ -362,6 +363,19 @@ Rai.prototype.wallet_export = function(wallet) {
 	var rpc_wallet_export = this.rpc(JSON.stringify({"action":"wallet_export","wallet":wallet}));
 	var wallet_export = rpc_wallet_export.json;
 	return wallet_export;
+}
+
+
+Rai.prototype.wallet_representative = function(wallet) {
+	var rpc_wallet_representative = this.rpc(JSON.stringify({"action":"wallet_representative","wallet":wallet}));
+	var wallet_representative = rpc_wallet_representative.representative;
+	return wallet_representative;
+}
+
+
+Rai.prototype.wallet_representative_set = function(wallet, representative) {
+	var wallet_representative_set = this.rpc(JSON.stringify({"action":"wallet_representative_set","wallet":wallet,"representative":representative}));
+	return wallet_representative_set;
 }
 
 

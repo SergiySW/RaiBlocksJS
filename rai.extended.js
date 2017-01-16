@@ -7,7 +7,7 @@
 */
 
 
-// Global variables: block_count, frontier_count, frontiers, peers, [node] version (?)
+// Global variables: block_count, frontier_count, frontiers, peers
 var RaiBlocks = RaiBlocks || {};
 
 Rai.prototype.initialize = function() {
@@ -16,7 +16,6 @@ Rai.prototype.initialize = function() {
 	RaiBlocks.frontier_count = this.frontier_count();
 	RaiBlocks.frontiers = this.frontiers();
 	RaiBlocks.peers = this.peers();
-	RaiBlocks.version = this.version();
 }
 
 
@@ -43,3 +42,20 @@ Rai.prototype.account_history = function(account, count) {
 	return account_history;
 }
 
+
+Rai.prototype.rpc_version = function() {
+	var rpc_version = this.version().rpc_version;
+	return rpc_version;
+}
+
+
+Rai.prototype.store_version = function() {
+	var store_version = this.version().store_version;
+	return store_version;
+}
+
+
+Rai.prototype.node_vendor = function() {
+	var node_vendor = this.version().node_vendor;
+	return node_vendor;
+}
