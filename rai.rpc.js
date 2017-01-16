@@ -334,14 +334,6 @@ this.peers = function() {
 }
 
 
-// draft, returns amount?
-this.representation = function(account) {
-	var rpc_representation = this.rpc(JSON.stringify({"action":"representation","account":account}));
-	var representation = rpc_representation.representation;
-	return representation;
-}
-
-
 this.representative = function(account) {
 	var rpc_representative = this.rpc(JSON.stringify({"action":"representative","account":account}));
 	var representative = rpc_representative.representative;
