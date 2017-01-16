@@ -2,7 +2,7 @@
 JavaScript functions for RaiBlocks node/wallet management via RPC commands
 https://github.com/clemahieu/raiblocks/wiki/RPC-protocol
 
-**Optimized for 7.5.1 unreleased version**
+**Optimized for 7.5.1 unreleased version**  
 If your node/wallet version < 7.5.1 use file versions uploaded before 15/01/2017
 
 * **rai.rpc.js** contains very basic RPC request tool + all RPC commands as JS functions
