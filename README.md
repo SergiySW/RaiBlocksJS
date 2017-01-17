@@ -2,8 +2,8 @@
 JavaScript functions for RaiBlocks node/wallet management via RPC commands
 https://github.com/clemahieu/raiblocks/wiki/RPC-protocol
 
-**Optimized for 7.5.1 unreleased version**  
-If your node/wallet version < 7.5.1 use file versions uploaded before 15/01/2017
+**Optimized for 7.6.0 unreleased version**  
+If your node/wallet version < 7.6.0 use file versions uploaded before 15/01/2017
 
 * **rai.rpc.js** contains very basic RPC request tool + all RPC commands as JS functions
 * ~~**rai.core.js** contains all RPC commands as JS functions~~ merged with rai.rpc.js
@@ -34,7 +34,7 @@ var weight = rai_example.chain('A703C82F08B1F2A61BDC3254D992025FE9D9566BD9FFDE19
 ```
 
 # Currrent limitations
-* [Fixed in 7.5.1 unreleased version] Cross-origin resource sharing prevents access from browser to node. Use plugins such as
+* [Fixed in 7.6.0 unreleased version] Cross-origin resource sharing prevents access from browser to node. Use plugins such as
   https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi
   https://addons.mozilla.org/ru/firefox/addon/cors-everywhere/
 * Impossible to retrieve wallet id via RPC. Replace var wallet in sample.html
