@@ -134,6 +134,20 @@ this.account_move = function(wallet, source, accounts) {
 }
 
 
+this.account_representative = function(account) {
+	var rpc_account_representative = this.rpc(JSON.stringify({"action":"account_representative","account":account}));
+	var account_representative = rpc_account_representative.representative;
+	return account_representative;
+}
+
+
+this.account_representative_set = function(account, representative) {
+	var rpc_account_representative_set = this.rpc(JSON.stringify({"action":"account_representative_set","account":account,"representative":representative}));
+	var account_representative_set = rpc_account_representative_set.block;
+	return account_representative_set;
+}
+
+
 // String output
 this.account_weight = function(account, unit) {
 	if (typeof unit == 'undefined') { unit = 'raw'; }
@@ -331,13 +345,6 @@ this.peers = function() {
 	var rpc_peers = this.rpc(JSON.stringify({"action":"peers"}));
 	var peers = rpc_peers.peers;
 	return peers;
-}
-
-
-this.representative = function(account) {
-	var rpc_representative = this.rpc(JSON.stringify({"action":"representative","account":account}));
-	var representative = rpc_representative.representative;
-	return representative;
 }
 
 
