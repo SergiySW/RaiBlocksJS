@@ -54,7 +54,7 @@ Rai.prototype.wallet_accounts_info = function(wallet, count) {
 	var wallet_accounts_info = []; // Accounts Array + balances
 	$.each(accounts_list, function(){
 		let account_balance = rai.account_balance(this);
-		let history = rai.account_history(this);
+		let history = rai.account_history(this, count);
 		wallet_accounts_info.push({key: this, raw_balance: account_balance, balance: rai.unit(account_balance, 'raw', 'rai'), history: history});
 	});
 	

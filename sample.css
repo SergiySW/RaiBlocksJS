@@ -82,3 +82,7 @@
 	background-image: linear-gradient(to bottom, #3cb0fd, #3498db);
 	text-decoration: none;
 }
+
+input.readonly {
+	background-color: #cccccc;
+}

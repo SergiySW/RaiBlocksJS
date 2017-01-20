@@ -26,6 +26,19 @@ $(document).ready(function() {
 		else { $('.hide').hide(); $('#hide_'+$(this).attr('id')).show(); }
 	});
 });
+
+// Send max from account
+$(document).ready(function() {
+	$("#send_max").click(function() {
+		if ($("#send_max").is(":checked")) {
+			$("#send_amount").prop("readonly", true);
+			$("#send_amount").addClass("readonly");
+		} else {
+			$("#send_amount").prop("readonly", false);
+			$("#send_amount").removeClass("readonly");
+		}
+	});
+});
 </script>
 
 </head>
@@ -61,6 +74,7 @@ $(document).ready(function() {
 		<option value="krai" selected>krai</option>
 		<option value="Mrai">Mrai</option>
 	</select>
+	<input type="checkbox" name="send_max" id="send_max">Send max
 </form>
 <div id="send" class="button">Send</div>
 
@@ -178,6 +192,8 @@ $.each(accounts, function(){
 	});
 });
 
+$('#send_from').append($("<option></option>").val("everything").html("Everything from all accounts"));
+
 
 // Send sample
 $( "#send" ).click(function() {
@@ -185,6 +201,7 @@ $( "#send" ).click(function() {
 	var send_to = $('#send_to')[0].value;
 	var send_amount = $('#send_amount')[0].value;
 	var send_unit = $('#send_unit')[0].value;
+	var send_max = $('#send_max')[0].checked;
 	
 	// Check for digits only
 	var validate_amount = validate_numbers(send_amount);
@@ -193,14 +210,28 @@ $( "#send" ).click(function() {
 		return false;
 	}
 	
+
 	// Check if trying to send more than balance
 	var raw_amount = rai.unit(send_amount, send_unit);
 	var breaking = false;
 	$.each(accounts, function(){
-		if ((this.key == send_from) && (parseInt(this.raw_balance) < parseInt(raw_amount))) {
+		// Send_max for 1 account
+		if ((this.key == send_from) && (send_max == true)) {
+			let confirmation = confirm("WARNING! You are trying to send all RaiBlocks from account " + send_from + " to account " + send_to);
+			send_amount = this.raw_balance;
+			send_unit = "raw";
+			if (confirmation == false) breaking = true;
+			return false;
+		}
+		else if ((this.key == send_from) && (parseInt(this.raw_balance) < parseInt(raw_amount))) {
 			alert( "Account " + send_from + " does not contain enough funds");
 			breaking = true;
 			return false;
+		}
+		// Send all
+		else if (send_from == "everything") {
+			if (!breaking) breaking = confirm("WARNING! You are trying to send all RaiBlocks from EVERY account in this wallet to account " + send_to);
+			if (breaking == true) && (parseInt(this.raw_balance) !== 0)) rai.send(wallet, this.key, send_to, this.raw_balance, "raw");
 		}
 	});
 	
