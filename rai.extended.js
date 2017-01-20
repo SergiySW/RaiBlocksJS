@@ -31,7 +31,7 @@ Rai.prototype.account_history = function(account, count) {
 	// Retrieve change blocks
 	$.each(chain, function( key, value ){
 		if (account_history[key].hash !== value) {
-			var block = rpc_request.block(value);
+			let block = rpc_request.block(value);
 			if (block.type=='change') {
 				let insert = {account:block.representative, amount:0, hash:value, type:block.type};
 				account_history.splice(key, 0, insert);
@@ -40,6 +40,25 @@ Rai.prototype.account_history = function(account, count) {
 	});
 	
 	return account_history;
+}
+
+
+// Extended function, jQuery is required
+Rai.prototype.wallet_accounts_info = function(wallet, count) {
+	var rpc_request = this;
+	
+	if (typeof RaiBlocks.frontiers == 'undefined') this.initialize(); // if not initialized
+	
+	var accounts_list = rpc_request.account_list(wallet);
+
+	var wallet_accounts_info = []; // Accounts Array + balances
+	$.each(accounts_list, function(){
+		let account_balance = rai.account_balance(this);
+		let history = rai.account_history(this);
+		wallet_accounts_info.push({key: this, raw_balance: account_balance, balance: rai.unit(account_balance, 'raw', 'rai'), history: history});
+	});
+	
+	return wallet_accounts_info;
 }
 
 

@@ -80,7 +80,8 @@ rai.initialize();
 // Version
 $('#version').append(rai.node_vendor());
 
-/* // Block Count
+// Sync Block Count Sample
+/* 
 var block_count = RaiBlocks.block_count;
 
 // Check block count from Community website
@@ -91,7 +92,9 @@ var block_count_check = community.block_count;
 $('#block_count').append(block_count);
 if (block_count != block_count_check) {
 	$('#block_count').css("color", "red"); // if block counts from node and community doesn't match
-} */
+}
+*/
+
 // async Block Count
 var block_count;
 var community = new RaiCommunity();
@@ -154,15 +157,7 @@ $( "#password_input_click" ).click(function() {
 
 
 // Accounts
-var accounts_list = rai.account_list(wallet);
-
-var frontiers = RaiBlocks.frontiers;
-var accounts = []; // Accounts Array + balances
-$.each(accounts_list, function(){
-	var account_balance = rai.account_balance(this);
-	var history = rai.account_history(this);
-	accounts.push({raw_balance: account_balance, balance: rai.unit(account_balance, 'raw', 'rai'), key: this, history: history});
-});
+var accounts = rai.wallet_accounts_info(wallet); // Accounts Array + balances
 // Sorting accounts
 accounts.sort(function(a, b) {
 	return b.balance - a.balance;
