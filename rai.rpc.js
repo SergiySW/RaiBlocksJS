@@ -27,8 +27,15 @@
 */
 
 function Rai(url_base) {
-
+	
 this.rpc = function(request, async) {
+	var url = document.createElement('a');
+	if (typeof url_base == 'undefined') { url.href = 'http://localhost'; } // if url is not set, use default to localhost
+	else if (!url_base.startsWith('http')) { url.href = 'http://' + url_base.split('/').reverse()[0]; } // local files are not supported; default protocol = HTTP
+	else { url.href = url_base; }
+		
+	if (url.port== "") { url.port = '7076'; } // default port 7076
+	
 	// Asynchronous
 	if (async === true) {
 		// TODO
@@ -36,12 +43,6 @@ this.rpc = function(request, async) {
 	
 	// Synchronous
 	else {
-		var url = document.createElement('a');
-		if (typeof url_base == 'undefined') { url.href = 'http://localhost'; } // if url is not set, use default to localhost
-		else if (!url_base.startsWith('http')) { url.href = 'http://' + url_base.split('/').reverse()[0]; } // local files are not supported; default protocol = HTTP
-		else { url.href = url_base; }
-		
-		if (url.port== "") { url.port = '7076'; }
 		
 		xhr = new XMLHttpRequest();
 		xhr.open("POST", url, false);
