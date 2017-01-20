@@ -231,7 +231,7 @@ $( "#send" ).click(function() {
 		// Send all
 		else if (send_from == "everything") {
 			if (!breaking) breaking = confirm("WARNING! You are trying to send all RaiBlocks from EVERY account in this wallet to account " + send_to);
-			if (breaking == true) && (parseInt(this.raw_balance) !== 0)) rai.send(wallet, this.key, send_to, this.raw_balance, "raw");
+			if ((breaking == true) && (parseInt(this.raw_balance) !== 0)) rai.send(wallet, this.key, send_to, this.raw_balance, "raw");
 		}
 	});
 	
