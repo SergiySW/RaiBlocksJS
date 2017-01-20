@@ -27,23 +27,48 @@
 */
 
 function Rai(url_base) {
-	
-this.rpc = function(request, async) {
+
+this.rpc = function(request, async_callback) {
 	var url = document.createElement('a');
 	if (typeof url_base == 'undefined') { url.href = 'http://localhost'; } // if url is not set, use default to localhost
 	else if (!url_base.startsWith('http')) { url.href = 'http://' + url_base.split('/').reverse()[0]; } // local files are not supported; default protocol = HTTP
 	else { url.href = url_base; }
 		
 	if (url.port== "") { url.port = '7076'; } // default port 7076
-	
+		
 	// Asynchronous
-	if (async === true) {
-		// TODO
+	if (typeof async_callback != 'undefined') {
+		let xhr;
+		xhr = new XMLHttpRequest();
+		xhr.onload = function (e) {
+			if (xhr.readyState === 4 && xhr.status === 200) {
+				let json = JSON.parse(xhr.responseText);
+				async_callback(json);
+			}
+			// draft
+			else if (xhr.readyState == 4 && xhr.status == 400) {
+				let json = JSON.parse(xhr.responseText);
+				let error = json.error;
+				alert(error);
+				console.error(error);
+				async_callback(json);
+			}
+			else {
+				console.error('XHR Failure');
+			}
+		};
+		
+		xhr.onerror = function (e) {
+			console.error(xhr.statusText);
+		};
+		
+		xhr.open("POST", url, true);
+		xhr.send(request);
 	}
 	
 	// Synchronous
 	else {
-		
+		let xhr;
 		xhr = new XMLHttpRequest();
 		xhr.open("POST", url, false);
 		xhr.send(request);
@@ -59,6 +84,9 @@ this.rpc = function(request, async) {
 			alert(error);
 			console.error(error);
 			return false;
+		}
+		else {
+			console.error('XHR Failure');
 		}
 	}
 }

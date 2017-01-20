@@ -80,7 +80,7 @@ rai.initialize();
 // Version
 $('#version').append(rai.node_vendor());
 
-// Block Count
+/* // Block Count
 var block_count = RaiBlocks.block_count;
 
 // Check block count from Community website
@@ -91,7 +91,24 @@ var block_count_check = community.block_count;
 $('#block_count').append(block_count);
 if (block_count != block_count_check) {
 	$('#block_count').css("color", "red"); // if block counts from node and community doesn't match
+} */
+// async Block Count
+var block_count;
+var community = new RaiCommunity();
+
+function check_blocks_callback(response) {
+	var block_count_check = response.blocks;
+	
+	if (block_count != block_count_check) {
+		$('#block_count').css("color", "red"); // if block counts from node and community doesn't match
+	}
 }
+function blocks_callback(response) {
+	block_count = response.count;
+	$('#block_count').append(block_count);
+	community.json("https://raiblockscommunity.net/page/summary.php?json=1", JSON.stringify({}), check_blocks_callback);
+}
+rai.rpc(JSON.stringify({"action":"block_count"}), blocks_callback);
 
 
 // Frontiers count
