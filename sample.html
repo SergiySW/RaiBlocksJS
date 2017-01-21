@@ -192,7 +192,7 @@ $.each(accounts, function(){
 	});
 });
 
-$('#send_from').append($("<option></option>").val("everything").html("Everything from all accounts"));
+if (accounts.length > 1) $('#send_from').append($("<option></option>").val("everything").html("Everything from all accounts"));
 
 
 // Send sample
@@ -234,6 +234,14 @@ $( "#send" ).click(function() {
 			if ((breaking == true) && (parseInt(this.raw_balance) !== 0)) rai.send(wallet, this.key, send_to, this.raw_balance, "raw");
 		}
 	});
+	
+	// Checking account send to
+	var validate_account_number = rai.validate_account_number(send_to);
+	if (validate_account_number == 0) {
+		alert( "Account " + send_to + " doesn't exist");
+		breaking = true;
+		return false;
+	}
 	
 	if (!breaking) {
 		let sending = rai.send(wallet, send_from, send_to, send_amount, send_unit);

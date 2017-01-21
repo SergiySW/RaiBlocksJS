@@ -25,19 +25,25 @@ Rai.prototype.account_history = function(account, count) {
 	
 	if (typeof RaiBlocks.frontiers == 'undefined') this.initialize(); // if not initialized
 	var hash = RaiBlocks.frontiers[account];
-	var account_history = this.history(hash);
-	var chain = this.chain(hash);
-	
-	// Retrieve change blocks
-	$.each(chain, function( key, value ){
-		if (account_history[key].hash !== value) {
-			let block = rpc_request.block(value);
-			if (block.type=='change') {
-				let insert = {account:block.representative, amount:0, hash:value, type:block.type};
-				account_history.splice(key, 0, insert);
+
+	if (typeof hash != 'undefined') {
+		var account_history = this.history(hash);
+		var chain = this.chain(hash);
+		
+		// Retrieve change blocks
+		$.each(chain, function( key, value ){
+			if (account_history[key].hash !== value) {
+				let block = rpc_request.block(value);
+				if (block.type=='change') {
+					let insert = {account:block.representative, amount:0, hash:value, type:block.type};
+					account_history.splice(key, 0, insert);
+				}
 			}
-		}
-	});
+		});
+	}
+	else {
+		console.log("Empty account " + account);
+	}
 	
 	return account_history;
 }
