@@ -36,8 +36,10 @@ var weight = rai_example.chain('A703C82F08B1F2A61BDC3254D992025FE9D9566BD9FFDE19
 
 # Currrent limitations
 * [Fixed in 7.6.0 unreleased version] Cross-origin resource sharing prevents access from browser to node. Use plugins such as
-  https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi
-  https://addons.mozilla.org/ru/firefox/addon/cors-everywhere/
+  https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi  
+  In Chrome after installation click on CORS button in plugins bar to enable  
+  https://addons.mozilla.org/ru/firefox/addon/cors-everywhere/  
+  In Firefox after installation & restart right-click on addons bar, select Customize, drag and drop CorsE icon to bar. Then click on it and enable (it should be green)  
 * Impossible to retrieve wallet id via RPC. Replace var wallet in sample.html
 
 Show RPC improvenment progress here:
