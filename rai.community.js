@@ -14,7 +14,7 @@ function RaiCommunity() {
 	
 	this.json = function(url, data, async_callback) {
 		// Asynchronous
-		if (typeof async_callback != 'undefined') {
+		if (typeof async_callback == 'function') {
 			let xhr;
 			xhr = new XMLHttpRequest();
 			xhr.onload = function (e) {
@@ -47,12 +47,21 @@ function RaiCommunity() {
 	}
 	
 	
-	this.summary = function() {
-		var summary = this.json("https://raiblockscommunity.net/page/summary.php?json=1", JSON.stringify({}));
-		this.available_supply = summary.available_supply;
-		this.block_count = summary.blocks;
-		this.frontier_count = summary.frontiers;
-		return summary;
+	this.block = function(hash) {
+		var block = this.json("https://raiblockscommunity.net/explorer/index.php?h=" + hash + "&json=1", JSON.stringify({}));
+		return block;
+	}
+	
+	
+	this.frontiers = function() {
+		var frontiers = this.json("https://raiblockscommunity.net/page/frontiers.php?json=1", JSON.stringify({}));
+		return frontiers;
+	}
+	
+	
+	this.history = function(account) {
+		var history = this.json("https://raiblockscommunity.net/account/index.php?acc=" + account + "&json=1", JSON.stringify({}));
+		return history;
 	}
 	
 	
@@ -62,14 +71,19 @@ function RaiCommunity() {
 	}
 	
 	
-	this.block = function(hash) {
-		var block = this.json("https://raiblockscommunity.net/explorer/index.php?h=" + hash + "&json=1", JSON.stringify({}));
-		return block;
+	this.representatives = function() {
+		var representatives = this.json("https://raiblockscommunity.net/page/representatives.php?json=1", JSON.stringify({}));
+		return representatives;
 	}
 	
-	this.history = function(account) {
-		var history = this.json("https://raiblockscommunity.net/account/index.php?acc=" + account + "&json=1", JSON.stringify({}));
-		return history;
+	
+	this.summary = function() {
+		var summary = this.json("https://raiblockscommunity.net/page/summary.php?json=1", JSON.stringify({}));
+		this.available_supply = summary.supply.available_supply;
+		this.block_count = summary.blocks;
+		this.frontier_count = summary.frontiers;
+		return summary;
 	}
+	
 	
 };
