@@ -13,7 +13,7 @@
 }
 
 .line {
-	width: 400px;
+	width: 650px;
 	height: 15px;
 }
 
@@ -22,7 +22,12 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	width: 250px;
+	width: 500px;
+}
+
+@media (max-width: 700px) {
+	.line { width: 400px; }
+	.account{ width: 250px; }
 }
 
 .balance {
