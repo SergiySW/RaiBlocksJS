@@ -37,7 +37,7 @@ this.rpc = function(request, async_callback) {
 	if (url.port== "") { url.port = '7076'; } // default port 7076
 		
 	// Asynchronous
-	if (typeof async_callback != 'undefined') {
+	if (typeof async_callback == 'function') {
 		let xhr;
 		xhr = new XMLHttpRequest();
 		xhr.onload = function (e) {

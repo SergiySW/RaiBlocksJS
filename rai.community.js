@@ -68,7 +68,7 @@ function RaiCommunity() {
 	}
 	
 	this.history = function(account) {
-		var history = this.json("https://raiblockscommunity.net/history/index.php?acc=" + account + "&json=1", JSON.stringify({}));
+		var history = this.json("https://raiblockscommunity.net/account/index.php?acc=" + account + "&json=1", JSON.stringify({}));
 		return history;
 	}
 	
