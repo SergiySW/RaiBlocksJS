@@ -35,15 +35,48 @@ this.rpc = function(request, async_callback) {
 	else { url.href = url_base; }
 		
 	if (url.port== "") { url.port = '7076'; } // default port 7076
+	
+	try {
+		// Asynchronous
+		if (typeof async_callback == 'function') {
+			let xhr;
+			xhr = new XMLHttpRequest();
+			xhr.onload = function (e) {
+				if (xhr.readyState === 4 && xhr.status === 200) {
+					let json = JSON.parse(xhr.responseText);
+					async_callback(json);
+				}
+				// draft
+				else if (xhr.readyState == 4 && xhr.status == 400) {
+					let json = JSON.parse(xhr.responseText);
+					let error = json.error;
+					alert(error);
+					console.error(error);
+					async_callback(json);
+				}
+				else {
+					console.error('XHR Failure');
+				}
+			};
+			
+			xhr.onerror = function (e) {
+				console.error(xhr.statusText);
+			};
+			
+			xhr.open("POST", url, true);
+			xhr.send(request);
+		}
 		
-	// Asynchronous
-	if (typeof async_callback == 'function') {
-		let xhr;
-		xhr = new XMLHttpRequest();
-		xhr.onload = function (e) {
-			if (xhr.readyState === 4 && xhr.status === 200) {
+		// Synchronous
+		else {
+			let xhr;
+			xhr = new XMLHttpRequest();
+			xhr.open("POST", url, false);
+			xhr.send(request);
+			
+			if (xhr.readyState == 4 && xhr.status == 200) {
 				let json = JSON.parse(xhr.responseText);
-				async_callback(json);
+				return json;
 			}
 			// draft
 			else if (xhr.readyState == 4 && xhr.status == 400) {
@@ -51,43 +84,16 @@ this.rpc = function(request, async_callback) {
 				let error = json.error;
 				alert(error);
 				console.error(error);
-				async_callback(json);
+				return false;
 			}
 			else {
 				console.error('XHR Failure');
 			}
-		};
-		
-		xhr.onerror = function (e) {
-			console.error(xhr.statusText);
-		};
-		
-		xhr.open("POST", url, true);
-		xhr.send(request);
+		}
 	}
-	
-	// Synchronous
-	else {
-		let xhr;
-		xhr = new XMLHttpRequest();
-		xhr.open("POST", url, false);
-		xhr.send(request);
-		
-		if (xhr.readyState == 4 && xhr.status == 200) {
-			let json = JSON.parse(xhr.responseText);
-			return json;
-		}
-		// draft
-		else if (xhr.readyState == 4 && xhr.status == 400) {
-			let json = JSON.parse(xhr.responseText);
-			let error = json.error;
-			alert(error);
-			console.error(error);
-			return false;
-		}
-		else {
-			console.error('XHR Failure');
-		}
+	catch (ex) {
+		alert(ex);
+		console.error(ex.message);
 	}
 }
 

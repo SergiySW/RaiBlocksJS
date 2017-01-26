@@ -13,36 +13,42 @@
 function RaiCommunity() {
 	
 	this.json = function(url, data, async_callback) {
-		// Asynchronous
-		if (typeof async_callback == 'function') {
-			let xhr;
-			xhr = new XMLHttpRequest();
-			xhr.onload = function (e) {
-				if (xhr.readyState === 4 && xhr.status === 200) {
-					let json = JSON.parse(xhr.responseText);
-					async_callback(json);
-				}
-			};
-			
-			xhr.onerror = function (e) {
-				console.error(xhr.statusText);
-			};
-			
-			xhr.open("POST", url, true);
-			xhr.send(data);
-		}
-		// Synchronous
-		else {
-			let xhr;
-			xhr = new XMLHttpRequest();
-			xhr.open("POST", url, false);
-			
-			xhr.send(data);
-			
-			if (xhr.readyState == 4 && xhr.status == 200) {
-				let json = JSON.parse(xhr.responseText);
-				return json;
+		try {
+			// Asynchronous
+			if (typeof async_callback == 'function') {
+				let xhr;
+				xhr = new XMLHttpRequest();
+				xhr.onload = function (e) {
+					if (xhr.readyState === 4 && xhr.status === 200) {
+						let json = JSON.parse(xhr.responseText);
+						async_callback(json);
+					}
+				};
+				
+				xhr.onerror = function (e) {
+					console.error(xhr.statusText);
+				};
+				
+				xhr.open("POST", url, true);
+				xhr.send(data);
 			}
+			// Synchronous
+			else {
+				let xhr;
+				xhr = new XMLHttpRequest();
+				xhr.open("POST", url, false);
+				
+				xhr.send(data);
+				
+				if (xhr.readyState == 4 && xhr.status == 200) {
+					let json = JSON.parse(xhr.responseText);
+					return json;
+				}
+			}
+		}
+		catch (ex) {
+			alert(ex);
+			console.error(ex.message);
 		}
 	}
 	
