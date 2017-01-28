@@ -44,14 +44,12 @@ this.rpc = function(request, async_callback) {
 			xhr.onload = function (e) {
 				if (xhr.readyState === 4 && xhr.status === 200) {
 					let json = JSON.parse(xhr.responseText);
-					async_callback(json);
-				}
-				// draft
-				else if (xhr.readyState == 4 && xhr.status == 400) {
-					let json = JSON.parse(xhr.responseText);
+					// Errors as JSON
 					let error = json.error;
-					alert(error);
-					console.error(error);
+					if (typeof error != 'undefined') {
+						alert(error);
+						console.error(error);
+					}
 					async_callback(json);
 				}
 				else {
@@ -76,15 +74,14 @@ this.rpc = function(request, async_callback) {
 			
 			if (xhr.readyState == 4 && xhr.status == 200) {
 				let json = JSON.parse(xhr.responseText);
-				return json;
-			}
-			// draft
-			else if (xhr.readyState == 4 && xhr.status == 400) {
-				let json = JSON.parse(xhr.responseText);
+				// Errors as JSON
 				let error = json.error;
-				alert(error);
-				console.error(error);
-				return false;
+				if (typeof error != 'undefined') {
+					alert(error);
+					console.error(error);
+					return false;
+				}
+				return json;
 			}
 			else {
 				console.error('XHR Failure');
