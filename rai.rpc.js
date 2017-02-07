@@ -378,6 +378,14 @@ this.peers = function() {
 }
 
 
+this.pending = function(account, count) {
+	if (typeof count == 'undefined') count = '4096';
+	var rpc_pending = this.rpc(JSON.stringify({"action":"pending","account":account,"count":count}));
+	var pending = rpc_pending.blocks;
+	return pending;
+}
+
+
 this.search_pending = function(wallet) {
 	var rpc_search_pending = this.rpc(JSON.stringify({"action":"search_pending","wallet":wallet}));
 	var search_pending = rpc_search_pending.started;

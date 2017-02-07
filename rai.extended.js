@@ -96,7 +96,7 @@ Rai.prototype.balance = function(account, unit) {
 
 
 // String output
-Rai.prototype.pending = function(account, unit) {
+Rai.prototype.account_pending = function(account, unit) {
 	if (typeof unit == 'undefined') { unit = 'raw'; }
 	var account_balance = rpc_request.account_balance(account);
 	var pending = this.unit(account_balance.pending, 'raw', unit);
