@@ -135,12 +135,10 @@ this.unit = function(input, input_unit, output_unit) {
 }
 
 
-// String output
-this.account_balance = function(account, unit) {
-	if (typeof unit == 'undefined') { unit = 'raw'; }
-	var rpc_balance = this.rpc(JSON.stringify({"action":"account_balance","account":account}));
-	var balance = this.unit(rpc_balance.balance, 'raw', unit);
-	return balance;
+// Object output
+this.account_balance = function(account) {
+	var account_balance = this.rpc(JSON.stringify({"action":"account_balance","account":account}));
+	return account_balance;
 }
 
 
