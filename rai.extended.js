@@ -7,12 +7,14 @@
 */
 
 
-// Global variables: block_count, frontier_count, frontiers, peers
+// Global variables: block_count, count, unchecked, frontier_count, frontiers, peers
 var RaiBlocks = RaiBlocks || {};
 
 Rai.prototype.initialize = function() {
 	RaiBlocks.available_supply = this.available_supply();
 	RaiBlocks.block_count = this.block_count();
+	RaiBlocks.count = RaiBlocks.block_count.count;
+	RaiBlocks.unchecked = RaiBlocks.block_count.unchecked;
 	RaiBlocks.frontier_count = this.frontier_count();
 	RaiBlocks.frontiers = this.frontiers();
 	RaiBlocks.peers = this.peers();
@@ -101,4 +103,18 @@ Rai.prototype.account_pending = function(account, unit) {
 	var account_balance = rpc_request.account_balance(account);
 	var pending = this.unit(account_balance.pending, 'raw', unit);
 	return pending;
+}
+
+
+// String output
+this.count = function() {
+	var count = rpc_request.block_count().count;
+	return count;
+}
+
+
+// String output
+this.unchecked = function() {
+	var unchecked = rpc_request.block_count().unchecked;
+	return unchecked;
 }

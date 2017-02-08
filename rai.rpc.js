@@ -210,10 +210,9 @@ this.block_account = function(hash) {
 }
 
 
-// String output
+// Object output
 this.block_count = function() {
-	var rpc_block_count = this.rpc(JSON.stringify({"action":"block_count"}));
-	var block_count = rpc_block_count.count;
+	var block_count = this.rpc(JSON.stringify({"action":"block_count"}));
 	return block_count;
 }
 
