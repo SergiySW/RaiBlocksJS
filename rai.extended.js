@@ -61,9 +61,11 @@ Rai.prototype.wallet_accounts_info = function(wallet, count) {
 
 	var wallet_accounts_info = []; // Accounts Array + balances
 	$.each(accounts_list, function(){
-		let balance = rai.balance(this);
+		let account_balance = rai.account_balance(this);
+		let balance = account_balance.balance;
+		let pending = account_balance.pending;
 		let history = rai.account_history(this, count);
-		wallet_accounts_info.push({key: this, raw_balance: balance, balance: rai.unit(balance, 'raw', 'rai'), history: history});
+		wallet_accounts_info.push({key: this, raw_balance: balance, balance: rai.unit(balance, 'raw', 'rai'), raw_pending: pending, pending: rai.unit(pending, 'raw', 'rai'), history: history});
 	});
 	
 	return wallet_accounts_info;
@@ -107,14 +109,34 @@ Rai.prototype.account_pending = function(account, unit) {
 
 
 // String output
-this.count = function() {
+Rai.prototype.count = function() {
 	var count = this.block_count().count;
 	return count;
 }
 
 
 // String output
-this.unchecked = function() {
+Rai.prototype.unchecked = function() {
 	var unchecked = this.block_count().unchecked;
 	return unchecked;
+}
+
+
+// String output
+Rai.prototype.wallet_balance = function(wallet, unit) {
+	var rpc_request = this;
+	if (typeof unit == 'undefined') { unit = 'raw'; }
+	
+	var accounts_list = rpc_request.account_list(wallet);
+	var balance = 0;
+	var pending = 0;
+	
+	$.each(accounts_list, function(){
+		let account_balance = rai.account_balance(this);
+		balance = parseInt(account_balance.balance) + balance;
+		pending = parseInt(account_balance.pending) + pending;
+	});
+	
+	var wallet_balance = { balance: rai.unit(balance, 'raw', unit), pending: rai.unit(pending, 'raw', unit) };
+	return wallet_balance;
 }

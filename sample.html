@@ -45,8 +45,9 @@ $(document).ready(function() {
 <body>
 <div class="counters" id="version"></div>
 <div class="counters" id="block_count">Block count: </div>
-<div class="counters" id="pending_count">Pending blocks: </div>
 <div class="counters" id="frontier_count">Frontiers count: </div>
+<div class="counters" id="total_balance">Wallet total balance: </div>
+<div class="counters" id="pending_balance">Wallet pending balance: </div>
 <div class="counters" id="password">
 	<div id="password_text"></div>
 	<div id="password_input">
@@ -116,7 +117,7 @@ var community = new RaiCommunity();
 function check_blocks_callback(response) {
 	var block_count_check = response.blocks;
 	
-	if (block_count != block_count_check) {
+	if (Math.abs(parseInt(block_count) - parseInt(block_count_check)) > 12 ) {
 		$('#block_count').css("color", "red"); // if block counts from node and community doesn't match
 	}
 }
@@ -131,9 +132,10 @@ rai.rpc(JSON.stringify({"action":"block_count"}), blocks_callback);
 // Frontiers count
 $('#frontier_count').append(RaiBlocks.frontier_count);
 
-// Pending Blocks
-var pending_count = rai.search_pending(wallet);
-$('#pending_count').append(pending_count);
+// Total balance & Pending Balance
+var wallet_balance = rai.wallet_balance(wallet, 'rai');
+$('#total_balance').append(wallet_balance.balance + ' rai');
+$('#pending_balance').append(wallet_balance.pending + ' rai');
 
 // Peers
 var peers = RaiBlocks.peers;
