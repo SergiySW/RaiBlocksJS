@@ -91,7 +91,7 @@ Rai.prototype.node_vendor = function() {
 // String output
 Rai.prototype.balance = function(account, unit) {
 	if (typeof unit == 'undefined') { unit = 'raw'; }
-	var account_balance = rpc_request.account_balance(account);
+	var account_balance = this.account_balance(account);
 	var balance = this.unit(account_balance.balance, 'raw', unit);
 	return balance;
 }
@@ -100,7 +100,7 @@ Rai.prototype.balance = function(account, unit) {
 // String output
 Rai.prototype.account_pending = function(account, unit) {
 	if (typeof unit == 'undefined') { unit = 'raw'; }
-	var account_balance = rpc_request.account_balance(account);
+	var account_balance = this.account_balance(account);
 	var pending = this.unit(account_balance.pending, 'raw', unit);
 	return pending;
 }
@@ -108,13 +108,13 @@ Rai.prototype.account_pending = function(account, unit) {
 
 // String output
 this.count = function() {
-	var count = rpc_request.block_count().count;
+	var count = this.block_count().count;
 	return count;
 }
 
 
 // String output
 this.unchecked = function() {
-	var unchecked = rpc_request.block_count().unchecked;
+	var unchecked = this.block_count().unchecked;
 	return unchecked;
 }
