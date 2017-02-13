@@ -135,12 +135,10 @@ this.unit = function(input, input_unit, output_unit) {
 }
 
 
-// String output
-this.account_balance = function(account, unit) {
-	if (typeof unit == 'undefined') { unit = 'raw'; }
-	var rpc_balance = this.rpc(JSON.stringify({"action":"account_balance","account":account}));
-	var balance = this.unit(rpc_balance.balance, 'raw', unit);
-	return balance;
+// Object output
+this.account_balance = function(account) {
+	var account_balance = this.rpc(JSON.stringify({"action":"account_balance","account":account}));
+	return account_balance;
 }
 
 
@@ -212,10 +210,9 @@ this.block_account = function(hash) {
 }
 
 
-// String output
+// Object output
 this.block_count = function() {
-	var rpc_block_count = this.rpc(JSON.stringify({"action":"block_count"}));
-	var block_count = rpc_block_count.count;
+	var block_count = this.rpc(JSON.stringify({"action":"block_count"}));
 	return block_count;
 }
 
@@ -377,6 +374,14 @@ this.peers = function() {
 	var rpc_peers = this.rpc(JSON.stringify({"action":"peers"}));
 	var peers = rpc_peers.peers;
 	return peers;
+}
+
+
+this.pending = function(account, count) {
+	if (typeof count == 'undefined') count = '4096';
+	var rpc_pending = this.rpc(JSON.stringify({"action":"pending","account":account,"count":count}));
+	var pending = rpc_pending.blocks;
+	return pending;
 }
 
 

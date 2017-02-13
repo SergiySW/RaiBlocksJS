@@ -2,7 +2,7 @@
 JavaScript functions for RaiBlocks node/wallet management via RPC commands
 https://github.com/clemahieu/raiblocks/wiki/RPC-protocol
 
-**Optimized for 7.6.1+ version**  
+**Optimized for 7.7.0 version**  
 If your node/wallet version < 7.6.0 use file versions uploaded before 15/01/2017
 
 * **rai.rpc.js** contains very basic RPC request tool + all RPC commands as JS functions
@@ -21,7 +21,7 @@ var answer_2 = [connection_name].[action_2]([parameters_2]); // RPC action_2 wit
 sample 1
 ```javascript
 var rai = new Rai(); // default connection to localhost
-var blocks = rai.block_count(); // recieve block count
+var blocks = rai.block_count(); // receive block count
 var weight = rai.account_weight('xrb_35jjmmmh81kydepzeuf9oec8hzkay7msr6yxagzxpcht7thwa5bus5tomgz9');
 // recieve weight of official faucet account
 ```
