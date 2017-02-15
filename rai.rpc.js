@@ -98,7 +98,7 @@ this.rpc = function(request, async_callback) {
 // Extended function, bignumber.js is required
 this.unit = function(input, input_unit, output_unit) {
 	
-	var value = new BigNumber(input);
+	var value = new BigNumber(input.toString());
 	
 	// Step 1: to RAW
 	switch(input_unit) {

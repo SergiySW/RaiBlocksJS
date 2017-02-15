@@ -117,7 +117,7 @@ var community = new RaiCommunity();
 function check_blocks_callback(response) {
 	var block_count_check = response.blocks;
 	
-	if (Math.abs(parseInt(block_count) - parseInt(block_count_check)) > 12 ) {
+	if (Math.abs(parseInt(block_count) - parseInt(block_count_check)) > 15 ) {
 		$('#block_count').css("color", "red"); // if block counts from node and community doesn't match
 	}
 }
