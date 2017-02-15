@@ -462,7 +462,8 @@ this.wallet_representative = function(wallet) {
 
 
 this.wallet_representative_set = function(wallet, representative) {
-	var wallet_representative_set = this.rpc(JSON.stringify({"action":"wallet_representative_set","wallet":wallet,"representative":representative}));
+	var rpc_wallet_representative_set = this.rpc(JSON.stringify({"action":"wallet_representative_set","wallet":wallet,"representative":representative}));
+	var wallet_representative_set = rpc_wallet_representative_set.set;
 	return wallet_representative_set;
 }
 
