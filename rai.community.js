@@ -54,7 +54,7 @@ function RaiCommunity() {
 	
 	
 	this.block = function(hash) {
-		var block = this.json("https://raiblockscommunity.net/explorer/index.php?h=" + hash + "&json=1", JSON.stringify({}));
+		var block = this.json("https://raiblockscommunity.net/block/index.php?h=" + hash + "&json=1", JSON.stringify({}));
 		return block;
 	}
 	
