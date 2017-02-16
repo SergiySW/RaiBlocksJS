@@ -171,8 +171,8 @@ this.account_representative = function(account) {
 }
 
 
-this.account_representative_set = function(account, representative) {
-	var rpc_account_representative_set = this.rpc(JSON.stringify({"action":"account_representative_set","account":account,"representative":representative}));
+this.account_representative_set = function(wallet, account, representative) {
+	var rpc_account_representative_set = this.rpc(JSON.stringify({"action":"account_representative_set","wallet":wallet,"account":account,"representative":representative}));
 	var account_representative_set = rpc_account_representative_set.block;
 	return account_representative_set;
 }
