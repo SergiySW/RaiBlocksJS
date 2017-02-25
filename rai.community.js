@@ -52,7 +52,12 @@ function RaiCommunity() {
 		}
 	}
 	
-	
+
+	this.account = function(account) {
+		var account = this.json("https://raiblockscommunity.net/account/index.php?acc=" + account + "&json=1", JSON.stringify({}));
+		return account;
+	}
+
 	this.block = function(hash) {
 		var block = this.json("https://raiblockscommunity.net/block/index.php?h=" + hash + "&json=1", JSON.stringify({}));
 		return block;
@@ -66,7 +71,7 @@ function RaiCommunity() {
 	
 	
 	this.history = function(account) {
-		var history = this.json("https://raiblockscommunity.net/account/index.php?acc=" + account + "&json=1", JSON.stringify({}));
+		var history = this.account(account).history;
 		return history;
 	}
 	
@@ -91,5 +96,56 @@ function RaiCommunity() {
 		return summary;
 	}
 	
+	
+	// Extended function, TX boost!
+	this.transaction_boost = function(frontier, boost_count) {
+		var rai = new Rai(host);
+		var chain = rai.chain(frontier, boost_count);
+		$.each(chain, function(){
+			let block = rai.block(this);
+			let url_block = encodeURIComponent(JSON.stringify(block));
+			let http = new XMLHttpRequest();
+			let url = "https://raiblockscommunity.net/processblock/elaborate.php";
+			let params = "processblock=" + url_block + "&submit=Process";
+			http.open("POST", url, true);
+			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			http.send(params);
+		});
+	}
+	
+	// Extended function, TX booster!
+	this.transaction_booster = function(wallet, host) {
+		if (typeof host == 'undefined') { host = 'http://localhost:7076'; } // if not initialized
+		var rai = new Rai(host);
+		var community_request = this;
+		
+		if (typeof RaiBlocks.frontiers == 'undefined') rai.initialize(); // if not initialized
+		
+		var accounts_list = rai.account_list(wallet);
+		
+		$.each(accounts_list, function(){
+			let frontier = RaiBlocks.frontiers[this];
+			if (typeof frontier != 'undefined') {
+				let chain = rai.chain(frontier, 50);
+				let comm_history = community_request.history(this);
+				let boost_count = 0;
+				if (comm_history == null) {
+					boost_count = history.length;
+				}
+				else {
+					let comm_frontier = comm_history[0]['hash'];
+					//console.log(comm_frontier);
+					for (let i = 0; i < chain.length; i++) {
+						current_hash = chain[i];
+						if (current_hash == comm_frontier) {
+							console.log(i);
+							boost_count = i;
+						}
+					}
+				}
+				if (boost_count > 0) community_request.transaction_boost(frontier, boost_count);
+			}
+		});
+	}
 	
 };
