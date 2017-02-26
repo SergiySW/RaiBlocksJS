@@ -130,7 +130,7 @@ function RaiCommunity() {
 				let comm_history = community_request.history(this);
 				let boost_count = 0;
 				if (comm_history == null) {
-					boost_count = history.length;
+					boost_count = chain.length;
 				}
 				else {
 					let comm_frontier = comm_history[0]['hash'];
