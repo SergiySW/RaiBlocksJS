@@ -217,6 +217,16 @@ this.block_count = function() {
 }
 
 
+// Empty output
+this.bootstrap = function(address, port) {
+	if (typeof address == 'undefined') { address = '::ffff:138.201.94.249'; }
+	if (typeof port == 'undefined') { port = '7075'; }
+	var rpc_bootstrap = this.rpc(JSON.stringify({"action":"bootstrap", "address":address, "port":port}));
+	var bootstrap = rpc_bootstrap.success;
+	return bootstrap;
+}
+
+
 this.chain = function(block, count) {
 	if (typeof count == 'undefined') count = '4096';
 	var rpc_chain = this.rpc(JSON.stringify({"action":"chain","block":block,"count":count}));
