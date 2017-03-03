@@ -100,7 +100,7 @@ function RaiCommunity() {
 	// Extended function, TX boost!
 	this.transaction_boost = function(frontier, boost_count) {
 		var rai = new Rai(host);
-		var chain = rai.chain(frontier, boost_count);
+		var chain = rai.chain(frontier, boost_count).reverse();
 		$.each(chain, function(){
 			let block = rai.block(this);
 			let url_block = encodeURIComponent(JSON.stringify(block));
@@ -126,7 +126,8 @@ function RaiCommunity() {
 		$.each(accounts_list, function(){
 			let frontier = RaiBlocks.frontiers[this];
 			if (typeof frontier != 'undefined') {
-				let chain = rai.chain(frontier, 50);
+				let chain_lenght = 64;
+				let chain = rai.chain(frontier, chain_lenght);
 				let comm_history = community_request.history(this);
 				let boost_count = 0;
 				if (comm_history == null) {
@@ -134,12 +135,14 @@ function RaiCommunity() {
 				}
 				else {
 					let comm_frontier = comm_history[0]['hash'];
-					//console.log(comm_frontier);
 					for (let i = 0; i < chain.length; i++) {
 						current_hash = chain[i];
 						if (current_hash == comm_frontier) {
 							console.log(i);
 							boost_count = i;
+						}
+						else if ((i + 1) == chain.length) {
+							boost_count = chain.length; // Send everything, if not found
 						}
 					}
 				}
