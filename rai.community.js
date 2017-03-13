@@ -126,8 +126,8 @@ function RaiCommunity() {
 		$.each(accounts_list, function(){
 			let frontier = RaiBlocks.frontiers[this];
 			if (typeof frontier != 'undefined') {
-				let chain_lenght = 64;
-				let chain = rai.chain(frontier, chain_lenght);
+				let chain_length = 64;
+				let chain = rai.chain(frontier, chain_length);
 				let comm_history = community_request.history(this);
 				let boost_count = 0;
 				if (comm_history == null) {
