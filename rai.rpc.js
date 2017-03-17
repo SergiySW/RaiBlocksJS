@@ -103,6 +103,7 @@ this.unit = function(input, input_unit, output_unit) {
 	// Step 1: to RAW
 	switch(input_unit) {
 		case 'raw': value = value; break;
+		case 'XRB': value = value.shift(30); break;
 		case 'Prai': value = value.shift(39); break; // draft
 		case 'Trai': value = value.shift(36); break; // draft
 		case 'Grai': value = value.shift(33); break;
@@ -118,6 +119,7 @@ this.unit = function(input, input_unit, output_unit) {
 	// Step 2: to output
 	switch(output_unit) {
 		case 'raw': value = value; break;
+		case 'XRB': value = value.shift(-30); break;
 		case 'Prai': value = value.shift(-39); break; // draft
 		case 'Trai': value = value.shift(-36); break; // draft
 		case 'Grai': value = value.shift(-33); break;
