@@ -151,6 +151,20 @@ this.account_create = function(wallet) {
 }
 
 
+this.account_get = function(key) {
+	var rpc_account_get = this.rpc(JSON.stringify({"action":"account_get","key":key}));
+	var account_get = rpc_account_get.account;
+	return account_get;
+}
+
+
+this.account_key = function(account) {
+	var rpc_account_key = this.rpc(JSON.stringify({"action":"account_key","account":account}));
+	var account_key = rpc_account_key.key;
+	return account_key;
+}
+
+
 this.account_list = function(wallet) {
 	var rpc_account_list = this.rpc(JSON.stringify({"action":"account_list","wallet":wallet}));
 	var account_list = rpc_account_list.accounts;
@@ -321,6 +335,20 @@ this.keepalive = function(address, port) {
 	if (typeof port == 'undefined') port = '7075';
 	var keepalive = this.rpc(JSON.stringify({"action":"keepalive","address":address,"port":port}));
 	return keepalive;
+}
+
+
+// Object output
+this.key_create = function() {
+	var key_create = this.rpc(JSON.stringify({"action":"key_create"}));
+	return key_create;
+}
+
+
+// Object output
+this.key_expand = function(key) {
+	var key_expand = this.rpc(JSON.stringify({"action":"key_expand","key":key}));
+	return key_expand;
 }
 
 
