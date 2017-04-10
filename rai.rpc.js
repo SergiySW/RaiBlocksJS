@@ -180,6 +180,13 @@ this.account_move = function(wallet, source, accounts) {
 }
 
 
+this.account_remove = function(wallet, account) {
+	var rpc_account_remove = this.rpc(JSON.stringify({"action":"account_remove","wallet":wallet,"account":account}));
+	var account_remove = rpc_account_remove.removed;
+	return account_remove;
+}
+
+
 this.account_representative = function(account) {
 	var rpc_account_representative = this.rpc(JSON.stringify({"action":"account_representative","account":account}));
 	var account_representative = rpc_account_representative.representative;
@@ -265,6 +272,13 @@ this.frontier_count = function() {
 	var rpc_frontier_count = this.rpc(JSON.stringify({"action":"frontier_count"}));
 	var frontier_count = rpc_frontier_count.count;
 	return frontier_count;
+}
+
+
+this.frontier_list = function(wallet) {
+	var rpc_frontier_list = this.rpc(JSON.stringify({"action":"frontier_list","wallet":wallet}));
+	var frontier_list = rpc_frontier_list.frontiers;
+	return frontier_list;
 }
 
 
@@ -425,6 +439,13 @@ this.pending = function(account, count) {
 }
 
 
+this.representatives = function() {
+	var rpc_representatives = this.rpc(JSON.stringify({"action":"representatives"}));
+	var representatives = rpc_representatives.representatives;
+	return representatives;
+}
+
+
 this.search_pending = function(wallet) {
 	var rpc_search_pending = this.rpc(JSON.stringify({"action":"search_pending","wallet":wallet}));
 	var search_pending = rpc_search_pending.started;
@@ -463,6 +484,14 @@ this.wallet_add = function(wallet, key) {
 	var rpc_wallet_add = this.rpc(JSON.stringify({"action":"wallet_add","wallet":wallet,"key":key}));
 	var wallet_add = rpc_wallet_add.account;
 	return wallet_add;
+}
+
+
+// Empty output
+this.wallet_change_seed = function(wallet, seed) {
+	var rpc_wallet_change_seed = this.rpc(JSON.stringify({"action":"wallet_change_seed", "wallet":wallet, "seed":seed}));
+	var wallet_change_seed = rpc_wallet_change_seed.success;
+	return wallet_change_seed;
 }
 
 

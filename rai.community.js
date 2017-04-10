@@ -119,12 +119,12 @@ function RaiCommunity() {
 		var rai = new Rai(host);
 		var community_request = this;
 		
-		if (typeof RaiBlocks.frontiers == 'undefined') rai.initialize(); // if not initialized
+		var fronriers = rai.frontier_list(wallet);
 		
 		var accounts_list = rai.account_list(wallet);
 		
 		$.each(accounts_list, function(){
-			let frontier = RaiBlocks.frontiers[this];
+			let frontier = frontiers[this];
 			if (typeof frontier != 'undefined') {
 				let chain_length = 64;
 				let chain = rai.chain(frontier, chain_length);
