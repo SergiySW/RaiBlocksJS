@@ -13,7 +13,7 @@
 }
 
 .line {
-	width: 650px;
+	width: 700px;
 	height: 15px;
 }
 
@@ -22,7 +22,7 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	width: 500px;
+	width: 510px;
 }
 
 @media (max-width: 700px) {
@@ -34,6 +34,18 @@
 	float:right;
 	width: 150px;
 	text-align: right;
+}
+
+.remove {
+	float:right;
+	width: 40px;
+	text-align: right;
+	color: red;
+	font-weight: bold;
+	cursor: pointer;
+}
+.remove:hover {
+	text-decoration: underline;
 }
 
 .head {

@@ -27,6 +27,7 @@ $(document).ready(function() {
 	});
 });
 
+
 // Send max from account
 $(document).ready(function() {
 	$("#send_max").click(function() {
@@ -183,7 +184,7 @@ console.log(accounts);
 // Parse HTML
 $.each(accounts, function(){
 	var key = this.key;
-	$(".accounts").append("<div id=\"" + key + "\" class=\"line\"><div class=\"account\">" + key + "</div><div class=\"balance\">" + this.balance + "</div></div>");
+	$(".accounts").append("<div id=\"" + key + "\" class=\"line\"><div class=\"account\">" + key + "</div><div class=\"remove\">X</div><div class=\"balance\">" + this.balance + "</div></div>");
 	$('#send_from').append($("<option></option>").val(key).html(key));
 	$('#send_to').val(key);
 	// History for each account
@@ -252,6 +253,15 @@ $( "#send" ).click(function() {
 	
 });
 
+// Remove account sample
+$('.remove').click(function() {
+	var account = $(this).parent().attr('id');
+	var confirmation = confirm("WARNING! You are trying to delete account " + account + "\nIt will be removed forever");
+	if (confirmation == true) {
+		rai.account_remove(wallet, account);
+		location.reload();
+	}
+});
 </script>
 
 </body>
