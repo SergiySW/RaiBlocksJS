@@ -144,6 +144,14 @@ this.account_balance = function(account) {
 }
 
 
+// String output
+this.account_block_count = function() {
+	var rpc_account_block_count = this.rpc(JSON.stringify({"action":"account_block_count","account":account}));
+	var account_block_count = rpc_account_block_count.block_count;
+	return account_block_count;
+}
+
+
 this.account_create = function(wallet) {
 	var rpc_account_create = this.rpc(JSON.stringify({"action":"account_create","wallet":wallet}));
 	var account_create = rpc_account_create.account;
