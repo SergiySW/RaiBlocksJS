@@ -283,13 +283,6 @@ this.frontier_count = function() {
 }
 
 
-this.frontier_list = function(wallet) {
-	var rpc_frontier_list = this.rpc(JSON.stringify({"action":"frontier_list","wallet":wallet}));
-	var frontier_list = rpc_frontier_list.frontiers;
-	return frontier_list;
-}
-
-
 this.history = function(hash, count) {
 	if (typeof count == 'undefined') count = '4096';
 	var rpc_history = this.rpc(JSON.stringify({"action":"history","hash":hash,"count":count}));
@@ -528,6 +521,13 @@ this.wallet_export = function(wallet) {
 	var rpc_wallet_export = this.rpc(JSON.stringify({"action":"wallet_export","wallet":wallet}));
 	var wallet_export = rpc_wallet_export.json;
 	return wallet_export;
+}
+
+
+this.wallet_frontiers = function(wallet) {
+	var rpc_wallet_frontiers = this.rpc(JSON.stringify({"action":"wallet_frontiers","wallet":wallet}));
+	var wallet_frontiers = rpc_wallet_frontiers.frontiers;
+	return wallet_frontiers;
 }
 
 
