@@ -103,6 +103,7 @@ this.unit = function(input, input_unit, output_unit) {
 	// Step 1: to RAW
 	switch(input_unit) {
 		case 'raw': value = value; break;
+		case 'XRB': value = value.shift(30); break;
 		case 'Prai': value = value.shift(39); break; // draft
 		case 'Trai': value = value.shift(36); break; // draft
 		case 'Grai': value = value.shift(33); break;
@@ -118,6 +119,7 @@ this.unit = function(input, input_unit, output_unit) {
 	// Step 2: to output
 	switch(output_unit) {
 		case 'raw': value = value; break;
+		case 'XRB': value = value.shift(-30); break;
 		case 'Prai': value = value.shift(-39); break; // draft
 		case 'Trai': value = value.shift(-36); break; // draft
 		case 'Grai': value = value.shift(-33); break;
@@ -142,10 +144,32 @@ this.account_balance = function(account) {
 }
 
 
+// String output
+this.account_block_count = function() {
+	var rpc_account_block_count = this.rpc(JSON.stringify({"action":"account_block_count","account":account}));
+	var account_block_count = rpc_account_block_count.block_count;
+	return account_block_count;
+}
+
+
 this.account_create = function(wallet) {
 	var rpc_account_create = this.rpc(JSON.stringify({"action":"account_create","wallet":wallet}));
 	var account_create = rpc_account_create.account;
 	return account_create;
+}
+
+
+this.account_get = function(key) {
+	var rpc_account_get = this.rpc(JSON.stringify({"action":"account_get","key":key}));
+	var account_get = rpc_account_get.account;
+	return account_get;
+}
+
+
+this.account_key = function(account) {
+	var rpc_account_key = this.rpc(JSON.stringify({"action":"account_key","account":account}));
+	var account_key = rpc_account_key.key;
+	return account_key;
 }
 
 
@@ -161,6 +185,13 @@ this.account_move = function(wallet, source, accounts) {
 	var rpc_account_move = this.rpc(JSON.stringify({"action":"account_move","wallet":wallet,"source":source,"accounts":accounts}));
 	var account_move = rpc_account_move.moved;
 	return account_move;
+}
+
+
+this.account_remove = function(wallet, account) {
+	var rpc_account_remove = this.rpc(JSON.stringify({"action":"account_remove","wallet":wallet,"account":account}));
+	var account_remove = rpc_account_remove.removed;
+	return account_remove;
 }
 
 
@@ -214,6 +245,16 @@ this.block_account = function(hash) {
 this.block_count = function() {
 	var block_count = this.rpc(JSON.stringify({"action":"block_count"}));
 	return block_count;
+}
+
+
+// Empty output
+this.bootstrap = function(address, port) {
+	if (typeof address == 'undefined') { address = '::ffff:138.201.94.249'; }
+	if (typeof port == 'undefined') { port = '7075'; }
+	var rpc_bootstrap = this.rpc(JSON.stringify({"action":"bootstrap", "address":address, "port":port}));
+	var bootstrap = rpc_bootstrap.success;
+	return bootstrap;
 }
 
 
@@ -312,6 +353,20 @@ this.keepalive = function(address, port) {
 }
 
 
+// Object output
+this.key_create = function() {
+	var key_create = this.rpc(JSON.stringify({"action":"key_create"}));
+	return key_create;
+}
+
+
+// Object output
+this.key_expand = function(key) {
+	var key_expand = this.rpc(JSON.stringify({"action":"key_expand","key":key}));
+	return key_expand;
+}
+
+
 this.password_change = function(wallet, password) {
 	var rpc_password_change = this.rpc(JSON.stringify({"action":"password_change","wallet":wallet,"password":password}));
 	var password_change = rpc_password_change.changed;
@@ -385,6 +440,13 @@ this.pending = function(account, count) {
 }
 
 
+this.representatives = function() {
+	var rpc_representatives = this.rpc(JSON.stringify({"action":"representatives"}));
+	var representatives = rpc_representatives.representatives;
+	return representatives;
+}
+
+
 this.search_pending = function(wallet) {
 	var rpc_search_pending = this.rpc(JSON.stringify({"action":"search_pending","wallet":wallet}));
 	var search_pending = rpc_search_pending.started;
@@ -426,6 +488,14 @@ this.wallet_add = function(wallet, key) {
 }
 
 
+// Empty output
+this.wallet_change_seed = function(wallet, seed) {
+	var rpc_wallet_change_seed = this.rpc(JSON.stringify({"action":"wallet_change_seed", "wallet":wallet, "seed":seed}));
+	var wallet_change_seed = rpc_wallet_change_seed.success;
+	return wallet_change_seed;
+}
+
+
 this.wallet_contains = function(wallet, account) {
 	var rpc_wallet_contains = this.rpc(JSON.stringify({"action":"wallet_contains","wallet":wallet,"account":account}));
 	var wallet_contains = rpc_wallet_contains.exists;
@@ -451,6 +521,13 @@ this.wallet_export = function(wallet) {
 	var rpc_wallet_export = this.rpc(JSON.stringify({"action":"wallet_export","wallet":wallet}));
 	var wallet_export = rpc_wallet_export.json;
 	return wallet_export;
+}
+
+
+this.wallet_frontiers = function(wallet) {
+	var rpc_wallet_frontiers = this.rpc(JSON.stringify({"action":"wallet_frontiers","wallet":wallet}));
+	var wallet_frontiers = rpc_wallet_frontiers.frontiers;
+	return wallet_frontiers;
 }
 
 

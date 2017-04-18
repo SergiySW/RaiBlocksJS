@@ -4,13 +4,13 @@
 <title>RaiBlocksJS Transaction Booster</title>
 <meta charset="utf-8">
 
-<link rel="stylesheet" media="all" href="sample.css">
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<link rel="stylesheet" media="all" href="..\sample.css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.0.min.js"></script>
 <!-- JS BigNumber library https://github.com/MikeMcl/bignumber.js -->
-<script type="text/javascript" src="bignumber.min.js"></script>
-<script type="text/javascript" src="rai.rpc.js"></script>
-<script type="text/javascript" src="rai.extended.js"></script>
-<script type="text/javascript" src="rai.community.js"></script>
+<script type="text/javascript" src="..\bignumber.min.js"></script>
+<script type="text/javascript" src="..\rai.rpc.js"></script>
+<script type="text/javascript" src="..\rai.extended.js"></script>
+<script type="text/javascript" src="..\rai.community.js"></script>
 
 </head>
 <body>
@@ -20,6 +20,7 @@
 
 var wallet = prompt( " Enter wallet from config.json "); // replace promt with your wallet actual id
 var host = "http://localhost:7076"; // default host
+var rai = new Rai(host); // connection
 var community = new RaiCommunity();
 community.transaction_booster(wallet, host);
 community.transaction_booster(wallet, host);
@@ -31,6 +32,7 @@ community.transaction_booster(wallet, host);
 community.transaction_booster(wallet, host);
 community.transaction_booster(wallet, host);
 community.transaction_booster(wallet, host);
+rai.bootstrap(); // bootstrap
 </script>
 
 </body>
