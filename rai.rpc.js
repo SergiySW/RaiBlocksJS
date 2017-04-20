@@ -28,6 +28,12 @@
 
 function Rai(url_base) {
 
+this.error = function(error) {
+	alert(error);
+	console.error(error);
+}
+
+
 this.rpc = function(request, async_callback) {
 	var url = document.createElement('a');
 	if (typeof url_base == 'undefined') { url.href = 'http://localhost'; } // if url is not set, use default to localhost
@@ -47,8 +53,7 @@ this.rpc = function(request, async_callback) {
 					// Errors as JSON
 					let error = json.error;
 					if (typeof error != 'undefined') {
-						alert(error);
-						console.error(error);
+						this.error(error);
 					}
 					async_callback(json);
 				}
@@ -77,8 +82,7 @@ this.rpc = function(request, async_callback) {
 				// Errors as JSON
 				let error = json.error;
 				if (typeof error != 'undefined') {
-					alert(error);
-					console.error(error);
+					this.error(error);
 					return false;
 				}
 				return json;
@@ -89,8 +93,7 @@ this.rpc = function(request, async_callback) {
 		}
 	}
 	catch (ex) {
-		alert(ex);
-		console.error(ex.message);
+		this.error(ex.message);
 	}
 }
 

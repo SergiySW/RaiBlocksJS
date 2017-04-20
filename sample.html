@@ -8,6 +8,9 @@
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.0.min.js"></script>
 <!-- JS BigNumber library https://github.com/MikeMcl/bignumber.js -->
 <script type="text/javascript" src="bignumber.min.js"></script>
+<!-- JS Blake library https://github.com/dcposch/blakejs -->
+<script type="text/javascript" src="blake2b.js"></script>
+
 <script type="text/javascript" src="rai.rpc.js"></script>
 <script type="text/javascript" src="rai.extended.js"></script>
 <script type="text/javascript" src="rai.community.js"></script>
@@ -239,9 +242,7 @@ $( "#send" ).click(function() {
 	});
 	
 	// Checking account send to
-	var validate_account_number = rai.validate_account_number(send_to);
-	if (validate_account_number == 0) {
-		alert( "Account " + send_to + " doesn't exist");
+	if (!rai.account_validate(send_to)) {
 		breaking = true;
 		return false;
 	}
