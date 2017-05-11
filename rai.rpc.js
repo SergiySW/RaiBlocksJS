@@ -29,18 +29,27 @@
 function Rai(url_base) {
 
 this.error = function(error) {
-	alert(error);
+	try { alert(error); }
+	catch (e) { }
 	console.error(error);
 }
 
 
 this.rpc = function(request, async_callback) {
-	var url = document.createElement('a');
-	if (typeof url_base == 'undefined') { url.href = 'http://localhost'; } // if url is not set, use default to localhost
-	else if (!url_base.startsWith('http')) { url.href = 'http://' + url_base.split('/').reverse()[0]; } // local files are not supported; default protocol = HTTP
-	else { url.href = url_base; }
-		
-	if (url.port== "") { url.port = '7076'; } // default port 7076
+	try {
+		var url = document.createElement('a');
+		if (typeof url_base == 'undefined') { url.href = 'http://localhost'; } // if url is not set, use default to localhost
+		else if (!url_base.startsWith('http')) { url.href = 'http://' + url_base.split('/').reverse()[0]; } // local files are not supported; default protocol = HTTP
+		else { url.href = url_base; }
+			
+		if (url.port== "") { url.port = '7076'; } // default port 7076
+	} catch (e) {
+		if (e instanceof ReferenceError) {
+			if (typeof url_base == 'undefined') { var url = 'http://localhost:7076'; }
+			else { var url = url_base; }
+		}
+		else { console.error(e); }
+	}
 	
 	try {
 		// Asynchronous
