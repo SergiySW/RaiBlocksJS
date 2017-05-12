@@ -299,6 +299,12 @@ Rai.prototype.account_validate = function(account) {
 }
 
 
+function pow_threshold (Uint8Array) {
+	if ((Uint8Array[0] == 255) && (Uint8Array[1] == 255) && (Uint8Array[2] == 255) && (Uint8Array[3] >= 192))	return true;
+	else	return false;
+}
+
+
 Rai.prototype.pow_initiate = function(threads, worker_path) {
 	if (typeof worker_path == 'undefined') { worker_path = ''; }
 	if (isNaN(threads)) { threads = self.navigator.hardwareConcurrency - 1; }
@@ -361,4 +367,31 @@ Rai.prototype.pow = function(hash_hex, threads, callback, worker_path) {
 		this.pow_callback(workers, hash, callback);
 	}
 	else	this.error('Invalid hash');
+}
+
+
+// Boolean output
+Rai.prototype.pow_validate = function(pow_hex, hash_hex) {
+	var isValidHash = /^[0123456789ABCDEF]+$/.test(hash_hex);
+	if (isValidHash && (hash_hex.length == 64)) {
+		var hash = hex_uint8(hash_hex);
+		var isValidPOW = /^[0123456789ABCDEFabcdef]+$/.test(pow_hex);
+		if (isValidPOW && (pow_hex.length == 16)) {
+			var pow = hex_uint8(pow_hex);
+			var context = blake2bInit(8, null);
+			blake2bUpdate(context, pow.reverse());
+			blake2bUpdate(context, hash);
+			var check = blake2bFinal(context).reverse();
+			if (pow_threshold(check))	return true;
+			else	return false;
+		}
+		else {
+			this.error('Invalid work');
+			return false;
+		}
+	}
+	else {
+		this.error('Invalid hash');
+		return false;
+	}
 }
