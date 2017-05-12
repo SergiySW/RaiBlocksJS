@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RaiBlocksJS PoW generator</title>
+<meta charset="utf-8">
+<link rel="stylesheet" media="all" href="..\sample.css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<!-- JS Blake library https://github.com/dcposch/blakejs -->
+<script type="text/javascript" src="..\blake2b.js"></script>
+<script type="text/javascript" src="..\rai.rpc.js"></script>
+<script type="text/javascript" src="..\rai.extended.js"></script>
+<style>
+div {
+	text-align: center;
+	padding: 10px;
+	font-size: 24px;
+}
+input {
+	width: 500px;
+}
+</style>
+</head>
+<body>
+
+<!-- Page content -->
+<div id="hash_input">
+	Enter hash to generate
+	<form name="hash_input">
+		<input id="hash_input_text" name="input" value="0000000000000000000000000000000000000000000000000000000000000000">
+	</form>
+	<div id="work_start" class="button">Generate</div>
+	<div id="work_stop" class="button">Stop</div>
+</div>
+
+<div id="threads"></div>
+<div id="hash" style="font-size: 22px;"></div>
+<div id="time"></div>
+
+<!-- General page scripts -->
+<script type="text/javascript">
+$( "#work_start" ).click(function() {
+	var start = new Date().getTime();
+	var threads = self.navigator.hardwareConcurrency - 1; // all cores - 1
+	if (threads == 1) threads = 2; // for dual-core
+	
+	let result = false;
+	function results (result) {
+		console.log(result);
+		document.getElementById('hash').innerHTML = toHex(result);
+		var elapsed = new Date().getTime() - start;
+		console.log('Total ms: ' + elapsed);
+		document.getElementById('time').innerHTML = "Elapsed time: <b>" + (elapsed / 1000) + " s</b>";
+	}
+	
+	var hash_hex = $('#hash_input_text')[0].value;
+	var hash = hex_uint8(hash_hex);
+	console.log(hash);
+	var rai = new Rai();
+	
+	console.log('PoW start');
+	//rai.pow(hash_hex, threads, results, '..\\');
+	var workers = rai.pow_initiate(threads, '..\\');
+	rai.pow_start(workers, hash);
+	document.getElementById('threads').innerHTML = threads + " threads blake2b start";
+	
+	$( "#work_stop" ).click(function() {
+		rai.pow_terminate(workers);
+		console.log('PoW stop');
+	});
+	
+	rai.pow_callback(workers, hash, results);
+});
+</script>
+
+</body>
+</html>

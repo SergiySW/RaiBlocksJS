@@ -297,3 +297,68 @@ Rai.prototype.account_validate = function(account) {
 	if (valid)	return true;
 	else	return false;
 }
+
+
+Rai.prototype.pow_initiate = function(threads, worker_path) {
+	if (typeof worker_path == 'undefined') { worker_path = ''; }
+	if (isNaN(threads)) { threads = self.navigator.hardwareConcurrency - 1; }
+	var workers = [];
+	for (let i = 0; i < threads; i++) {
+		workers[i] = new Worker(worker_path + 'rai.pow.js');
+	}
+	return workers;
+}
+
+
+// hash input as Uint8Array
+Rai.prototype.pow_start = function(workers, hash) {
+	if ((hash instanceof Uint8Array) && (hash.length == 32)) {
+		var threads = workers.length;
+		for (let i = 0; i < threads; i++) {
+			workers[i].postMessage(hash);
+		}
+	}
+	else	this.error('Invalid hash array');
+}
+
+
+Rai.prototype.pow_terminate = function(workers) {
+	var threads = workers.length;
+	for (let i = 0; i < threads; i++) {
+		workers[i].terminate();
+	}
+}
+
+
+// hash input as Uint8Array, callback as function
+Rai.prototype.pow_callback = function(workers, hash, callback) {
+	if ((hash instanceof Uint8Array) && (hash.length == 32) && (typeof callback == 'function')) {
+		var pow = this;
+		var threads = workers.length;
+		for (let i = 0; i < threads; i++) {
+			workers[i].onmessage = function(e) {
+				result = e.data;
+				if (result) {
+					pow.pow_terminate (workers);
+					callback (result); 
+				}
+				else workers[i].postMessage(hash);
+			}
+		}
+	}
+	else if (typeof callback != 'function')	this.error('Invalid callback function');
+	else	this.error('Invalid hash array');
+}
+
+
+// hash_hex input as text, callback as function
+Rai.prototype.pow = function(hash_hex, threads, callback, worker_path) {
+	var isValid = /^[0123456789ABCDEF]+$/.test(hash_hex);
+	if (isValid && (hash_hex.length == 64)) {
+		var hash = hex_uint8(hash_hex);
+		var workers = this.pow_initiate(threads, worker_path);
+		this.pow_start(workers, hash);
+		this.pow_callback(workers, hash, callback);
+	}
+	else	this.error('Invalid hash');
+}
