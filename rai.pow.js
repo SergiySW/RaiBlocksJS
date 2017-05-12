@@ -17,11 +17,11 @@ function generator256 (hash) {
 	for (let r = 0; r < 256; r++) {
 		random[7] = (random[7] + r) % 256; // pseudo random part
 		let context = blake2bInit(8, null);
-		blake2bUpdate(context, random.reverse());
+		blake2bUpdate(context, random);
 		blake2bUpdate(context, hash);
 		let blake_random = blake2bFinal(context).reverse();
 		let check = threshold(blake_random);
-		if (check === true) 	return random;
+		if (check === true) 	return random.reverse();
 	}
 	return false;
 }
@@ -30,7 +30,7 @@ onmessage = function(ev)
 {
 	for (let i = 0; i < 4096; i++) {
 		let generate = generator256(ev.data);
-		if (generate) { 
+		if (generate) {
 			postMessage(generate); // Worker return
 			break;
 		}
