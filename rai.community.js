@@ -119,7 +119,7 @@ function RaiCommunity() {
 		var rai = new Rai(host);
 		var community_request = this;
 		
-		var fronriers = rai.wallet_frontiers(wallet);
+		var frontiers = rai.wallet_frontiers(wallet);
 		
 		var accounts_list = rai.account_list(wallet);
 		
