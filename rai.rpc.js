@@ -260,6 +260,13 @@ this.block_count = function() {
 }
 
 
+this.block_successor = function(hash) {
+	var rpc_block_successor = this.rpc(JSON.stringify({"action":"block_successor", "hash":hash}));
+	var block_successor = rpc_block_successor.successor;
+	return block_successor;
+}
+
+
 // Empty output
 this.bootstrap = function(address, port) {
 	if (typeof address == 'undefined') { address = '::ffff:138.201.94.249'; }
@@ -270,11 +277,27 @@ this.bootstrap = function(address, port) {
 }
 
 
+// Empty output
+this.bootstrap_multi = function() {
+	var rpc_bootstrap_multi = this.rpc(JSON.stringify({"action":"bootstrap_multi"}));
+	var bootstrap_multi = rpc_bootstrap_multi.success;
+	return bootstrap_multi;
+}
+
+
 this.chain = function(block, count) {
 	if (typeof count == 'undefined') count = '4096';
 	var rpc_chain = this.rpc(JSON.stringify({"action":"chain","block":block,"count":count}));
 	var chain = rpc_chain.blocks;
 	return chain;
+}
+
+
+this.chain_reverse = function(block, count) {
+	if (typeof count == 'undefined') count = '4096';
+	var rpc_chain_reverse = this.rpc(JSON.stringify({"action":"chain_reverse","block":block,"count":count}));
+	var chain_reverse = rpc_chain_reverse.blocks;
+	return chain_reverse;
 }
 
 
@@ -459,6 +482,14 @@ this.representatives = function() {
 }
 
 
+// Empty output
+this.republish = function(hash) {
+	var rpc_republish = this.rpc(JSON.stringify({"action":"republish", "hash":hash}));
+	var republish = rpc_republish.success;
+	return republish;
+}
+
+
 this.search_pending = function(wallet) {
 	var rpc_search_pending = this.rpc(JSON.stringify({"action":"search_pending","wallet":wallet}));
 	var search_pending = rpc_search_pending.started;
@@ -567,6 +598,12 @@ this.work_generate = function(hash) {
 	var rpc_work_generate = this.rpc(JSON.stringify({"action":"work_generate","hash":hash}));
 	var work_generate = rpc_work_generate.work;
 	return work_generate;
+}
+
+this.work_validate = function(work, hash) {
+	var rpc_work_validate = this.rpc(JSON.stringify({"action":"work_validate","work":work,"hash":hash}));
+	var work_validate = rpc_work_validate.valid;
+	return work_validate;
 }
 
 };
