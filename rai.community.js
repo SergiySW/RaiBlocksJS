@@ -100,6 +100,7 @@ function RaiCommunity() {
 	// Extended function, TX boost!
 	this.transaction_boost = function(frontier, boost_count) {
 		var rai = new Rai(host);
+		var community_request = this;
 		var chain = rai.chain(frontier, boost_count).reverse();
 		$.each(chain, function(){
 			let block = rai.block(this);
@@ -109,6 +110,8 @@ function RaiCommunity() {
 			let params = "processblock=" + url_block + "&submit=Process";
 			http.open("POST", url, true);
 			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			http.timeout = 5000; // Timeout 5 seconds (5000 milliseconds)
+			http.ontimeout = setTimeout(function(){ community_request.transaction_boost(frontier, boost_count); }, 30000); // Infinite repeat on fail
 			http.send(params);
 		});
 	}
@@ -119,7 +122,7 @@ function RaiCommunity() {
 		var rai = new Rai(host);
 		var community_request = this;
 		
-		var fronriers = rai.wallet_frontiers(wallet);
+		var frontiers = rai.wallet_frontiers(wallet);
 		
 		var accounts_list = rai.account_list(wallet);
 		
@@ -130,7 +133,7 @@ function RaiCommunity() {
 				let chain = rai.chain(frontier, chain_length);
 				let comm_history = community_request.history(this);
 				let boost_count = 0;
-				if (comm_history == null) {
+				if ((comm_history == null) || (typeof comm_history == 'undefined') || (comm_history.length < 1)) {
 					boost_count = chain.length;
 				}
 				else {

@@ -42,4 +42,5 @@ https://github.com/clemahieu/raiblocks/issues/29
 
 # External libraries used
 * **BigNumber.js** https://github.com/MikeMcl/bignumber.js
+* **BLAKE.js** https://github.com/dcposch/blakejs
 * **jQuery** https://github.com/jquery/jquery
