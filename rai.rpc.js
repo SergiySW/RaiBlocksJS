@@ -115,10 +115,14 @@ this.unit = function(input, input_unit, output_unit) {
 	// Step 1: to RAW
 	switch(input_unit) {
 		case 'raw': value = value; break;
+		case 'Txrb': value = value.shift(36); break; // draft
+		case 'Gxrb': value = value.shift(33); break;
 		case 'Mxrb': value = value.shift(30); break;
 		case 'kxrb': value = value.shift(27); break;
 		case 'xrb': value = value.shift(24); break;
-		case 'Prai': value = value.shift(39); break; // draft
+		case 'mxrb': value = value.shift(21); break;
+		case 'uxrb': value = value.shift(18); break;
+		case 'pxrb': value = value.shift(15); break; // draft
 		case 'Trai': value = value.shift(36); break; // draft
 		case 'Grai': value = value.shift(33); break;
 		case 'Mrai': value = value.shift(30); break;
@@ -133,10 +137,14 @@ this.unit = function(input, input_unit, output_unit) {
 	// Step 2: to output
 	switch(output_unit) {
 		case 'raw': value = value; break;
+		case 'Txrb': value = value.shift(-36); break; // draft
+		case 'Gxrb': value = value.shift(-33); break;
 		case 'Mxrb': value = value.shift(-30); break;
 		case 'kxrb': value = value.shift(-27); break;
 		case 'xrb': value = value.shift(-24); break;
-		case 'Prai': value = value.shift(-39); break; // draft
+		case 'mxrb': value = value.shift(-21); break;
+		case 'uxrb': value = value.shift(-18); break;
+		case 'pxrb': value = value.shift(-15); break; // draft
 		case 'Trai': value = value.shift(-36); break; // draft
 		case 'Grai': value = value.shift(-33); break;
 		case 'Mrai': value = value.shift(-30); break;
