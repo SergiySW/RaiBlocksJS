@@ -272,13 +272,6 @@ this.block_count = function() {
 }
 
 
-this.block_successor = function(hash) {
-	var rpc_block_successor = this.rpc(JSON.stringify({"action":"block_successor", "hash":hash}));
-	var block_successor = rpc_block_successor.successor;
-	return block_successor;
-}
-
-
 // Empty output
 this.bootstrap = function(address, port) {
 	if (typeof address == 'undefined') { address = '::ffff:138.201.94.249'; }
@@ -290,10 +283,10 @@ this.bootstrap = function(address, port) {
 
 
 // Empty output
-this.bootstrap_multi = function() {
-	var rpc_bootstrap_multi = this.rpc(JSON.stringify({"action":"bootstrap_multi"}));
-	var bootstrap_multi = rpc_bootstrap_multi.success;
-	return bootstrap_multi;
+this.bootstrap_any = function() {
+	var rpc_bootstrap_any = this.rpc(JSON.stringify({"action":"bootstrap_any"}));
+	var bootstrap_any = rpc_bootstrap_any.success;
+	return bootstrap_any;
 }
 
 
@@ -302,14 +295,6 @@ this.chain = function(block, count) {
 	var rpc_chain = this.rpc(JSON.stringify({"action":"chain","block":block,"count":count}));
 	var chain = rpc_chain.blocks;
 	return chain;
-}
-
-
-this.chain_reverse = function(block, count) {
-	if (typeof count == 'undefined') count = '4096';
-	var rpc_chain_reverse = this.rpc(JSON.stringify({"action":"chain_reverse","block":block,"count":count}));
-	var chain_reverse = rpc_chain_reverse.blocks;
-	return chain_reverse;
 }
 
 
@@ -522,6 +507,15 @@ this.stop = function() {
 	var stop = this.rpc(JSON.stringify({"action":"stop"}));
 	return stop;
 }
+
+
+this.successors = function(block, count) {
+	if (typeof count == 'undefined') count = '4096';
+	var rpc_successors = this.rpc(JSON.stringify({"action":"successors","block":block,"count":count}));
+	var successors = rpc_successors.blocks;
+	return successors;
+}
+
 
 this.validate_account_number = function(account) {
 	var rpc_validate_account_number = this.rpc(JSON.stringify({"action":"validate_account_number","account":account}));
