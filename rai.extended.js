@@ -219,6 +219,21 @@ uint4_hex = function(uint4) {
 	return(hex);
 }
 
+uint8_hex = function(uint8) {
+	var hex = uint4_hex(uint8_uint4(uint8));
+	return(hex);
+}
+
+int_uint8 = function(integer, length) {
+	var uint8 = new Uint8Array(length);
+	for (var index = 0; index < length; index ++ ) {
+		var byte = integer & 0xff;
+		uint8 [ index ] = byte;
+			integer = (integer - byte) / 256 ;
+	}
+	return uint8;
+};
+
 equal_arrays = function(array1, array2) {
 	for (let i = 0; i < array1.length; i++) {
 		if (array1[i] != array2[i])	return false;
@@ -392,6 +407,33 @@ Rai.prototype.pow_validate = function(pow_hex, hash_hex) {
 	}
 	else {
 		this.error('Invalid hash');
+		return false;
+	}
+}
+
+
+
+
+// String output
+Rai.prototype.seed_key = function(seed_hex, index) {
+	var isValidHash = /^[0123456789ABCDEF]+$/.test(seed_hex);
+	if (isValidHash && (seed_hex.length == 64)) {
+		var seed = hex_uint8(seed_hex);
+		if (Number.isInteger(index)) {
+			var uint8 = int_uint8(index, 4);
+			var context = blake2bInit(32, null);
+			blake2bUpdate(context, seed);
+			blake2bUpdate(context, uint8.reverse());
+			var key = uint8_hex(blake2bFinal(context));
+			return key;
+		}
+		else {
+			this.error('Invalid index');
+			return false;
+		}
+	}
+	else {
+		this.error('Invalid seed');
 		return false;
 	}
 }

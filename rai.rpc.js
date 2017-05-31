@@ -298,6 +298,14 @@ this.chain = function(block, count) {
 }
 
 
+// Object output
+this.deterministic_key = function(seed, index) {
+	if (typeof index == 'undefined') index = 0;
+	var deterministic_key = this.rpc(JSON.stringify({"action":"deterministic_key","seed":seed, "index":index}));
+	return deterministic_key;
+}
+
+
 this.frontiers = function(account, count) {
 	if (typeof account == 'undefined') account = 'xrb_1111111111111111111111111111111111111111111111111117353trpda'; // This must match all accounts existing
 	if (typeof count == 'undefined') count = '1048576';
