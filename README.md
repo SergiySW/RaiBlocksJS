@@ -44,3 +44,4 @@ https://github.com/clemahieu/raiblocks/issues/29
 * **BigNumber.js** https://github.com/MikeMcl/bignumber.js
 * **BLAKE.js** https://github.com/dcposch/blakejs
 * **jQuery** https://github.com/jquery/jquery
+* **NaCl.js (jaimehgb fork)** https://github.com/jaimehgb/tweetnacl-js

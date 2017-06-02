@@ -437,3 +437,53 @@ Rai.prototype.seed_key = function(seed_hex, index) {
 		return false;
 	}
 }
+
+
+Rai.prototype.publicFromPrivateKey = function(secretKey) {
+	
+	if(!/[0-9A-F]{64}/i.test(secretKey)) {
+		this.error = "Invalid secret key. Should be a 32 byte hex string.";
+		return false;
+	}
+	
+	return uint8_hex(nacl.sign.keyPair.fromSecretKey(hex_uint8(secretKey)).publicKey);
+}
+
+
+Rai.prototype.signBlock = function(blockHash, secretKey) {
+	
+	if(!/[0-9A-F]{64}/i.test(secretKey)) {
+		this.error = "Invalid secret key. Should be a 32 byte hex string.";
+		return false;
+	}
+	
+	if(!/[0-9A-F]{64}/i.test(blockHash)) {
+		this.error = "Invalid block hash. Should be a 32 byte hex string.";
+		return false;
+	}
+	
+	return uint8_hex(nacl.sign.detached(hex_uint8(blockHash), hex_uint8(secretKey)));
+}
+
+Rai.prototype.checkSignature = function(hexMessage, hexSignature, publicKeyOrXRBAccount) {
+	
+	if(!/[0-9A-F]{128}/i.test(signature)) {
+		this.error = "Invalid signature. Needs to be a 64 byte hex encoded ed25519 signature.";
+		return false;
+	}
+	
+	if(/[0-9A-F]{64}/i.test(publicKeyOrXRBAccount)) {
+		// it's a 32 byte hex encoded key
+		return nacl.sign.detached.verify(hex_uint8(hexMessage), hex_uint8(hexSignature), hex_uint8(publicKeyOrXRBAccount));
+	}
+	else
+	{
+		var pubKey = this.ext_account_key (publicKeyOrXRBAccount);
+		if(pubKey) {
+			// it's a XRB account
+			return nacl.sign.detached.verify(hex_uint8(hexMessage), hex_uint8(hexSignature), hex_uint8(pubKey));
+		}
+		this.error = "Invalid public key or XRB account.";
+		return false;
+	}
+}
