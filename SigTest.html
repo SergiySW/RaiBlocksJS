@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    
+</head>
+
+<body>
+    <script src="blake2b.js"></script>
+    <script src="nacl.js"></script>
+    <script src="rai.rpc.js"></script>
+    <script src="rai.extended.js"></script>
+    <script>
+        
+        var rai = new Rai();
+        
+        // Derive the public key from the secret key
+        
+        // random key pair
+        console.log("Derive public key from random secret key");
+        
+        var randomKeyPair = nacl.sign.keyPair();
+        console.log(
+            rai.publicFromPrivateKey( uint8_hex( randomKeyPair.secretKey ) ) === uint8_hex(randomKeyPair.publicKey)
+        );
+        
+        // random key pair from raiblocks official node
+        var priv = "49FF617E9074857402411B346D92174572EB5DE02CC9469C22E9681D8565E6D5";
+        var pub = "6C32F3E6ED921D2D98A3573B665FE7F8A35D510186AA9F1B365D283BBAA93DFB";
+        var account = "xrb_1u3kyhmgu6ix7pec8osueshyhy75doai53ocmwfmeqba9gxckhhurc3cokfo";
+        
+        console.log("Derive public key from a random secret key generated with the official RaiBlocks implementation.");
+        console.log(
+            rai.publicFromPrivateKey(priv) === pub
+        );
+        
+        /*
+        Signing a block
+        
+        I would sign a block here with a one time account made with the official 
+        wallet but it's better if you verify it yourself :)
+        */
+        
+        var yourPrivateKey = "";
+        var yourPublicKey = "";
+        var oneOfYourBlocksHashes = "";
+        var theSignatureOnThatBlock = "";
+        
+        console.log("Known signatures match:")
+        console.log(
+            rai.signBlock(oneOfYourBlocksHashes, yourPrivateKey) === theSignatureOnThatBlock
+        );
+        
+        /*
+        Verify a block signature
+        
+        I've used a random block I found at the explorer :P
+        */
+        
+        var blockHash = "B8C51B22BFE48B358C437BE5ACE3F203BD5938A5231F4F1C177488E879317B5E";
+        var account = "xrb_39ymww61tksoddjh1e43mprw5r8uu1318it9z3agm7e6f96kg4ndqg9tuds4";
+        var pubKey = rai.ext_account_key(account);
+        var signature = "0E5DC6C6CDBC96A9885B1DDB0E782BC04D9B2DCB107FDD4B8A3027695A3B3947BE8E6F413190AD304B8BC5129A50ECFB8DB918FAA3EEE2856C4449A329325E0A";
+        
+        console.log("Verify a signature 1: ");
+        console.log(
+            rai.checkSignature(blockHash, signature, account)
+        );
+        
+        console.log("Verify a signature 2: ");
+        console.log(
+            rai.checkSignature(blockHash, signature, pubKey)
+        );
+        
+        
+    </script>
+    
+</body>
+
+</html>
