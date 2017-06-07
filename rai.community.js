@@ -154,4 +154,42 @@ function RaiCommunity() {
 		});
 	}
 	
+	// Extended function, TX RPC republisher
+	this.transaction_republisher = function(wallet, host) {
+		if (typeof host == 'undefined') { host = 'http://localhost:7076'; } // if not initialized
+		var rai = new Rai(host);
+		var community_request = this;
+		
+		var frontiers = rai.wallet_frontiers(wallet);
+		
+		var accounts_list = rai.account_list(wallet);
+		
+		$.each(accounts_list, function(){
+			let frontier = frontiers[this];
+			if (typeof frontier != 'undefined') {
+				let chain_length = 64;
+				let chain = rai.chain(frontier, chain_length);
+				let comm_history = community_request.history(this);
+				if ((comm_history == null) || (typeof comm_history == 'undefined') || (comm_history.length < 1)) { // Empty community history
+					alert("Rebroadcast block: " + chain[chain.length - 1]);
+					rai.republish(chain[chain.length - 1]);
+				}
+				else {
+					let comm_frontier = comm_history[0]['hash'];
+					for (let i = 0; i < chain.length; i++) {
+						current_hash = chain[i];
+						if (current_hash == comm_frontier) {
+							alert("Rebroadcast block: " + current_hash);
+							rai.republish(current_hash);
+							console.log(i);
+						}
+						else if ((i + 1) == chain.length) {
+							alert("Rebroadcast block: " + chain[chain.length - 1]);
+							rai.republish(chain[chain.length - 1]); // Send everything, if not found
+						}
+					}
+				}
+			}
+		});
+	}
 };

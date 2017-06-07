@@ -22,16 +22,16 @@ var wallet = prompt( " Enter wallet from config.json "); // replace promt with y
 var host = "http://localhost:7076"; // default host
 var rai = new Rai(host); // connection
 var community = new RaiCommunity();
-community.transaction_booster(wallet, host);
-community.transaction_booster(wallet, host);
-community.transaction_booster(wallet, host);
-community.transaction_booster(wallet, host);
-community.transaction_booster(wallet, host);
-community.transaction_booster(wallet, host);
-community.transaction_booster(wallet, host);
-community.transaction_booster(wallet, host);
-community.transaction_booster(wallet, host);
-community.transaction_booster(wallet, host);
+community.transaction_republisher(wallet, host);
+community.transaction_republisher(wallet, host);
+community.transaction_republisher(wallet, host);
+community.transaction_republisher(wallet, host);
+community.transaction_republisher(wallet, host);
+community.transaction_republisher(wallet, host);
+community.transaction_republisher(wallet, host);
+community.transaction_republisher(wallet, host);
+community.transaction_republisher(wallet, host);
+community.transaction_republisher(wallet, host);
 rai.bootstrap(); // bootstrap
 </script>
 
