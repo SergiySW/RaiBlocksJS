@@ -487,3 +487,88 @@ Rai.prototype.checkSignature = function(hexMessage, hexSignature, publicKeyOrXRB
 		return false;
 	}
 }
+
+
+/**
+ * Computes the block hash given its type and the required parameters
+ * Parameters should be hex encoded (block hashes, accounts (its public key) and balances)
+ * 
+ * @param {string} blockType - send, receive, change and open
+ * @param {object} parameters - {previous: "", destination: "", balance: ""}	 (send)
+ *								{previous: "", source: ""}						 (receive)
+ *								{previous: "", representative: "" } 		     (change)
+ *								{source:   "", representative: "", account: "" } (open)
+ * @returns {string} The block hash
+ */
+Rai.prototype.computeBlockHash = function(blockType, parameters)
+{
+
+	if(
+		blockType == 'send' &&    ( 
+									!/[0-9A-F]{64}/i.test(parameters.previous) ||
+									!/[0-9A-F]{64}/i.test(parameters.destination) ||
+									!/[0-9A-F]{32}/i.test(parameters.balance)
+								  ) ||
+		
+		blockType == 'receive' && ( 
+									!/[0-9A-F]{64}/i.test(parameters.previous) || 
+									!/[0-9A-F]{64}/i.test(parameters.source) 
+								  ) ||
+		
+		blockType == 'open' &&    (
+									!/[0-9A-F]{64}/i.test(parameters.source) ||
+									!/[0-9A-F]{64}/i.test(parameters.representative) ||
+									!/[0-9A-F]{64}/i.test(parameters.account) 
+								  ) ||
+		
+		blockType == 'change' &&  ( 
+									!/[0-9A-F]{64}/i.test(parameters.previous) ||
+									!/[0-9A-F]{64}/i.test(parameters.representative)
+								  )
+	)
+	{
+		this.error = "Invalid parameters.";
+		return false;
+	}
+	
+	var hash;
+    
+    switch(blockType)
+    {
+        case 'send':
+            var context = blake2bInit(32, null);
+            blake2bUpdate(context, hex_uint8(parameters.previous));
+            blake2bUpdate(context, hex_uint8(parameters.destination));
+            blake2bUpdate(context, hex_uint8(parameters.balance));
+            hash = uint8_hex(blake2bFinal(context));
+            break;
+        
+        case 'receive':
+            var context = blake2bInit(32, null);
+            blake2bUpdate(context, hex_uint8(parameters.previous));
+            blake2bUpdate(context, hex_uint8(parameters.source));
+            hash = uint8_hex(blake2bFinal(context));
+            break;
+        
+        case 'open':
+            var context = blake2bInit(32, null);
+            blake2bUpdate(context, hex_uint8(parameters.source));
+            blake2bUpdate(context, hex_uint8(parameters.representative));
+            blake2bUpdate(context, hex_uint8(parameters.account));
+            hash = uint8_hex(blake2bFinal(context));
+            break;
+        
+        case 'change':
+            var context = blake2bInit(32, null);
+            blake2bUpdate(context, hex_uint8(parameters.previous));
+            blake2bUpdate(context, hex_uint8(parameters.representative));
+            hash = uint8_hex(blake2bFinal(context));
+            break;
+        
+        default:
+            this.error = "Invalid block type.";
+            return false;
+    }
+    
+    return hash;
+}
