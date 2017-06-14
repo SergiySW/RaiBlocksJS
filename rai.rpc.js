@@ -234,8 +234,7 @@ this.account_representative_set = function(wallet, account, representative) {
 
 
 // String output
-this.account_weight = function(account, unit) {
-	if (typeof unit == 'undefined') { unit = 'raw'; }
+this.account_weight = function(account, unit = 'raw') {
 	var rpc_account_weight = this.rpc(JSON.stringify({"action":"account_weight","account":account}));
 	var account_weight = this.unit(rpc_account_weight.weight, 'raw', unit);
 	return account_weight;
@@ -243,8 +242,7 @@ this.account_weight = function(account, unit) {
 
 
 // String output
-this.available_supply = function(unit) {
-	if (typeof unit == 'undefined') { unit = 'raw'; }
+this.available_supply = function(unit = 'raw') {
 	var rpc_available_supply = this.rpc(JSON.stringify({"action":"available_supply"}));
 	var available_supply = this.unit(rpc_available_supply.available, 'raw', unit);
 	return available_supply;
@@ -273,9 +271,7 @@ this.block_count = function() {
 
 
 // Empty output
-this.bootstrap = function(address, port) {
-	if (typeof address == 'undefined') { address = '::ffff:138.201.94.249'; }
-	if (typeof port == 'undefined') { port = '7075'; }
+this.bootstrap = function(address = '::ffff:138.201.94.249', port = '7075') {
 	var rpc_bootstrap = this.rpc(JSON.stringify({"action":"bootstrap", "address":address, "port":port}));
 	var bootstrap = rpc_bootstrap.success;
 	return bootstrap;
@@ -290,8 +286,7 @@ this.bootstrap_any = function() {
 }
 
 
-this.chain = function(block, count) {
-	if (typeof count == 'undefined') count = '4096';
+this.chain = function(block, count = '4096') {
 	var rpc_chain = this.rpc(JSON.stringify({"action":"chain","block":block,"count":count}));
 	var chain = rpc_chain.blocks;
 	return chain;
@@ -299,16 +294,13 @@ this.chain = function(block, count) {
 
 
 // Object output
-this.deterministic_key = function(seed, index) {
-	if (typeof index == 'undefined') index = 0;
+this.deterministic_key = function(seed, index = 0) {
 	var deterministic_key = this.rpc(JSON.stringify({"action":"deterministic_key","seed":seed, "index":index}));
 	return deterministic_key;
 }
 
 
-this.frontiers = function(account, count) {
-	if (typeof account == 'undefined') account = 'xrb_1111111111111111111111111111111111111111111111111117353trpda'; // This must match all accounts existing
-	if (typeof count == 'undefined') count = '1048576';
+this.frontiers = function(account = 'xrb_1111111111111111111111111111111111111111111111111117353trpda', count = '1048576') {
 	var rpc_frontiers = this.rpc(JSON.stringify({"action":"frontiers","account":account,"count":count}));
 	var frontiers = rpc_frontiers.frontiers;
 	return frontiers;
@@ -323,8 +315,7 @@ this.frontier_count = function() {
 }
 
 
-this.history = function(hash, count) {
-	if (typeof count == 'undefined') count = '4096';
+this.history = function(hash, count = '4096') {
 	var rpc_history = this.rpc(JSON.stringify({"action":"history","hash":hash,"count":count}));
 	var history = rpc_history.history;
 	return history;
@@ -385,9 +376,7 @@ this.rai_to_raw = function(amount) {
 }
 
 
-this.keepalive = function(address, port) {
-	if (typeof address == 'undefined') address = '::ffff:192.168.1.1';
-	if (typeof port == 'undefined') port = '7075';
+this.keepalive = function(address = '::ffff:192.168.1.1', port = '7075') {
 	var keepalive = this.rpc(JSON.stringify({"action":"keepalive","address":address,"port":port}));
 	return keepalive;
 }
@@ -472,8 +461,7 @@ this.peers = function() {
 }
 
 
-this.pending = function(account, count) {
-	if (typeof count == 'undefined') count = '4096';
+this.pending = function(account, count = '4096') {
 	var rpc_pending = this.rpc(JSON.stringify({"action":"pending","account":account,"count":count}));
 	var pending = rpc_pending.blocks;
 	return pending;
@@ -502,8 +490,7 @@ this.search_pending = function(wallet) {
 }
 
 
-this.send = function(wallet, source, destination, amount, unit) {
-	if (typeof unit == 'undefined') { unit = 'raw'; }
+this.send = function(wallet, source, destination, amount, unit = 'raw') {
 	var raw_amount = this.unit(amount, unit, 'raw');
 	var rpc_send = this.rpc(JSON.stringify({"action":"send","wallet":wallet,"source":source,"destination":destination,"amount":raw_amount}));
 	var send = rpc_send.block;
@@ -517,8 +504,7 @@ this.stop = function() {
 }
 
 
-this.successors = function(block, count) {
-	if (typeof count == 'undefined') count = '4096';
+this.successors = function(block, count = '4096') {
 	var rpc_successors = this.rpc(JSON.stringify({"action":"successors","block":block,"count":count}));
 	var successors = rpc_successors.blocks;
 	return successors;

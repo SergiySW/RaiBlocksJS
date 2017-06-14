@@ -91,8 +91,7 @@ Rai.prototype.node_vendor = function() {
 
 
 // String output
-Rai.prototype.balance = function(account, unit) {
-	if (typeof unit == 'undefined') { unit = 'raw'; }
+Rai.prototype.balance = function(account, unit = 'raw') {
 	var account_balance = this.account_balance(account);
 	var balance = this.unit(account_balance.balance, 'raw', unit);
 	return balance;
@@ -100,8 +99,7 @@ Rai.prototype.balance = function(account, unit) {
 
 
 // String output
-Rai.prototype.account_pending = function(account, unit) {
-	if (typeof unit == 'undefined') { unit = 'raw'; }
+Rai.prototype.account_pending = function(account, unit = 'raw') {
 	var account_balance = this.account_balance(account);
 	var pending = this.unit(account_balance.pending, 'raw', unit);
 	return pending;
@@ -123,9 +121,8 @@ Rai.prototype.unchecked = function() {
 
 
 // String output
-Rai.prototype.wallet_balance = function(wallet, unit) {
+Rai.prototype.wallet_balance = function(wallet, unit = 'raw') {
 	var rpc_request = this;
-	if (typeof unit == 'undefined') { unit = 'raw'; }
 	
 	var accounts_list = rpc_request.account_list(wallet);
 	var balance = 0;
@@ -256,9 +253,18 @@ array_extend = function(array) {
 }
 // Arrays manipulations
 
+var XRB = XRB || {};
+
+
+XRB.error = function(error) {
+	try { alert(error); }
+	catch (e) { }
+	console.error(error);
+}
+
 
 // String output
-Rai.prototype.ext_account_get = function(key) {
+XRB.account_get = function(key) {
 	var isValid = /^[0123456789ABCDEF]+$/.test(key);
 	if (isValid && (key.length == 64)) {
 		var key_array = hex_uint8(key);
@@ -269,14 +275,17 @@ Rai.prototype.ext_account_get = function(key) {
 		return account;
 	}
 	else {
-		this.error('Invalid public key');
+		XRB.error('Invalid public key');
 		return false;
 	}
+}
+Rai.prototype.ext_account_get = function(key) {
+	return XRB.account_get(key);
 }
 
 
 // String output
-Rai.prototype.ext_account_key = function(account) {
+XRB.account_key = function(account) {
 	if ((account.startsWith('xrb_1') || account.startsWith('xrb_3')) && (account.length == 64)) {
 		var account_crop = account.substring(4,64);
 		var isValid = /^[13456789abcdefghijkmnopqrstuwxyz]+$/.test(account_crop);
@@ -290,27 +299,33 @@ Rai.prototype.ext_account_key = function(account) {
 				return key;
 			}
 			else {
-				this.error('Invalid account');
+				XRB.error('Invalid account');
 				return false;
 			}
 		}
 		else {
-			this.error('Invalid symbols');
+			XRB.error('Invalid symbols');
 			return false;
 		}
 	}
 	else {
-		this.error('Invalid account');
+		XRB.error('Invalid account');
 		return false;
 	}
+}
+Rai.prototype.ext_account_key = function(account) {
+	return XRB.account_key(account);
 }
 
 
 // Boolean output
-Rai.prototype.account_validate = function(account) {
-	var valid = this.ext_account_key (account);
+XRB.account_validate = function(account) {
+	var valid = XRB.account_key (account);
 	if (valid)	return true;
 	else	return false;
+}
+Rai.prototype.account_validate = function(account) {
+	return XRB.account_validate(account);
 }
 
 
@@ -320,8 +335,7 @@ function pow_threshold (Uint8Array) {
 }
 
 
-Rai.prototype.pow_initiate = function(threads, worker_path) {
-	if (typeof worker_path == 'undefined') { worker_path = ''; }
+XRB.pow_initiate = function(threads, worker_path = '') {
 	if (isNaN(threads)) { threads = self.navigator.hardwareConcurrency - 1; }
 	var workers = [];
 	for (let i = 0; i < threads; i++) {
@@ -329,64 +343,77 @@ Rai.prototype.pow_initiate = function(threads, worker_path) {
 	}
 	return workers;
 }
+Rai.prototype.pow_initiate = function(threads, worker_path = '') {
+	return XRB.pow_initiate(threads, worker_path);
+}
 
 
 // hash input as Uint8Array
-Rai.prototype.pow_start = function(workers, hash) {
+XRB.pow_start = function(workers, hash) {
 	if ((hash instanceof Uint8Array) && (hash.length == 32)) {
 		var threads = workers.length;
 		for (let i = 0; i < threads; i++) {
 			workers[i].postMessage(hash);
 		}
 	}
-	else	this.error('Invalid hash array');
+	else	XRB.error('Invalid hash array');
+}
+Rai.prototype.pow_start = function(workers, hash) {
+	return XRB.pow_start(workers, hash);
 }
 
 
-Rai.prototype.pow_terminate = function(workers) {
+XRB.pow_terminate = function(workers) {
 	var threads = workers.length;
 	for (let i = 0; i < threads; i++) {
 		workers[i].terminate();
 	}
 }
+Rai.prototype.pow_terminate = function(workersh) {
+	return XRB.pow_terminate(workers);
+}
 
 
 // hash input as Uint8Array, callback as function
-Rai.prototype.pow_callback = function(workers, hash, callback) {
+XRB.pow_callback = function(workers, hash, callback) {
 	if ((hash instanceof Uint8Array) && (hash.length == 32) && (typeof callback == 'function')) {
-		var pow = this;
 		var threads = workers.length;
 		for (let i = 0; i < threads; i++) {
 			workers[i].onmessage = function(e) {
 				result = e.data;
 				if (result) {
-					pow.pow_terminate (workers);
+					XRB.pow_terminate (workers);
 					callback (result); 
 				}
 				else workers[i].postMessage(hash);
 			}
 		}
 	}
-	else if (typeof callback != 'function')	this.error('Invalid callback function');
-	else	this.error('Invalid hash array');
+	else if (typeof callback != 'function')	XRB.error('Invalid callback function');
+	else	XRB.error('Invalid hash array');
+}
+Rai.prototype.pow_callback = function(workers, hash, callback) {
+	return XRB.pow_callback(workers, hash, callback);
 }
 
 
 // hash_hex input as text, callback as function
-Rai.prototype.pow = function(hash_hex, threads, callback, worker_path) {
+XRB.pow = function(hash_hex, threads, callback, worker_path) {
 	var isValid = /^[0123456789ABCDEF]+$/.test(hash_hex);
 	if (isValid && (hash_hex.length == 64)) {
 		var hash = hex_uint8(hash_hex);
-		var workers = this.pow_initiate(threads, worker_path);
-		this.pow_start(workers, hash);
-		this.pow_callback(workers, hash, callback);
+		var workers = XRB.pow_initiate(threads, worker_path);
+		XRB.pow_start(workers, hash);
+		XRB.pow_callback(workers, hash, callback);
 	}
-	else	this.error('Invalid hash');
+	else	XRB.error('Invalid hash');
+}
+Rai.prototype.pow = function(hash_hex, threads, callback, worker_path) {
+	return XRB.pow(hash_hex, threads, callback, worker_path);
 }
 
-
 // Boolean output
-Rai.prototype.pow_validate = function(pow_hex, hash_hex) {
+XRB.pow_validate = function(pow_hex, hash_hex) {
 	var isValidHash = /^[0123456789ABCDEF]+$/.test(hash_hex);
 	if (isValidHash && (hash_hex.length == 64)) {
 		var hash = hex_uint8(hash_hex);
@@ -401,21 +428,22 @@ Rai.prototype.pow_validate = function(pow_hex, hash_hex) {
 			else	return false;
 		}
 		else {
-			this.error('Invalid work');
+			XRB.error('Invalid work');
 			return false;
 		}
 	}
 	else {
-		this.error('Invalid hash');
+		XRB.error('Invalid hash');
 		return false;
 	}
 }
-
-
+Rai.prototype.pow_validate = function(pow_hex, hash_hex) {
+	return XRB.pow_validate(pow_hex, hash_hex);
+}
 
 
 // String output
-Rai.prototype.seed_key = function(seed_hex, index) {
+XRB.seed_key = function(seed_hex, index) {
 	var isValidHash = /^[0123456789ABCDEF]+$/.test(seed_hex);
 	if (isValidHash && (seed_hex.length == 64)) {
 		var seed = hex_uint8(seed_hex);
@@ -428,47 +456,56 @@ Rai.prototype.seed_key = function(seed_hex, index) {
 			return key;
 		}
 		else {
-			this.error('Invalid index');
+			XRB.error('Invalid index');
 			return false;
 		}
 	}
 	else {
-		this.error('Invalid seed');
+		XRB.error('Invalid seed');
 		return false;
 	}
 }
+Rai.prototype.seed_key = function(seed_hex, index) {
+	return XRB.seed_key(seed_hex, index);
+}
 
 
-Rai.prototype.publicFromPrivateKey = function(secretKey) {
+XRB.publicFromPrivateKey = function(secretKey) {
 	
 	if(!/[0-9A-F]{64}/i.test(secretKey)) {
-		this.error = "Invalid secret key. Should be a 32 byte hex string.";
+		XRB.error = "Invalid secret key. Should be a 32 byte hex string.";
 		return false;
 	}
 	
 	return uint8_hex(nacl.sign.keyPair.fromSecretKey(hex_uint8(secretKey)).publicKey);
 }
+Rai.prototype.publicFromPrivateKey = function(secretKey) {
+	return XRB.publicFromPrivateKey(secretKey);
+}
 
 
-Rai.prototype.signBlock = function(blockHash, secretKey) {
+XRB.signBlock = function(blockHash, secretKey) {
 	
 	if(!/[0-9A-F]{64}/i.test(secretKey)) {
-		this.error = "Invalid secret key. Should be a 32 byte hex string.";
+		XRB.error = "Invalid secret key. Should be a 32 byte hex string.";
 		return false;
 	}
 	
 	if(!/[0-9A-F]{64}/i.test(blockHash)) {
-		this.error = "Invalid block hash. Should be a 32 byte hex string.";
+		XRB.error = "Invalid block hash. Should be a 32 byte hex string.";
 		return false;
 	}
 	
 	return uint8_hex(nacl.sign.detached(hex_uint8(blockHash), hex_uint8(secretKey)));
 }
+Rai.prototype.signBlock = function(blockHash, secretKey) {
+	return XRB.signBlock(blockHash, secretKey);
+}
 
-Rai.prototype.checkSignature = function(hexMessage, hexSignature, publicKeyOrXRBAccount) {
+XRB.checkSignature = function(hexMessage, hexSignature, publicKeyOrXRBAccount) {
 	
 	if(!/[0-9A-F]{128}/i.test(signature)) {
-		this.error = "Invalid signature. Needs to be a 64 byte hex encoded ed25519 signature.";
+		XRB.error = "Invalid signature. Needs to be a 64 byte hex encoded ed25519 signature.";
 		return false;
 	}
 	
@@ -478,14 +515,17 @@ Rai.prototype.checkSignature = function(hexMessage, hexSignature, publicKeyOrXRB
 	}
 	else
 	{
-		var pubKey = this.ext_account_key (publicKeyOrXRBAccount);
+		var pubKey = XRB.account_key (publicKeyOrXRBAccount);
 		if(pubKey) {
 			// it's a XRB account
 			return nacl.sign.detached.verify(hex_uint8(hexMessage), hex_uint8(hexSignature), hex_uint8(pubKey));
 		}
-		this.error = "Invalid public key or XRB account.";
+		XRB.error = "Invalid public key or XRB account.";
 		return false;
 	}
+}
+Rai.prototype.checkSignature = function(hexMessage, hexSignature, publicKeyOrXRBAccount) {
+	return XRB.checkSignature(hexMessage, hexSignature, publicKeyOrXRBAccount);
 }
 
 
@@ -496,15 +536,15 @@ Rai.prototype.checkSignature = function(hexMessage, hexSignature, publicKeyOrXRB
  * @param {string} blockType - send, receive, change and open
  * @param {object} parameters - {previous: "", destination: "", balance: ""}	 (send)
  *								{previous: "", source: ""}						 (receive)
- *								{previous: "", representative: "" } 		     (change)
+ *								{previous: "", representative: "" } 			 (change)
  *								{source:   "", representative: "", account: "" } (open)
  * @returns {string} The block hash
  */
-Rai.prototype.computeBlockHash = function(blockType, parameters)
+XRB.computeBlockHash = function(blockType, parameters)
 {
 
 	if(
-		blockType == 'send' &&    ( 
+		blockType == 'send' &&	( 
 									!/[0-9A-F]{64}/i.test(parameters.previous) ||
 									!/[0-9A-F]{64}/i.test(parameters.destination) ||
 									!/[0-9A-F]{32}/i.test(parameters.balance)
@@ -515,7 +555,7 @@ Rai.prototype.computeBlockHash = function(blockType, parameters)
 									!/[0-9A-F]{64}/i.test(parameters.source) 
 								  ) ||
 		
-		blockType == 'open' &&    (
+		blockType == 'open' &&	(
 									!/[0-9A-F]{64}/i.test(parameters.source) ||
 									!/[0-9A-F]{64}/i.test(parameters.representative) ||
 									!/[0-9A-F]{64}/i.test(parameters.account) 
@@ -527,48 +567,49 @@ Rai.prototype.computeBlockHash = function(blockType, parameters)
 								  )
 	)
 	{
-		this.error = "Invalid parameters.";
+		XRB.error = "Invalid parameters.";
 		return false;
 	}
 	
 	var hash;
-    
-    switch(blockType)
-    {
-        case 'send':
-            var context = blake2bInit(32, null);
-            blake2bUpdate(context, hex_uint8(parameters.previous));
-            blake2bUpdate(context, hex_uint8(parameters.destination));
-            blake2bUpdate(context, hex_uint8(parameters.balance));
-            hash = uint8_hex(blake2bFinal(context));
-            break;
-        
-        case 'receive':
-            var context = blake2bInit(32, null);
-            blake2bUpdate(context, hex_uint8(parameters.previous));
-            blake2bUpdate(context, hex_uint8(parameters.source));
-            hash = uint8_hex(blake2bFinal(context));
-            break;
-        
-        case 'open':
-            var context = blake2bInit(32, null);
-            blake2bUpdate(context, hex_uint8(parameters.source));
-            blake2bUpdate(context, hex_uint8(parameters.representative));
-            blake2bUpdate(context, hex_uint8(parameters.account));
-            hash = uint8_hex(blake2bFinal(context));
-            break;
-        
-        case 'change':
-            var context = blake2bInit(32, null);
-            blake2bUpdate(context, hex_uint8(parameters.previous));
-            blake2bUpdate(context, hex_uint8(parameters.representative));
-            hash = uint8_hex(blake2bFinal(context));
-            break;
-        
-        default:
-            this.error = "Invalid block type.";
-            return false;
-    }
-    
-    return hash;
+	
+	switch(blockType)
+	{
+		case 'send':
+			var context = blake2bInit(32, null);
+			blake2bUpdate(context, hex_uint8(parameters.previous));
+			blake2bUpdate(context, hex_uint8(parameters.destination));
+			blake2bUpdate(context, hex_uint8(parameters.balance));
+			hash = uint8_hex(blake2bFinal(context));
+			break;
+		
+		case 'receive':
+			var context = blake2bInit(32, null);
+			blake2bUpdate(context, hex_uint8(parameters.previous));
+			blake2bUpdate(context, hex_uint8(parameters.source));
+			hash = uint8_hex(blake2bFinal(context));
+			break;
+		
+		case 'open':
+			var context = blake2bInit(32, null);
+			blake2bUpdate(context, hex_uint8(parameters.source));
+			blake2bUpdate(context, hex_uint8(parameters.representative));
+			blake2bUpdate(context, hex_uint8(parameters.account));
+			hash = uint8_hex(blake2bFinal(context));
+			break;
+		
+		case 'change':
+			var context = blake2bInit(32, null);
+			blake2bUpdate(context, hex_uint8(parameters.previous));
+			blake2bUpdate(context, hex_uint8(parameters.representative));
+			hash = uint8_hex(blake2bFinal(context));
+			break;
+		
+		default:
+			XRB.error = "Invalid block type.";
+			return false;
+	}
+	
+	return hash;
 }
+
