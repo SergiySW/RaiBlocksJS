@@ -253,15 +253,22 @@ array_extend = function(array) {
 }
 // Arrays manipulations
 
-var XRB = XRB || {};
+// String output
+random_hex = function() {
+	var array = new Uint8Array(32);
+	crypto.getRandomValues(array);
+	var hex = uint8_hex(array);
+	return hex;
+}
 
+
+var XRB = XRB || {};
 
 XRB.error = function(error) {
 	try { alert(error); }
 	catch (e) { }
 	console.error(error);
 }
-
 
 // String output
 XRB.account_get = function(key) {
@@ -613,3 +620,54 @@ XRB.computeBlockHash = function(blockType, parameters)
 	return hash;
 }
 
+
+XRB.open = function(private_key, work, source, representative = 'xrb_16k5pimotz9zehjk795wa4qcx54mtusk8hc5mdsjgy57gnhbj3hj6zaib4ic') {
+	var block = {};
+	block.source = source;
+	block.representative = XRB.account_key(representative);
+	block.account = XRB.publicFromPrivateKey(private_key);
+	var hash = XRB.computeBlockHash('open', block);
+	block.type = "open";
+	block.account = XRB.account_get(block.account);
+	block.representative = representative;
+	block.work = work;
+	block.signature = XRB.signBlock(hash, private_key);
+	return(block);
+}
+
+XRB.receive = function(private_key, work, source, previous) {
+	var block = {};
+	block.source = source;
+	block.previous = previous;
+	var hash = XRB.computeBlockHash('receive', block);
+	block.type = "receive";
+	block.work = work;
+	block.signature = XRB.signBlock(hash, private_key);
+	return(block);
+}
+
+XRB.change = function(private_key, work, previous, representative = 'xrb_16k5pimotz9zehjk795wa4qcx54mtusk8hc5mdsjgy57gnhbj3hj6zaib4ic') {
+	var block = {};
+	block.previous = previous;
+	block.representative = XRB.account_key(representative);
+	var hash = XRB.computeBlockHash('change', block);
+	block.type = "change";
+	block.representative = representative;
+	block.work = work;
+	block.signature = XRB.signBlock(hash, private_key);
+	return(block);
+}
+
+// new_balance in RAW
+XRB.send = function(private_key, work, previous, destination, new_balance) {
+	var block = {};
+	block.previous = previous;
+	block.destination = XRB.account_key(destination);
+	block.balance = new_balance;
+	var hash = XRB.computeBlockHash('send', block);
+	block.type = "send";
+	block.destination = destination;
+	block.work = work;
+	block.signature = XRB.signBlock(hash, private_key);
+	return(block);
+}
