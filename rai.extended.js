@@ -550,6 +550,11 @@ Rai.prototype.checkSignature = function(hexMessage, hexSignature, publicKeyOrXRB
 XRB.computeBlockHash = function(blockType, parameters)
 {
 
+	if ((typeof parameters.destination != 'undefined') && (parameters.destination.startsWith('xrb_')))	parameters.destination = XRB.account_key(parameters.destination);
+	if ((typeof parameters.representative != 'undefined') && (parameters.representative.startsWith('xrb_')))	parameters.representative = XRB.account_key(parameters.representative);
+	if ((typeof parameters.account != 'undefined') && (parameters.account.startsWith('xrb_')))	parameters.account = XRB.account_key(parameters.account);
+	if ((typeof parameters.type != 'undefined') && (blockType == null))	blockType = parameters.type;
+
 	if(
 		blockType == 'send' &&	( 
 									!/[0-9A-F]{64}/i.test(parameters.previous) ||
@@ -623,13 +628,11 @@ XRB.computeBlockHash = function(blockType, parameters)
 
 XRB.open = function(private_key, work, source, representative = 'xrb_16k5pimotz9zehjk795wa4qcx54mtusk8hc5mdsjgy57gnhbj3hj6zaib4ic') {
 	var block = {};
-	block.source = source;
-	block.representative = XRB.account_key(representative);
-	block.account = XRB.publicFromPrivateKey(private_key);
-	var hash = XRB.computeBlockHash('open', block);
 	block.type = "open";
-	block.account = XRB.account_get(block.account);
+	block.source = source;
 	block.representative = representative;
+	block.account = XRB.account_get(XRB.publicFromPrivateKey(private_key));
+	var hash = XRB.computeBlockHash(null, block);
 	block.work = work;
 	block.signature = XRB.signBlock(hash, private_key);
 	return(block);
@@ -637,10 +640,10 @@ XRB.open = function(private_key, work, source, representative = 'xrb_16k5pimotz9
 
 XRB.receive = function(private_key, work, source, previous) {
 	var block = {};
+	block.type = "receive";
 	block.source = source;
 	block.previous = previous;
-	var hash = XRB.computeBlockHash('receive', block);
-	block.type = "receive";
+	var hash = XRB.computeBlockHash(null, block);
 	block.work = work;
 	block.signature = XRB.signBlock(hash, private_key);
 	return(block);
@@ -648,25 +651,26 @@ XRB.receive = function(private_key, work, source, previous) {
 
 XRB.change = function(private_key, work, previous, representative = 'xrb_16k5pimotz9zehjk795wa4qcx54mtusk8hc5mdsjgy57gnhbj3hj6zaib4ic') {
 	var block = {};
-	block.previous = previous;
-	block.representative = XRB.account_key(representative);
-	var hash = XRB.computeBlockHash('change', block);
 	block.type = "change";
+	block.previous = previous;
 	block.representative = representative;
+	var hash = XRB.computeBlockHash(null, block);
 	block.work = work;
 	block.signature = XRB.signBlock(hash, private_key);
 	return(block);
 }
 
 // new_balance in RAW
-XRB.send = function(private_key, work, previous, destination, new_balance) {
+XRB.send = function(private_key, work, previous, destination, old_balance, amount, unit = 'raw') {
 	var block = {};
-	block.previous = previous;
-	block.destination = XRB.account_key(destination);
-	block.balance = new_balance;
-	var hash = XRB.computeBlockHash('send', block);
 	block.type = "send";
+	block.previous = previous;
 	block.destination = destination;
+	var old_raw = XRB.unit(old_balance, unit, 'raw');
+	var amount_raw = XRB.unit(amount, unit, 'raw');
+	var balance = XRB.minus(old_raw, amount_raw);
+	block.balance = XRB.raw_to_hex(balance);
+	var hash = XRB.computeBlockHash(null, block);
 	block.work = work;
 	block.signature = XRB.signBlock(hash, private_key);
 	return(block);
