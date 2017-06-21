@@ -199,66 +199,63 @@ this.account_balance = function(account) {
 
 // String output
 this.account_block_count = function() {
-	var rpc_account_block_count = this.rpc(JSON.stringify({"action":"account_block_count","account":account}));
-	var account_block_count = rpc_account_block_count.block_count;
-	return account_block_count;
+	var account_block_count = this.rpc(JSON.stringify({"action":"account_block_count","account":account}));
+	return account_block_count.block_count;
 }
 
 
 this.account_create = function(wallet) {
-	var rpc_account_create = this.rpc(JSON.stringify({"action":"account_create","wallet":wallet}));
-	var account_create = rpc_account_create.account;
-	return account_create;
+	var account_create = this.rpc(JSON.stringify({"action":"account_create","wallet":wallet}));
+	return account_create.account;
+}
+
+
+this.account_history = function(account, count = '4096') {
+	var account_history = this.rpc(JSON.stringify({"action":"account_history","account":account,"count":count}));
+	return account_history.history;
 }
 
 
 this.account_get = function(key) {
-	var rpc_account_get = this.rpc(JSON.stringify({"action":"account_get","key":key}));
-	var account_get = rpc_account_get.account;
-	return account_get;
+	var account_get = this.rpc(JSON.stringify({"action":"account_get","key":key}));
+	return account_get.account;
 }
 
 
 this.account_key = function(account) {
-	var rpc_account_key = this.rpc(JSON.stringify({"action":"account_key","account":account}));
-	var account_key = rpc_account_key.key;
-	return account_key;
+	var account_key = this.rpc(JSON.stringify({"action":"account_key","account":account}));
+	return account_key.key;
 }
 
 
 this.account_list = function(wallet) {
-	var rpc_account_list = this.rpc(JSON.stringify({"action":"account_list","wallet":wallet}));
-	var account_list = rpc_account_list.accounts;
-	return account_list;
+	var account_list = this.rpc(JSON.stringify({"action":"account_list","wallet":wallet}));
+	return account_list.accounts;
 }
 
 
 // accounts is array
 this.account_move = function(wallet, source, accounts) {
-	var rpc_account_move = this.rpc(JSON.stringify({"action":"account_move","wallet":wallet,"source":source,"accounts":accounts}));
-	var account_move = rpc_account_move.moved;
-	return account_move;
+	var account_move = this.rpc(JSON.stringify({"action":"account_move","wallet":wallet,"source":source,"accounts":accounts}));
+	return account_move.moved;
 }
 
 
 this.account_remove = function(wallet, account) {
-	var rpc_account_remove = this.rpc(JSON.stringify({"action":"account_remove","wallet":wallet,"account":account}));
-	var account_remove = rpc_account_remove.removed;
-	return account_remove;
+	var account_remove = this.rpc(JSON.stringify({"action":"account_remove","wallet":wallet,"account":account}));
+	return account_remove.removed;
 }
 
 
 this.account_representative = function(account) {
-	var rpc_account_representative = this.rpc(JSON.stringify({"action":"account_representative","account":account}));
-	var account_representative = rpc_account_representative.representative;
-	return account_representative;
+	var account_representative = this.rpc(JSON.stringify({"action":"account_representative","account":account}));
+	return account_representative.representative;
 }
 
 
 this.account_representative_set = function(wallet, account, representative) {
-	var rpc_account_representative_set = this.rpc(JSON.stringify({"action":"account_representative_set","wallet":wallet,"account":account,"representative":representative}));
-	var account_representative_set = rpc_account_representative_set.block;
-	return account_representative_set;
+	var account_representative_set = this.rpc(JSON.stringify({"action":"account_representative_set","wallet":wallet,"account":account,"representative":representative}));
+	return account_representative_set.block;
 }
 
 
@@ -267,6 +264,26 @@ this.account_weight = function(account, unit = 'raw') {
 	var rpc_account_weight = this.rpc(JSON.stringify({"action":"account_weight","account":account}));
 	var account_weight = this.unit(rpc_account_weight.weight, 'raw', unit);
 	return account_weight;
+}
+
+// Array input
+this.accounts_balances = function(accounts) {
+	var accounts_balances = this.rpc(JSON.stringify({"action":"accounts_balances","accounts":accounts}));
+	return accounts_balances.balances;
+}
+
+
+// Array input
+this.accounts_frontiers = function(accounts) {
+	var accounts_frontiers = this.rpc(JSON.stringify({"action":"accounts_frontiers","accounts":accounts}));
+	return accounts_frontiers.frontiers;
+}
+
+
+// Array input
+this.accounts_pending = function(accounts) {
+	var accounts_pending = this.rpc(JSON.stringify({"action":"accounts_pending","accounts":accounts}));
+	return accounts_pending.blocks;
 }
 
 
@@ -285,10 +302,20 @@ this.block = function(hash) {
 }
 
 
+// Array input
+this.blocks = function(hashes) {
+	var rpc_blocks = this.rpc(JSON.stringify({"action":"blocks","hashes":hashes}));
+	var blocks = rpc_blocks.blocks;
+	for(let key in blocks){
+		blocks[key] = JSON.parse(blocks[key]);
+	}
+	return blocks;
+}
+
+
 this.block_account = function(hash) {
-	var rpc_block_account = this.rpc(JSON.stringify({"action":"block_account","hash":hash}));
-	var block_account = rpc_block_account.account;
-	return block_account;
+	var block_account = this.rpc(JSON.stringify({"action":"block_account","hash":hash}));
+	return block_account.account;
 }
 
 
@@ -301,24 +328,21 @@ this.block_count = function() {
 
 // Empty output
 this.bootstrap = function(address = '::ffff:138.201.94.249', port = '7075') {
-	var rpc_bootstrap = this.rpc(JSON.stringify({"action":"bootstrap", "address":address, "port":port}));
-	var bootstrap = rpc_bootstrap.success;
-	return bootstrap;
+	var bootstrap = this.rpc(JSON.stringify({"action":"bootstrap", "address":address, "port":port}));
+	return bootstrap.success;
 }
 
 
 // Empty output
 this.bootstrap_any = function() {
-	var rpc_bootstrap_any = this.rpc(JSON.stringify({"action":"bootstrap_any"}));
-	var bootstrap_any = rpc_bootstrap_any.success;
-	return bootstrap_any;
+	var bootstrap_any = this.rpc(JSON.stringify({"action":"bootstrap_any"}));
+	return bootstrap_any.success;
 }
 
 
 this.chain = function(block, count = '4096') {
-	var rpc_chain = this.rpc(JSON.stringify({"action":"chain","block":block,"count":count}));
-	var chain = rpc_chain.blocks;
-	return chain;
+	var chain = this.rpc(JSON.stringify({"action":"chain","block":block,"count":count}));
+	return chain.blocks;
 }
 
 
@@ -331,77 +355,68 @@ this.deterministic_key = function(seed, index = 0) {
 
 this.frontiers = function(account = 'xrb_1111111111111111111111111111111111111111111111111117353trpda', count = '1048576') {
 	var rpc_frontiers = this.rpc(JSON.stringify({"action":"frontiers","account":account,"count":count}));
-	var frontiers = rpc_frontiers.frontiers;
-	return frontiers;
+	return rpc_frontiers.frontiers;
 }
 
 
 // String output
 this.frontier_count = function() {
-	var rpc_frontier_count = this.rpc(JSON.stringify({"action":"frontier_count"}));
-	var frontier_count = rpc_frontier_count.count;
-	return frontier_count;
+	var frontier_count = this.rpc(JSON.stringify({"action":"frontier_count"}));
+	return frontier_count.count;
 }
 
 
 this.history = function(hash, count = '4096') {
 	var rpc_history = this.rpc(JSON.stringify({"action":"history","hash":hash,"count":count}));
-	var history = rpc_history.history;
-	return history;
+	return rpc_history.history;
 }
 
 
 // Use this.unit instead of this function
 // String input and output
 this.mrai_from_raw = function(amount) {
-	var rpc_mrai_from_raw = this.rpc(JSON.stringify({"action":"mrai_from_raw","amount":amount}));
-	var mrai_from_raw = rpc_mrai_from_raw.amount;
-	return mrai_from_raw;
+	var mrai_from_raw = this.rpc(JSON.stringify({"action":"mrai_from_raw","amount":amount}));
+	return mrai_from_raw.amount;
 }
 
 
 // Use this.unit instead of this function
 // String input and output
 this.mrai_to_raw = function(amount) {
-	var rpc_mrai_to_raw = this.rpc(JSON.stringify({"action":"mrai_to_raw","amount":amount}));
-	var mrai_to_raw = rpc_mrai_to_raw.amount;
-	return mrai_to_raw;
+	var mrai_to_raw = this.rpc(JSON.stringify({"action":"mrai_to_raw","amount":amount}));
+	return mrai_to_raw.amount;
 }
 
 
 // Use this.unit instead of this function
 // String input and output
 this.krai_from_raw = function(amount) {
-	var rpc_krai_from_raw = this.rpc(JSON.stringify({"action":"krai_from_raw","amount":amount}));
-	var krai_from_raw = rpc_krai_from_raw.amount;
-	return krai_from_raw;
+	var krai_from_raw = this.rpc(JSON.stringify({"action":"krai_from_raw","amount":amount}));
+	return krai_from_raw.amount;
 }
 
 
 // Use this.unit instead of this function
 // String input and output
 this.krai_to_raw = function(amount) {
-	var rpc_krai_to_raw = this.rpc(JSON.stringify({"action":"krai_to_raw","amount":amount}));
-	var krai_to_raw = rpc_krai_to_raw.amount;
-	return krai_to_raw;
+	var krai_to_raw = this.rpc(JSON.stringify({"action":"krai_to_raw","amount":amount}));
+	return krai_to_raw.amount;
 }
 
 
 // Use this.unit instead of this function
 // String input and output
 this.rai_from_raw = function(amount) {
-	var rpc_rai_from_raw = this.rpc(JSON.stringify({"action":"rai_from_raw","amount":amount}));
-	var rai_from_raw = rpc_rai_from_raw.amount;
-	return rai_from_raw;
+	var rai_from_raw = this.rpc(JSON.stringify({"action":"rai_from_raw","amount":amount}));
+	return rai_from_raw.amount;
 }
 
 
 // Use this.unit instead of this function
 // String input and output
 this.rai_to_raw = function(amount) {
-	var rpc_rai_to_raw = this.rpc(JSON.stringify({"action":"rai_to_raw","amount":amount}));
-	var rai_to_raw = rpc_rai_to_raw.amount;
-	return rai_to_raw;
+	var rai_to_raw = this.rpc(JSON.stringify({"action":"rai_to_raw","amount":amount}));
+	return rai_to_raw.amount;
 }
 
 
@@ -426,39 +441,34 @@ this.key_expand = function(key) {
 
 
 this.password_change = function(wallet, password) {
-	var rpc_password_change = this.rpc(JSON.stringify({"action":"password_change","wallet":wallet,"password":password}));
-	var password_change = rpc_password_change.changed;
-	return password_change;
+	var password_change = this.rpc(JSON.stringify({"action":"password_change","wallet":wallet,"password":password}));
+	return password_change.changed;
 }
 
 
 this.password_enter = function(wallet, password) {
 	var rpc_password_enter;
 	if (typeof password == 'undefined') rpc_password_enter = this.rpc(JSON.stringify({"action":"password_enter","wallet":wallet,"password":""}));
-	else rpc_password_enter = this.rpc(JSON.stringify({"action":"password_enter","wallet":wallet,"password":password}));
-	var password_enter = rpc_password_enter.valid;
-	return password_enter;
+	else password_enter = this.rpc(JSON.stringify({"action":"password_enter","wallet":wallet,"password":password}));
+	return password_enter.valid;
 }
 
 
 this.password_valid = function(wallet) {
-	var rpc_password_valid = this.rpc(JSON.stringify({"action":"password_valid","wallet":wallet}));
-	var password_valid = rpc_password_valid.valid;
-	return password_valid;
+	var password_valid = this.rpc(JSON.stringify({"action":"password_valid","wallet":wallet}));
+	return password_valid.valid;
 }
 
 
 this.payment_begin = function(wallet) {
-	var rpc_payment_begin = this.rpc(JSON.stringify({"action":"payment_begin","wallet":wallet}));
-	var payment_begin = rpc_payment_begin.account;
-	return payment_begin;
+	var payment_begin = this.rpc(JSON.stringify({"action":"payment_begin","wallet":wallet}));
+	return payment_begin.account;
 }
 
 
 this.payment_init = function(wallet) {
-	var rpc_payment_init = this.rpc(JSON.stringify({"action":"payment_init","wallet":wallet}));
-	var payment_init = rpc_payment_init.status;
-	return payment_init;
+	var payment_init = this.rpc(JSON.stringify({"action":"payment_init","wallet":wallet}));
+	return payment_init.status;
 }
 
 
@@ -470,9 +480,8 @@ this.payment_end = function(account, wallet) {
 
 // String input
 this.payment_wait = function(account, amount, timeout) {
-	var rpc_payment_wait = this.rpc(JSON.stringify({"action":"payment_wait","account":account,"amount":amount,"timeout":timeout}));
-	var payment_wait = rpc_payment_wait.status;
-	return payment_wait;
+	var payment_wait = this.rpc(JSON.stringify({"action":"payment_wait","account":account,"amount":amount,"timeout":timeout}));
+	return payment_wait.status;
 }
 
 
@@ -485,45 +494,45 @@ this.process = function(block) {
 
 this.peers = function() {
 	var rpc_peers = this.rpc(JSON.stringify({"action":"peers"}));
-	var peers = rpc_peers.peers;
-	return peers;
+	return rpc_peers.peers;
 }
 
 
 this.pending = function(account, count = '4096') {
-	var rpc_pending = this.rpc(JSON.stringify({"action":"pending","account":account,"count":count}));
-	var pending = rpc_pending.blocks;
-	return pending;
+	var pending = this.rpc(JSON.stringify({"action":"pending","account":account,"count":count}));
+	return pending.blocks;
+}
+
+
+this.receive = function(wallet, account, block) {
+	var receive = this.rpc(JSON.stringify({"action":"receive","wallet":wallet,"account":account,"block":block}));
+	return receive.block;
 }
 
 
 this.representatives = function() {
 	var rpc_representatives = this.rpc(JSON.stringify({"action":"representatives"}));
-	var representatives = rpc_representatives.representatives;
-	return representatives;
+	return rpc_representatives.representatives;
 }
 
 
 // Empty output
 this.republish = function(hash) {
-	var rpc_republish = this.rpc(JSON.stringify({"action":"republish", "hash":hash}));
-	var republish = rpc_republish.success;
-	return republish;
+	var republish = this.rpc(JSON.stringify({"action":"republish", "hash":hash}));
+	return republish.success;
 }
 
 
 this.search_pending = function(wallet) {
-	var rpc_search_pending = this.rpc(JSON.stringify({"action":"search_pending","wallet":wallet}));
-	var search_pending = rpc_search_pending.started;
-	return search_pending;
+	var search_pending = this.rpc(JSON.stringify({"action":"search_pending","wallet":wallet}));
+	return search_pending.started;
 }
 
 
 this.send = function(wallet, source, destination, amount, unit = 'raw') {
 	var raw_amount = this.unit(amount, unit, 'raw');
-	var rpc_send = this.rpc(JSON.stringify({"action":"send","wallet":wallet,"source":source,"destination":destination,"amount":raw_amount}));
-	var send = rpc_send.block;
-	return send;
+	var send = this.rpc(JSON.stringify({"action":"send","wallet":wallet,"source":source,"destination":destination,"amount":raw_amount}));
+	return send.block;
 }
 
 
@@ -534,16 +543,14 @@ this.stop = function() {
 
 
 this.successors = function(block, count = '4096') {
-	var rpc_successors = this.rpc(JSON.stringify({"action":"successors","block":block,"count":count}));
-	var successors = rpc_successors.blocks;
-	return successors;
+	var successors = this.rpc(JSON.stringify({"action":"successors","block":block,"count":count}));
+	return successors.blocks;
 }
 
 
 this.validate_account_number = function(account) {
-	var rpc_validate_account_number = this.rpc(JSON.stringify({"action":"validate_account_number","account":account}));
-	var validate_account_number = rpc_validate_account_number.valid;
-	return validate_account_number;
+	var validate_account_number = this.rpc(JSON.stringify({"action":"validate_account_number","account":account}));
+	return validate_account_number.valid;
 }
 
 
@@ -554,31 +561,40 @@ this.version = function() {
 
 
 this.wallet_add = function(wallet, key) {
-	var rpc_wallet_add = this.rpc(JSON.stringify({"action":"wallet_add","wallet":wallet,"key":key}));
-	var wallet_add = rpc_wallet_add.account;
-	return wallet_add;
+	var wallet_add = this.rpc(JSON.stringify({"action":"wallet_add","wallet":wallet,"key":key}));
+	return wallet_add.account;
+}
+
+
+// Object output
+this.wallet_balance_total = function(wallet) {
+	var wallet_balance_total = this.rpc(JSON.stringify({"action":"wallet_balance_total","wallet":wallet}));
+	return wallet_balance_total;
+}
+
+
+this.wallet_balances = function(wallet) {
+	var wallet_balances = this.rpc(JSON.stringify({"action":"wallet_balances","wallet":wallet}));
+	return wallet_balances.balances;
 }
 
 
 // Empty output
 this.wallet_change_seed = function(wallet, seed) {
-	var rpc_wallet_change_seed = this.rpc(JSON.stringify({"action":"wallet_change_seed", "wallet":wallet, "seed":seed}));
-	var wallet_change_seed = rpc_wallet_change_seed.success;
-	return wallet_change_seed;
+	var wallet_change_seed = this.rpc(JSON.stringify({"action":"wallet_change_seed", "wallet":wallet, "seed":seed}));
+	return wallet_change_seed.success;
 }
 
 
 this.wallet_contains = function(wallet, account) {
-	var rpc_wallet_contains = this.rpc(JSON.stringify({"action":"wallet_contains","wallet":wallet,"account":account}));
-	var wallet_contains = rpc_wallet_contains.exists;
-	return wallet_contains;
+	var wallet_contains = this.rpc(JSON.stringify({"action":"wallet_contains","wallet":wallet,"account":account}));
+	return wallet_contains.exists;
 }
 
 
 this.wallet_create = function() {
-	var rpc_wallet_create = this.rpc(JSON.stringify({"action":"wallet_create"}));
-	var wallet_create = rpc_wallet_create.wallet;
-	return wallet_create;
+	var wallet_create = this.rpc(JSON.stringify({"action":"wallet_create"}));
+	return wallet_create.wallet;
 }
 
 
@@ -590,30 +606,26 @@ this.wallet_destroy = function(wallet) {
 
 // Return as array or as JSON/Object?
 this.wallet_export = function(wallet) {
-	var rpc_wallet_export = this.rpc(JSON.stringify({"action":"wallet_export","wallet":wallet}));
-	var wallet_export = rpc_wallet_export.json;
-	return wallet_export;
+	var wallet_export = this.rpc(JSON.stringify({"action":"wallet_export","wallet":wallet}));
+	return wallet_export.json;
 }
 
 
 this.wallet_frontiers = function(wallet) {
-	var rpc_wallet_frontiers = this.rpc(JSON.stringify({"action":"wallet_frontiers","wallet":wallet}));
-	var wallet_frontiers = rpc_wallet_frontiers.frontiers;
-	return wallet_frontiers;
+	var wallet_frontiers = this.rpc(JSON.stringify({"action":"wallet_frontiers","wallet":wallet}));
+	return wallet_frontiers.frontiers;
 }
 
 
 this.wallet_representative = function(wallet) {
-	var rpc_wallet_representative = this.rpc(JSON.stringify({"action":"wallet_representative","wallet":wallet}));
-	var wallet_representative = rpc_wallet_representative.representative;
-	return wallet_representative;
+	var wallet_representative = this.rpc(JSON.stringify({"action":"wallet_representative","wallet":wallet}));
+	return wallet_representative.representative;
 }
 
 
 this.wallet_representative_set = function(wallet, representative) {
-	var rpc_wallet_representative_set = this.rpc(JSON.stringify({"action":"wallet_representative_set","wallet":wallet,"representative":representative}));
-	var wallet_representative_set = rpc_wallet_representative_set.set;
-	return wallet_representative_set;
+	var wallet_representative_set = this.rpc(JSON.stringify({"action":"wallet_representative_set","wallet":wallet,"representative":representative}));
+	return wallet_representative_set.set;
 }
 
 
@@ -624,15 +636,13 @@ this.work_cancel = function(hash) {
 
 
 this.work_generate = function(hash) {
-	var rpc_work_generate = this.rpc(JSON.stringify({"action":"work_generate","hash":hash}));
-	var work_generate = rpc_work_generate.work;
-	return work_generate;
+	var work_generate = this.rpc(JSON.stringify({"action":"work_generate","hash":hash}));
+	return work_generate.work;
 }
 
 this.work_validate = function(work, hash) {
-	var rpc_work_validate = this.rpc(JSON.stringify({"action":"work_validate","work":work,"hash":hash}));
-	var work_validate = rpc_work_validate.valid;
-	return work_validate;
+	var work_validate = this.rpc(JSON.stringify({"action":"work_validate","work":work,"hash":hash}));
+	return work_validate.valid;
 }
 
 };
