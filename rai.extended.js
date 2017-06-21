@@ -483,7 +483,7 @@ XRB.seed_keys = function(seed_hex, count = 1) {
 		var seed = hex_uint8(seed_hex);
 		if (Number.isInteger(count)) {
 			var keys = [];
-			for (index = 0; index < count; index++) [
+			for (let index = 0; index < count; index++) {
 				var uint8 = int_uint8(index, 4);
 				var context = blake2bInit(32, null);
 				blake2bUpdate(context, seed);

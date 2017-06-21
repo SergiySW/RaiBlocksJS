@@ -49,8 +49,7 @@ $( "#start" ).click(function() {
 	$("#accounts").append("<tr><th>ID</th><th>Account</th></tr>");
 	for (let i = 0; i < 1000; i++) {
 		let key = XRB.seed_key(seed, i);
-		let pubkey = XRB.publicFromPrivateKey(key);
-		let account = XRB.account_get(pubkey);
+		let account = XRB.key_account(key);
 		$("#accounts").append("<tr><td>" + i + "</td><td><a href=\"" + acc_explorer + account + "\">" + account + "</a></td></tr>");
 		console.log(account);
 	}
