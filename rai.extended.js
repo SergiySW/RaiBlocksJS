@@ -450,7 +450,7 @@ Rai.prototype.pow_validate = function(pow_hex, hash_hex) {
 
 
 // String output
-XRB.seed_key = function(seed_hex, index) {
+XRB.seed_key = function(seed_hex, index = 0) {
 	var isValidHash = /^[0123456789ABCDEF]+$/.test(seed_hex);
 	if (isValidHash && (seed_hex.length == 64)) {
 		var seed = hex_uint8(seed_hex);
@@ -476,6 +476,32 @@ Rai.prototype.seed_key = function(seed_hex, index) {
 	return XRB.seed_key(seed_hex, index);
 }
 
+// Array output
+XRB.seed_keys = function(seed_hex, count = 1) {
+	var isValidHash = /^[0123456789ABCDEF]+$/.test(seed_hex);
+	if (isValidHash && (seed_hex.length == 64)) {
+		var seed = hex_uint8(seed_hex);
+		if (Number.isInteger(count)) {
+			var keys = [];
+			for (index = 0; index < count; index++) [
+				var uint8 = int_uint8(index, 4);
+				var context = blake2bInit(32, null);
+				blake2bUpdate(context, seed);
+				blake2bUpdate(context, uint8.reverse());
+				keys.push(uint8_hex(blake2bFinal(context)));
+			}
+			return keys;
+		}
+		else {
+			XRB.error('Invalid count');
+			return false;
+		}
+	}
+	else {
+		XRB.error('Invalid seed');
+		return false;
+	}
+}
 
 XRB.publicFromPrivateKey = function(secretKey) {
 	
@@ -490,6 +516,9 @@ Rai.prototype.publicFromPrivateKey = function(secretKey) {
 	return XRB.publicFromPrivateKey(secretKey);
 }
 
+XRB.key_account = function(private_key) {
+	return XRB.account_get(XRB.publicFromPrivateKey(private_key));
+}
 
 XRB.signBlock = function(blockHash, secretKey) {
 	
@@ -631,7 +660,7 @@ XRB.open = function(private_key, work, source, representative = 'xrb_16k5pimotz9
 	block.type = "open";
 	block.source = source;
 	block.representative = representative;
-	block.account = XRB.account_get(XRB.publicFromPrivateKey(private_key));
+	block.account = XRB.key_account(private_key);
 	var hash = XRB.computeBlockHash(null, block);
 	block.work = work;
 	block.signature = XRB.signBlock(hash, private_key);
