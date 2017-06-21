@@ -662,6 +662,7 @@ XRB.open = function(private_key, work, source, representative = 'xrb_16k5pimotz9
 	block.representative = representative;
 	block.account = XRB.key_account(private_key);
 	var hash = XRB.computeBlockHash(null, block);
+	block.account = XRB.key_account(private_key);
 	block.work = work;
 	block.signature = XRB.signBlock(hash, private_key);
 	return(block);
@@ -684,6 +685,7 @@ XRB.change = function(private_key, work, previous, representative = 'xrb_16k5pim
 	block.previous = previous;
 	block.representative = representative;
 	var hash = XRB.computeBlockHash(null, block);
+	block.representative = representative;
 	block.work = work;
 	block.signature = XRB.signBlock(hash, private_key);
 	return(block);
@@ -700,6 +702,7 @@ XRB.send = function(private_key, work, previous, destination, old_balance, amoun
 	var balance = XRB.minus(old_raw, amount_raw);
 	block.balance = XRB.raw_to_hex(balance);
 	var hash = XRB.computeBlockHash(null, block);
+	block.destination = destination;
 	block.work = work;
 	block.signature = XRB.signBlock(hash, private_key);
 	return(block);
