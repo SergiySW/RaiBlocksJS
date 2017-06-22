@@ -281,8 +281,8 @@ this.accounts_frontiers = function(accounts) {
 
 
 // Array input
-this.accounts_pending = function(accounts) {
-	var accounts_pending = this.rpc(JSON.stringify({"action":"accounts_pending","accounts":accounts}));
+this.accounts_pending = function(accounts, count = '4096') {
+	var accounts_pending = this.rpc(JSON.stringify({"action":"accounts_pending","accounts":accounts,"count":count}));
 	return accounts_pending.blocks;
 }
 

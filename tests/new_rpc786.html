@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test RPC</title>
+<meta charset="utf-8">
+<script type="text/javascript" src="..\rai.rpc.js"></script>
+<script type="text/javascript">
+var rai = new Rai("http://192.168.1.244:7076"); // clean
+
+var blocks = rai.blocks(["991CF190094C00F0B68E2E5F75F6BEE95A2E0BD93CEAA4A6734DB9F19B728948", "A170D51B94E00371ACE76E35AC81DC9405D5D04D4CEBC399AEACE07AE05DD293"]);
+console.log(blocks);
+var string = JSON.stringify(blocks["991CF190094C00F0B68E2E5F75F6BEE95A2E0BD93CEAA4A6734DB9F19B728948"], null, 2).replace(/\s*\n\s*/g, '');
+console.log(Object.is(string, '{"type": "open","source": "E89208DD038FBB269987689621D52292AE9C35941A7484756ECCED92A65093BA","representative": "xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3","account": "xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3","work": "62f05417dd3fb691","signature": "9F0C933C8ADE004D808EA1985FA746A7E95BA2A38F867640F53EC8F180BDFE9E2C1268DEAD7C2664F356E37ABA362BC58E46DBA03E523A7B5A19E4B6EB12BB02"}'));
+string = JSON.stringify(blocks["A170D51B94E00371ACE76E35AC81DC9405D5D04D4CEBC399AEACE07AE05DD293"], null, 2).replace(/\s*\n\s*/g, '');
+console.log(Object.is(string, '{"type": "send","previous": "991CF190094C00F0B68E2E5F75F6BEE95A2E0BD93CEAA4A6734DB9F19B728948","destination": "xrb_13ezf4od79h1tgj9aiu4djzcmmguendtjfuhwfukhuucboua8cpoihmh8byo","balance": "FD89D89D89D89D89D89D89D89D89D89D","work": "3c82cc724905ee95","signature": "5B11B17DB9C8FE0CC58CAC6A6EECEF9CB122DA8A81C6D3DB1B5EE3AB065AA8F8CB1D6765C8EB91B58530C5FF5987AD95E6D34BB57F44257E20795EE412E61600"}'));
+
+var Historia = rai.account_history("xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3");
+var last_history = JSON.stringify(Historia[Historia.length-1]);
+console.log(Object.is(last_history, '{"type":"receive","account":"xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3","amount":"340282366920938463463374607431768211455","hash":"991CF190094C00F0B68E2E5F75F6BEE95A2E0BD93CEAA4A6734DB9F19B728948"}'));
+
+
+var deterministic_key = rai.deterministic_key("0000000000000000000000000000000000000000000000000000000000000000", 0);
+console.log(deterministic_key);
+console.log(deterministic_key.private === "9F0E444C69F77A49BD0BE89DB92C38FE713E0963165CCA12FAF5712D7657120F");
+console.log(deterministic_key.public === "C008B814A7D269A1FA3C6528B19201A24D797912DB9996FF02A1FF356E45552B");
+console.log(deterministic_key.account === "xrb_3i1aq1cchnmbn9x5rsbap8b15akfh7wj7pwskuzi7ahz8oq6cobd99d4r3b7");
+
+console.log(rai.accounts_balances(["xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3", "xrb_13ezf4od79h1tgj9aiu4djzcmmguendtjfuhwfukhuucboua8cpoihmh8byo"]));
+
+console.log(rai.accounts_frontiers(["xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3", "xrb_13ezf4od79h1tgj9aiu4djzcmmguendtjfuhwfukhuucboua8cpoihmh8byo"]));
+
+console.log(rai.accounts_pending(["xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3", "xrb_13ezf4od79h1tgj9aiu4djzcmmguendtjfuhwfukhuucboua8cpoihmh8byo"]));
+</script>
+
+</head>
+<body>
+
+</body>
+</html>
