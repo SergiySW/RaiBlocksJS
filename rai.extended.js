@@ -22,7 +22,7 @@ Rai.prototype.initialize = function() {
 
 
 // Extended function, jQuery is required
-Rai.prototype.account_history = function(account, count) {
+Rai.prototype.ext_account_history = function(account, count) {
 	var rpc_request = this;
 	
 	if (typeof RaiBlocks.frontiers == 'undefined') this.initialize(); // if not initialized
@@ -64,7 +64,7 @@ Rai.prototype.wallet_accounts_info = function(wallet, count) {
 		let account_balance = rai.account_balance(this);
 		let balance = account_balance.balance;
 		let pending = account_balance.pending;
-		let history = rai.account_history(this, count);
+		let history = rai.ext_account_history(this, count);
 		wallet_accounts_info.push({key: this, raw_balance: balance, balance: rai.unit(balance, 'raw', 'rai'), raw_pending: pending, pending: rai.unit(pending, 'raw', 'rai'), history: history});
 	});
 	
