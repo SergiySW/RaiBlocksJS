@@ -262,14 +262,6 @@ random_hex = function() {
 }
 
 
-var XRB = XRB || {};
-
-XRB.error = function(error) {
-	try { alert(error); }
-	catch (e) { }
-	console.error(error);
-}
-
 // String output
 XRB.account_get = function(key) {
 	var isValid = /^[0123456789ABCDEF]+$/.test(key);
