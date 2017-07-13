@@ -122,20 +122,15 @@ Rai.prototype.unchecked = function() {
 
 // String output
 Rai.prototype.wallet_balance = function(wallet, unit = 'raw') {
-	var rpc_request = this;
-	
-	var accounts_list = rpc_request.account_list(wallet);
-	var balance = 0;
-	var pending = 0;
-	
-	$.each(accounts_list, function(){
-		let account_balance = rai.account_balance(this);
-		balance = parseInt(account_balance.balance) + balance;
-		pending = parseInt(account_balance.pending) + pending;
-	});
-	
-	var wallet_balance = { balance: rai.unit(balance, 'raw', unit), pending: rai.unit(pending, 'raw', unit) };
+	var wallet_balance = this.wallet_balance_total(wallet, unit);
 	return wallet_balance;
+}
+
+
+// String output
+Rai.prototype.wallet_pending = function(wallet, unit = 'raw') {
+	var wallet_pending = this.wallet_balance_total(wallet, unit);
+	return wallet_pending;
 }
 
 

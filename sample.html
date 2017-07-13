@@ -137,7 +137,7 @@ rai.rpc(JSON.stringify({"action":"block_count"}), blocks_callback);
 $('#frontier_count').append(RaiBlocks.frontier_count);
 
 // Total balance & Pending Balance
-var wallet_balance = rai.wallet_balance(wallet, 'rai');
+var wallet_balance = rai.wallet_balance_total(wallet, 'rai');
 $('#total_balance').append(wallet_balance.balance + ' rai');
 $('#pending_balance').append(wallet_balance.pending + ' rai');
 

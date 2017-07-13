@@ -567,8 +567,9 @@ this.wallet_add = function(wallet, key) {
 
 
 // Object output
-this.wallet_balance_total = function(wallet) {
-	var wallet_balance_total = this.rpc(JSON.stringify({"action":"wallet_balance_total","wallet":wallet}));
+this.wallet_balance_total = function(wallet, unit = 'raw') {
+	var rpc_wallet_balance = this.rpc(JSON.stringify({"action":"wallet_balance_total","wallet":wallet}));
+	var wallet_balance_total = { balance: this.unit(rpc_wallet_balance.balance, 'raw', unit), pending: this.unit(rpc_wallet_balance.pending, 'raw', unit) };
 	return wallet_balance_total;
 }
 
