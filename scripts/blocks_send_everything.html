@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test send sample</title>
+<meta charset="utf-8">
+<link rel="stylesheet" media="all" href="..\sample.css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="..\bignumber.min.js"></script>
+<!-- JS Blake library https://github.com/dcposch/blakejs -->
+<script type="text/javascript" src="..\blake2b.js"></script>
+<script type="text/javascript" src="..\rai.rpc.js"></script>
+<script type="text/javascript" src="..\nacl.js"></script>
+<script type="text/javascript" src="..\rai.extended.js"></script>
+<style>
+div {
+	text-align: center;
+	padding: 10px;
+	font-size: 24px;
+}
+input {
+	width: 500px;
+}
+#block {
+	border: 1px black;
+}
+</style>
+
+</head>
+<body>
+
+<!-- Page content -->
+<div id="key_input">
+	Enter
+	<form name="key_input">
+		Seed or Key: <input id="key" name="input" value="0000000000000000000000000000000000000000000000000000000000000000"><br />
+		Account: <input id="account" name="input"><br />
+		Previous hash: <input id="previous" name="input" value="0000000000000000000000000000000000000000000000000000000000000000"><br />
+		Destination: <input id="destination" name="input"><br />
+		Work: <input id="work" name="input" value="0000000000000000"><br />
+	</form>
+	<div id="start" class="button">Generate</div>
+</div>
+<div id="block"></div>
+<div>Paste result block: <a href="https://raiblockscommunity.net/processblock/" target="_blank">https://raiblockscommunity.net/processblock/</a></div>
+
+<!-- General page scripts -->
+<script type="text/javascript">
+$( "#start" ).click(function() {
+	var key = $('#key')[0].value;
+	var account = $('#account')[0].value;
+	// search for key
+	if (account != XRB.key_account(key)) {
+		var seed = key;
+		for (let i = 0; i < 256; i++) {
+			key = XRB.seed_key(seed, i);
+			let new_account = XRB.key_account(key);
+			if (account == new_account) 	break;
+		}
+	}
+	var work = $('#work')[0].value;
+	var previous = $('#previous')[0].value;
+	var destination = $('#destination')[0].value;
+	var block = XRB.send(key, work, previous, destination, 100, 100);
+	console.log(block);
+	var string = JSON.stringify(block, null, 2);
+	console.log(string);
+	$('#block').text(string);
+});
+
+</script>
+
+</body>
+</html>
