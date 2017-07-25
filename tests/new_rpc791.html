@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Test RPC</title>
+<meta charset="utf-8">
+<script type="text/javascript" src="..\bignumber.min.js"></script>
+<script type="text/javascript" src="..\rai.rpc.js"></script>
+<script type="text/javascript" src="..\rai.extended.js"></script>
+<script type="text/javascript">
+var rai = new Rai();
+
+
+blocks = rai.pending("xrb_1111111111111111111111111111111111111111111111111111hifc8npp", 1000000, 1, 'Mrai');
+console.log(blocks['8AD284236B8B595F532133BAFC880A7AD730DA7FAB228F0C1217CB0F5922078D'] == 5);
+
+
+blocks = rai.accounts_pending(["xrb_1111111111111111111111111111111111111111111111111111hifc8npp", "xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3"], 1000000, 5, 'Mrai');
+console.log(blocks['xrb_1111111111111111111111111111111111111111111111111111hifc8npp']['8AD284236B8B595F532133BAFC880A7AD730DA7FAB228F0C1217CB0F5922078D'] == 5);
+console.log(blocks['xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3']['4C1FEEF0BEA7F50BE35489A1233FE002B212DEA554B55B1B470D78BD8F210C74'] == 106);
+
+
+var exists = rai.pending_exists("8AD284236B8B595F532133BAFC880A7AD730DA7FAB228F0C1217CB0F5922078D");
+console.log(exists == 1);
+
+
+var search_pending = rai.search_pending_all();
+console.log(search_pending == '');
+
+
+var rec_min_set = rai.receive_minimum_set(10, 'Mrai');
+console.log(rec_min_set == '');
+var rec_min = rai.receive_minimum('krai');
+console.log(rec_min == 10000);
+
+
+blocks = rai.republish("B8D267C593C92A7E251AF2FBFCF2C68D0DBE157BFA92D4AB22004E87DCC4597F", 3, 2)
+console.log(equal_arrays(blocks, ["B3F135A9D62B124E9C424ECC68B0E46697A7969CB8EE71247F15D1B034057AF5", "F02F061C4618332737AEDB75FB35B85EB20D3E841A9E5FE46A3145DD71AAF09F", "B8D267C593C92A7E251AF2FBFCF2C68D0DBE157BFA92D4AB22004E87DCC4597F", "268E2C581C1C18F4B567155E627D0696892EBFCC793226549A21E8659E28C7AE", "E4ADD2B8B573A46A857C2B94DFF33C017A09DE6AF5D5393F847F9E33C8150909", "5310825FF18B86D8D7740D8637EF1C58B021D3CDDF75F92FD3703EE230153C84", "8A6F09C3F84383DE6506BC0C0BEDF3B171F9885A8F4A466DDDA9F8802F6DF04F"]));
+
+</script>
+
+</head>
+<body>
+
+</body>
+</html>

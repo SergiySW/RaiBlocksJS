@@ -3,9 +3,10 @@
 <head>
 <title>Test RPC</title>
 <meta charset="utf-8">
+<script type="text/javascript" src="..\bignumber.min.js"></script>
 <script type="text/javascript" src="..\rai.rpc.js"></script>
 <script type="text/javascript">
-var rai = new Rai("http://192.168.1.244:7076"); // clean
+var rai = new Rai();
 
 var blocks = rai.blocks(["991CF190094C00F0B68E2E5F75F6BEE95A2E0BD93CEAA4A6734DB9F19B728948", "A170D51B94E00371ACE76E35AC81DC9405D5D04D4CEBC399AEACE07AE05DD293"]);
 console.log(blocks);
