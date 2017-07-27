@@ -10,7 +10,7 @@
 var rai = new Rai();
 
 
-blocks = rai.pending("xrb_1111111111111111111111111111111111111111111111111111hifc8npp", 1000000, 1, 'Mrai');
+var blocks = rai.pending("xrb_1111111111111111111111111111111111111111111111111111hifc8npp", 1000000, 1, 'Mrai');
 console.log(blocks['8AD284236B8B595F532133BAFC880A7AD730DA7FAB228F0C1217CB0F5922078D'] == 5);
 
 
@@ -35,6 +35,44 @@ console.log(rec_min == 10000);
 
 blocks = rai.republish("B8D267C593C92A7E251AF2FBFCF2C68D0DBE157BFA92D4AB22004E87DCC4597F", 3, 2)
 console.log(equal_arrays(blocks, ["B3F135A9D62B124E9C424ECC68B0E46697A7969CB8EE71247F15D1B034057AF5", "F02F061C4618332737AEDB75FB35B85EB20D3E841A9E5FE46A3145DD71AAF09F", "B8D267C593C92A7E251AF2FBFCF2C68D0DBE157BFA92D4AB22004E87DCC4597F", "268E2C581C1C18F4B567155E627D0696892EBFCC793226549A21E8659E28C7AE", "E4ADD2B8B573A46A857C2B94DFF33C017A09DE6AF5D5393F847F9E33C8150909", "5310825FF18B86D8D7740D8637EF1C58B021D3CDDF75F92FD3703EE230153C84", "8A6F09C3F84383DE6506BC0C0BEDF3B171F9885A8F4A466DDDA9F8802F6DF04F"]));
+
+
+var delegators = rai.delegators('xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3', 'Mrai');
+var balance = rai.balance('xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3', 'Mrai');
+console.log(delegators['xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3'] == balance);
+
+var delegators_count = rai.delegators_count('xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3');
+console.log(delegators_count);
+console.log(parseInt(delegators_count) >= 1);
+
+
+var account_info = rai.account_info('xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3', 'Mrai');
+console.log(account_info);
+console.log(account_info.open_block == '991CF190094C00F0B68E2E5F75F6BEE95A2E0BD93CEAA4A6734DB9F19B728948');
+console.log(account_info.representative_block == '991CF190094C00F0B68E2E5F75F6BEE95A2E0BD93CEAA4A6734DB9F19B728948');
+console.log(account_info.balance == balance);
+console.log(parseInt(account_info.block_count) >= 32);
+
+
+var blocks_info = rai.blocks_info(['991CF190094C00F0B68E2E5F75F6BEE95A2E0BD93CEAA4A6734DB9F19B728948'], 'Mrai');
+console.log(blocks_info);
+console.log(blocks_info['991CF190094C00F0B68E2E5F75F6BEE95A2E0BD93CEAA4A6734DB9F19B728948']['block_account'] == 'xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3');
+console.log(blocks_info['991CF190094C00F0B68E2E5F75F6BEE95A2E0BD93CEAA4A6734DB9F19B728948']['amount'] == 340282367);
+var string = JSON.stringify(blocks_info['991CF190094C00F0B68E2E5F75F6BEE95A2E0BD93CEAA4A6734DB9F19B728948']['contents'], null, 2).replace(/\s*\n\s*/g, '');
+console.log(Object.is(string, '{"type": "open","source": "E89208DD038FBB269987689621D52292AE9C35941A7484756ECCED92A65093BA","representative": "xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3","account": "xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3","work": "62f05417dd3fb691","signature": "9F0C933C8ADE004D808EA1985FA746A7E95BA2A38F867640F53EC8F180BDFE9E2C1268DEAD7C2664F356E37ABA362BC58E46DBA03E523A7B5A19E4B6EB12BB02"}'));
+
+
+var work_peers_clear = rai.work_peers_clear();
+console.log(work_peers_clear == '');
+
+
+var work_peer_add = rai.work_peer_add('::ffff:127.0.0.1', '7076');
+console.log(work_peer_add == '');
+
+
+var work_peers = rai.work_peers();
+console.log(work_peers[0] == '::ffff:127.0.0.1:7076');
+rai.work_peers_clear();
 
 </script>
 

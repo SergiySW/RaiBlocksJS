@@ -210,6 +210,13 @@ this.account_create = function(wallet) {
 }
 
 
+this.account_info = function(account, unit = 'raw') {
+	var account_info = this.rpc(JSON.stringify({"action":"account_info","account":account}));
+	if (unit != 'raw')	account_info.balance = this.unit(account_info.balance, 'raw', unit);
+	return account_info;
+}
+
+
 this.account_history = function(account, count = '4096') {
 	var account_history = this.rpc(JSON.stringify({"action":"account_history","account":account,"count":count}));
 	return account_history.history;
@@ -321,6 +328,18 @@ this.blocks = function(hashes) {
 }
 
 
+// Array input
+this.blocks_info = function(hashes, unit = 'raw') {
+	var rpc_blocks_info = this.rpc(JSON.stringify({"action":"blocks_info","hashes":hashes}));
+	var blocks = rpc_blocks_info.blocks;
+	for(let key in blocks){
+		blocks[key].contents = JSON.parse(blocks[key].contents);
+		if (unit != 'raw')	blocks[key].amount = this.unit(blocks[key].amount, 'raw', unit);
+	}
+	return blocks;
+}
+
+
 this.block_account = function(hash) {
 	var block_account = this.rpc(JSON.stringify({"action":"block_account","hash":hash}));
 	return block_account.account;
@@ -351,6 +370,21 @@ this.bootstrap_any = function() {
 this.chain = function(block, count = '4096') {
 	var chain = this.rpc(JSON.stringify({"action":"chain","block":block,"count":count}));
 	return chain.blocks;
+}
+
+
+this.delegators = function(account, unit = 'raw') {
+	var rpc_delegators = this.rpc(JSON.stringify({"action":"delegators","account":account}));
+	var delegators = rpc_delegators.delegators;
+	if (unit != 'raw')	for (let delegator in delegators)	delegators[delegator] = this.unit(delegators[delegator], 'raw', unit);
+	return delegators;
+}
+
+
+// String output
+this.delegators_count = function(account) {
+	var delegators_count = this.rpc(JSON.stringify({"action":"delegators_count","account":account}));
+	return delegators_count.count;
 }
 
 
@@ -544,9 +578,13 @@ this.receive_minimum_set = function(amount, unit = 'raw') {
 }
 
 
-this.representatives = function() {
+this.representatives = function(unit = 'raw') {
 	var rpc_representatives = this.rpc(JSON.stringify({"action":"representatives"}));
-	return rpc_representatives.representatives;
+	var representatives = rpc_representatives.representatives;
+	if (unit != 'raw'){
+		for (let represetative in representatives)	representatives[represetative] = this.unit(representatives[represetative], 'raw', unit);
+	}
+	return representatives;
 }
 
 
@@ -721,6 +759,26 @@ this.work_set = function(wallet, account, work) {
 this.work_validate = function(work, hash) {
 	var work_validate = this.rpc(JSON.stringify({"action":"work_validate","work":work,"hash":hash}));
 	return work_validate.valid;
+}
+
+
+// Empty output
+this.work_peer_add = function(address = '::1', port = '7076') {
+	var work_peer_add = this.rpc(JSON.stringify({"action":"work_peer_add", "address":address, "port":port}));
+	return work_peer_add.success;
+}
+
+
+this.work_peers = function() {
+	var rpc_work_peers = this.rpc(JSON.stringify({"action":"work_peers"}));
+	return rpc_work_peers.work_peers;
+}
+
+
+// Empty output
+this.work_peers_clear = function() {
+	var work_peers_clear = this.rpc(JSON.stringify({"action":"work_peers_clear"}));
+	return work_peers_clear.success;
 }
 
 };
