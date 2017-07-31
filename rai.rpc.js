@@ -353,6 +353,13 @@ this.block_count = function() {
 }
 
 
+// Object output
+this.block_count_type = function() {
+	var block_count_type = this.rpc(JSON.stringify({"action":"block_count_type"}));
+	return block_count_type;
+}
+
+
 // Empty output
 this.bootstrap = function(address = '::ffff:138.201.94.249', port = '7075') {
 	var bootstrap = this.rpc(JSON.stringify({"action":"bootstrap", "address":address, "port":port}));
@@ -622,6 +629,40 @@ this.stop = function() {
 this.successors = function(block, count = '4096') {
 	var successors = this.rpc(JSON.stringify({"action":"successors","block":block,"count":count}));
 	return successors.blocks;
+}
+
+
+this.unchecked = function(count = '4096') {
+	var unchecked = this.rpc(JSON.stringify({"action":"unchecked","count":count}));
+	var blocks = unchecked.blocks;
+	for(let key in blocks){
+		blocks[key] = JSON.parse(blocks[key]);
+	}
+	return blocks;
+}
+
+
+// Empty output
+this.unchecked_clear = function() {
+	var unchecked_clear = this.rpc(JSON.stringify({"action":"unchecked_clear"}));
+	return unchecked_clear.success;
+}
+
+
+this.unchecked_get = function(hash) {
+	var unchecked_get = this.rpc(JSON.stringify({"action":"unchecked_get","hash":hash}));
+	var block = JSON.parse(unchecked_get.contents);
+	return block;
+}
+
+
+this.unchecked_keys = function(key = '0000000000000000000000000000000000000000000000000000000000000000', count = '4096') {
+	var unchecked_keys = this.rpc(JSON.stringify({"action":"unchecked_keys","key":key,"count":count}));
+	var unchecked = unchecked_keys.unchecked;
+	for(let key in unchecked){
+		unchecked[key].contents = JSON.parse(unchecked[key].contents);
+	}
+	return unchecked;
 }
 
 

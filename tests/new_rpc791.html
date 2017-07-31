@@ -74,6 +74,35 @@ var work_peers = rai.work_peers();
 console.log(work_peers[0] == '::ffff:127.0.0.1:7076');
 rai.work_peers_clear();
 
+
+var block_count_type = rai.block_count_type();
+console.log(block_count_type);
+console.log(parseInt(block_count_type.send) > (parseInt(block_count_type.receive) + parseInt(block_count_type.open)));
+
+
+var unchecked_count = rai.unchecked_count();
+var unchecked = rai.unchecked();
+console.log(unchecked);
+console.log(Object.keys(unchecked).length <= unchecked_count);
+
+
+var unchecked_keys = rai.unchecked_keys();
+console.log(unchecked_keys);
+console.log(unchecked_keys.length == unchecked_count);
+
+
+if (unchecked_keys.length > 0) {
+	var unchecked_get = rai.unchecked_get(unchecked_keys[0].hash);
+	string = JSON.stringify(unchecked_keys[0].contents, null, 2).replace(/\s*\n\s*/g, '');
+	var string2 = JSON.stringify(unchecked_get, null, 2).replace(/\s*\n\s*/g, '');
+	console.log(Object.is(string, string2));
+}
+
+
+rai.unchecked_clear();
+unchecked_count = rai.unchecked_count();
+console.log(0 == unchecked_count);
+
 </script>
 
 </head>

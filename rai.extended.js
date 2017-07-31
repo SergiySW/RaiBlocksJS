@@ -114,9 +114,9 @@ Rai.prototype.count = function() {
 
 
 // String output
-Rai.prototype.unchecked = function() {
-	var unchecked = this.block_count().unchecked;
-	return unchecked;
+Rai.prototype.unchecked_count = function() {
+	var unchecked_count = this.block_count().unchecked;
+	return unchecked_count;
 }
 
 
