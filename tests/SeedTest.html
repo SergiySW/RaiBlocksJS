@@ -19,6 +19,9 @@ div {
 input {
 	width: 500px;
 }
+#seed_count {
+	width: 70px;
+}
 </style>
 
 </head>
@@ -28,7 +31,8 @@ input {
 <div id="seed_input">
 	Enter seed to generate accounts
 	<form name="seed_input">
-		<input id="seed_input_text" name="input" value="0000000000000000000000000000000000000000000000000000000000000000">
+		<input id="seed_input_text" value="0000000000000000000000000000000000000000000000000000000000000000">
+		<br />Count: <input id="seed_count" value="100">
 	</form>
 	<div id="start" class="button">Generate accounts</div>
 </div>
@@ -45,9 +49,10 @@ input {
 var acc_explorer = "https://raiblockscommunity.net/account/index.php?acc=";
 $( "#start" ).click(function() {
 	var seed = $('#seed_input_text')[0].value;
+	var count = parseInt($('#seed_count')[0].value);
 	$("tr").remove();
 	$("#accounts").append("<tr><th>ID</th><th>Account</th></tr>");
-	for (let i = 0; i < 1000; i++) {
+	for (let i = 0; i < count; i++) {
 		let key = XRB.seed_key(seed, i);
 		let account = XRB.key_account(key);
 		$("#accounts").append("<tr><td>" + i + "</td><td><a href=\"" + acc_explorer + account + "\">" + account + "</a></td></tr>");
