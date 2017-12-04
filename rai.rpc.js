@@ -210,6 +210,12 @@ this.account_create = function(wallet) {
 }
 
 
+this.accounts_create = function(wallet, count = 1) {
+	var accounts_create = this.rpc(JSON.stringify({"action":"accounts_create","wallet":wallet,"count": count}));
+	return accounts_create.accounts;
+}
+
+
 this.account_info = function(account, unit = 'raw', representative = false, weight = false, pending = false) {
 	var account_info = this.rpc(JSON.stringify({"action":"account_info","account":account,"representative":representative,"weight":weight,"pending":pending}));
 	if (unit != 'raw') {
@@ -361,6 +367,23 @@ this.block_count = function() {
 this.block_count_type = function() {
 	var block_count_type = this.rpc(JSON.stringify({"action":"block_count_type"}));
 	return block_count_type;
+}
+
+
+// Object input, object output
+/*	Sample block creation:
+	var block_data = {};
+	block_data.type = "open";
+	block_data.key = "0000000000000000000000000000000000000000000000000000000000000001",
+	block_data.account = xrb_3kdbxitaj7f6mrir6miiwtw4muhcc58e6tn5st6rfaxsdnb7gr4roudwn951";
+	block_data.representative = "xrb_1hza3f7wiiqa7ig3jczyxj5yo86yegcmqk3criaz838j91sxcckpfhbhhra1";
+	block_data.source = "19D3D919475DEED4696B5D13018151D1AF88B2BD3BCFF048B45031C1F36D1858";
+	var block = rpc.block_create(block_data);		*/
+this.block_create = function(block_data) {
+	block_data.action = "block_create";
+	var block_create = this.rpc(JSON.stringify(block_data));
+	var block = JSON.parse(block_create.block);
+	return block;
 }
 
 
@@ -545,7 +568,7 @@ this.payment_wait = function(account, amount, timeout) {
 // block as Object
 this.process = function(block) {
 	var process = this.rpc(JSON.stringify({"action":"process","block":block}));
-	return process;
+	return process.hash;
 }
 
 
@@ -630,7 +653,7 @@ this.send = function(wallet, source, destination, amount, unit = 'raw') {
 
 this.stop = function() {
 	var stop = this.rpc(JSON.stringify({"action":"stop"}));
-	return stop;
+	return stop.success;
 }
 
 
@@ -749,6 +772,12 @@ this.wallet_frontiers = function(wallet) {
 }
 
 
+this.wallet_locked = function(wallet) {
+	var wallet_locked = this.rpc(JSON.stringify({"action":"wallet_locked","wallet":wallet}));
+	return wallet_locked.locked;
+}
+
+
 this.wallet_pending = function(wallet, count = '4096', threshold = 0, unit = 'raw') {
 	if (threshold != 0)	threshold = this.unit(threshold, unit, 'raw');
 	var wallet_pending = this.rpc(JSON.stringify({"action":"wallet_pending","wallet":wallet,"count":count,"threshold":threshold}));
@@ -774,9 +803,16 @@ this.wallet_representative_set = function(wallet, representative) {
 	return wallet_representative_set.set;
 }
 
+
 this.wallet_republish = function(wallet, count = 2) {
 	var wallet_republish = this.rpc(JSON.stringify({"action":"wallet_republish","wallet":wallet,"count":count}));
 	return wallet_republish.blocks;
+}
+
+
+this.wallet_unlock = function(wallet, password) {
+	var wallet_unlock = this.password_enter(wallet, password);
+	return wallet_unlock;
 }
 
 
