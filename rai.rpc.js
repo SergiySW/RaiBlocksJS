@@ -210,9 +210,13 @@ this.account_create = function(wallet) {
 }
 
 
-this.account_info = function(account, unit = 'raw') {
-	var account_info = this.rpc(JSON.stringify({"action":"account_info","account":account}));
-	if (unit != 'raw')	account_info.balance = this.unit(account_info.balance, 'raw', unit);
+this.account_info = function(account, unit = 'raw', representative = false, weight = false, pending = false) {
+	var account_info = this.rpc(JSON.stringify({"action":"account_info","account":account,"representative":representative,"weight":weight,"pending":pending}));
+	if (unit != 'raw') {
+		account_info.balance = this.unit(account_info.balance, 'raw', unit);
+		if (weight)		account_info.weight = this.unit(account_info.weight, 'raw', unit);
+		if (pending)		account_info.pending = this.unit(account_info.pending, 'raw', unit);
+	}
 	return account_info;
 }
 
@@ -488,6 +492,10 @@ this.key_expand = function(key) {
 	return key_expand;
 }
 
+this.ledger = function(account = 'xrb_1111111111111111111111111111111111111111111111111117353trpda', count = '1048576', representative = false, weight = false, pending = false, sorting = false) {
+	var ledger = this.rpc(JSON.stringify({"action":"ledger","account":account,"count":count,"representative":representative,"weight":weight,"pending":pending,"sorting":sorting}));
+	return ledger.accounts;
+}
 
 this.password_change = function(wallet, password) {
 	var password_change = this.rpc(JSON.stringify({"action":"password_change","wallet":wallet,"password":password}));
@@ -585,8 +593,8 @@ this.receive_minimum_set = function(amount, unit = 'raw') {
 }
 
 
-this.representatives = function(unit = 'raw') {
-	var rpc_representatives = this.rpc(JSON.stringify({"action":"representatives"}));
+this.representatives = function(unit = 'raw', count = '1048576', sorting = false) {
+	var rpc_representatives = this.rpc(JSON.stringify({"action":"representatives","count":count,"sorting":sorting}));
 	var representatives = rpc_representatives.representatives;
 	if (unit != 'raw'){
 		for (let represetative in representatives)	representatives[represetative] = this.unit(representatives[represetative], 'raw', unit);
@@ -692,8 +700,13 @@ this.wallet_balance_total = function(wallet, unit = 'raw') {
 }
 
 
-this.wallet_balances = function(wallet) {
-	var wallet_balances = this.rpc(JSON.stringify({"action":"wallet_balances","wallet":wallet}));
+this.wallet_balances = function(wallet, unit = 'raw', threshold = 0) {
+	if (threshold != 0)	threshold = this.unit(threshold, unit, 'raw');
+	var wallet_balances = this.rpc(JSON.stringify({"action":"wallet_balances","wallet":wallet,"threshold":threshold}));
+	for (let account in wallet_balances.balances) {
+		wallet_balances.balances[account].balance = this.unit(wallet_balances.balances[account].balance, 'raw', unit);
+		wallet_balances.balances[account].pending = this.unit(wallet_balances.balances[account].pending, 'raw', unit);
+	}
 	return wallet_balances.balances;
 }
 
