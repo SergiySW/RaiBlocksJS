@@ -204,15 +204,9 @@ this.account_block_count = function() {
 }
 
 
-this.account_create = function(wallet) {
-	var account_create = this.rpc(JSON.stringify({"action":"account_create","wallet":wallet}));
+this.account_create = function(wallet, work = true) {
+	var account_create = this.rpc(JSON.stringify({"action":"account_create","wallet":wallet,"work":work}));
 	return account_create.account;
-}
-
-
-this.accounts_create = function(wallet, count = 1) {
-	var accounts_create = this.rpc(JSON.stringify({"action":"accounts_create","wallet":wallet,"count": count}));
-	return accounts_create.accounts;
 }
 
 
@@ -270,8 +264,8 @@ this.account_representative = function(account) {
 }
 
 
-this.account_representative_set = function(wallet, account, representative) {
-	var account_representative_set = this.rpc(JSON.stringify({"action":"account_representative_set","wallet":wallet,"account":account,"representative":representative}));
+this.account_representative_set = function(wallet, account, representative, work = '0000000000000000') {
+	var account_representative_set = this.rpc(JSON.stringify({"action":"account_representative_set","wallet":wallet,"account":account,"representative":representative,"work":work}));
 	return account_representative_set.block;
 }
 
@@ -283,10 +277,17 @@ this.account_weight = function(account, unit = 'raw') {
 	return account_weight;
 }
 
+
 // Array input
 this.accounts_balances = function(accounts) {
 	var accounts_balances = this.rpc(JSON.stringify({"action":"accounts_balances","accounts":accounts}));
 	return accounts_balances.balances;
+}
+
+
+this.accounts_create = function(wallet, count = 1, work = true) {
+	var accounts_create = this.rpc(JSON.stringify({"action":"accounts_create","wallet":wallet,"count": count,"work":work}));
+	return accounts_create.accounts;
 }
 
 
@@ -298,10 +299,17 @@ this.accounts_frontiers = function(accounts) {
 
 
 // Array input
-this.accounts_pending = function(accounts, count = '4096', threshold = 0, unit = 'raw') {
+this.accounts_pending = function(accounts, count = '4096', threshold = 0, unit = 'raw', source = false) {
 	if (threshold != 0)	threshold = this.unit(threshold, unit, 'raw');
-	var accounts_pending = this.rpc(JSON.stringify({"action":"accounts_pending","accounts":accounts,"count":count,"threshold":threshold}));
-	if (threshold != 0) {
+	var accounts_pending = this.rpc(JSON.stringify({"action":"accounts_pending","accounts":accounts,"count":count,"threshold":threshold,"source":source}));
+	if (source) {
+		for (let account in accounts_pending.blocks) {
+			for (let hash in accounts_pending.blocks[account]) {
+				accounts_pending.blocks[account][hash].amount = this.unit(accounts_pending.blocks[account][hash].amount, 'raw', unit);
+			}
+		}
+	}
+	else if (threshold != 0) {
 		for (let account in accounts_pending.blocks) {
 			for (let hash in accounts_pending.blocks[account]) {
 				accounts_pending.blocks[account][hash] = this.unit(accounts_pending.blocks[account][hash], 'raw', unit);
@@ -339,8 +347,8 @@ this.blocks = function(hashes) {
 
 
 // Array input
-this.blocks_info = function(hashes, unit = 'raw') {
-	var rpc_blocks_info = this.rpc(JSON.stringify({"action":"blocks_info","hashes":hashes}));
+this.blocks_info = function(hashes, unit = 'raw', pending = false, source = false) {
+	var rpc_blocks_info = this.rpc(JSON.stringify({"action":"blocks_info","hashes":hashes,"pending":pending,"source":source}));
 	var blocks = rpc_blocks_info.blocks;
 	for(let key in blocks){
 		blocks[key].contents = JSON.parse(blocks[key].contents);
@@ -578,10 +586,15 @@ this.peers = function() {
 }
 
 
-this.pending = function(account, count = '4096', threshold = 0, unit = 'raw') {
+this.pending = function(account, count = '4096', threshold = 0, unit = 'raw', source = false) {
 	if (threshold != 0)	threshold = this.unit(threshold, unit, 'raw');
-	var pending = this.rpc(JSON.stringify({"action":"pending","account":account,"count":count,"threshold":threshold}));
-	if (threshold != 0) {
+	var pending = this.rpc(JSON.stringify({"action":"pending","account":account,"count":count,"threshold":threshold,"source":source}));
+	if (source) {
+		for (let hash in pending.blocks) {
+			pending.blocks[hash].amount = this.unit(pending.blocks[hash].amount, 'raw', unit);
+		}
+	}
+	else if (threshold != 0) {
 		for (let hash in pending.blocks) {
 			pending.blocks[hash] = this.unit(pending.blocks[hash], 'raw', unit);
 		}
@@ -596,8 +609,8 @@ this.pending_exists = function(hash) {
 }
 
 
-this.receive = function(wallet, account, block) {
-	var receive = this.rpc(JSON.stringify({"action":"receive","wallet":wallet,"account":account,"block":block}));
+this.receive = function(wallet, account, block, work = '0000000000000000') {
+	var receive = this.rpc(JSON.stringify({"action":"receive","wallet":wallet,"account":account,"block":block,"work":work}));
 	return receive.block;
 }
 
@@ -644,9 +657,9 @@ this.search_pending_all = function() {
 }
 
 
-this.send = function(wallet, source, destination, amount, unit = 'raw') {
+this.send = function(wallet, source, destination, amount, unit = 'raw', work = '0000000000000000') {
 	var raw_amount = this.unit(amount, unit, 'raw');
-	var send = this.rpc(JSON.stringify({"action":"send","wallet":wallet,"source":source,"destination":destination,"amount":raw_amount}));
+	var send = this.rpc(JSON.stringify({"action":"send","wallet":wallet,"source":source,"destination":destination,"amount":raw_amount,"work":work}));
 	return send.block;
 }
 
@@ -709,8 +722,8 @@ this.version = function() {
 }
 
 
-this.wallet_add = function(wallet, key) {
-	var wallet_add = this.rpc(JSON.stringify({"action":"wallet_add","wallet":wallet,"key":key}));
+this.wallet_add = function(wallet, key, work = true) {
+	var wallet_add = this.rpc(JSON.stringify({"action":"wallet_add","wallet":wallet,"key":key,"work":work}));
 	return wallet_add.account;
 }
 
@@ -778,10 +791,17 @@ this.wallet_locked = function(wallet) {
 }
 
 
-this.wallet_pending = function(wallet, count = '4096', threshold = 0, unit = 'raw') {
+this.wallet_pending = function(wallet, count = '4096', threshold = 0, unit = 'raw', source = false) {
 	if (threshold != 0)	threshold = this.unit(threshold, unit, 'raw');
-	var wallet_pending = this.rpc(JSON.stringify({"action":"wallet_pending","wallet":wallet,"count":count,"threshold":threshold}));
-	if (threshold != 0) {
+	var wallet_pending = this.rpc(JSON.stringify({"action":"wallet_pending","wallet":wallet,"count":count,"threshold":threshold,"source":source}));
+	if (source) {
+		for (let account in wallet_pending.blocks) {
+			for (let hash in wallet_pending.blocks[account]) {
+				wallet_pending.blocks[account][hash].amount = this.unit(wallet_pending.blocks[account][hash].amount, 'raw', unit);
+			}
+		}
+	}
+	else if (threshold != 0) {
 		for (let account in wallet_pending.blocks) {
 			for (let hash in wallet_pending.blocks[account]) {
 				wallet_pending.blocks[account][hash] = this.unit(wallet_pending.blocks[account][hash], 'raw', unit);
