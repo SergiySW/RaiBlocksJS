@@ -1,0 +1,27 @@
+{
+  "name": "raiblocksjs",
+  "version": "1.0.0",
+  "description": "Raiblocks RPC client",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orrybaram/RaiBlocksJS.git"
+  },
+  "keywords": [
+    "Raiblocks",
+    "crypto",
+    "rpc"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/orrybaram/RaiBlocksJS/issues"
+  },
+  "homepage": "https://github.com/orrybaram/RaiBlocksJS#readme"
+}
