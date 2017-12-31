@@ -23,5 +23,23 @@
   "bugs": {
     "url": "https://github.com/orrybaram/RaiBlocksJS/issues"
   },
-  "homepage": "https://github.com/orrybaram/RaiBlocksJS#readme"
+  "homepage": "https://github.com/orrybaram/RaiBlocksJS#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-watch": "^2.0.7",
+    "eslint": "^4.14.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "husky": "^0.14.3",
+    "jest": "^22.0.4"
+  },
+  "dependencies": {
+    "bignumber": "^1.1.0",
+    "blake2b": "^2.1.2",
+    "nacl": "^0.1.3",
+    "node-fetch": "^1.7.3"
+  }
 }
