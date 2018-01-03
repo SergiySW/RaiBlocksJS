@@ -26,165 +26,19 @@
 *
 */
 
-import fetch from 'node-fetch';
+import axios from 'axios';
 import getUnit from './utils/getUnit';
+import Account from './lib/Account';
+import Accounts from './lib/Accounts';
 
 export default class Rai {
   constructor(hostUrl) {
     this.hostUrl = hostUrl || 'http://localhost:7076';
+    this.account = Account.call(this, this.rpc);
+    this.accounts = Accounts.call(this, this.rpc);
   }
 
-  async rpc(body) {
-    const response = await fetch(this.hostUrl, { method: 'POST', body });
-
-    if (response.status !== 200) {
-      console.error('XHR Failure');
-    }
-
-    return response.json();
-  }
-
-  // Object output
-  accountBalance(account) {
-    return this.rpc({ action: 'account_balance', account });
-  }
-
-
-  // String output
-  accountBlockCount(account) {
-    const { blockCount } = this.rpc({ action: 'account_block_count', account });
-    return blockCount;
-  }
-
-
-  accountCreate(wallet, work = true) {
-    const { account } = this.rpc({ action: 'account_create', wallet, work });
-    return account;
-  }
-
-
-  accountInfo(account, unit = 'raw', representative = false, weight = false, pending = false) {
-    const accountInfo = this.rpc({
-      action: 'account_info', account, representative, weight, pending,
-    });
-
-    if (unit !== 'raw') {
-      accountInfo.balance = getUnit(accountInfo.balance, 'raw', unit);
-      if (weight) accountInfo.weight = getUnit(accountInfo.weight, 'raw', unit);
-      if (pending) accountInfo.pending = getUnit(accountInfo.pending, 'raw', unit);
-    }
-
-    return accountInfo;
-  }
-
-
-  accountHistory(account, count = '4096') {
-    const { history } = this.rpc({ action: 'account_history', account, count });
-    return history;
-  }
-
-
-  accountGet(key) {
-    const { account } = this.rpc({ action: 'account_get', key });
-    return account;
-  }
-
-
-  accountKey(account) {
-    const { key } = this.rpc({ action: 'account_key', account });
-    return key;
-  }
-
-
-  accountList(wallet) {
-    const { accounts } = this.rpc({ action: 'account_list', wallet });
-    return accounts;
-  }
-
-
-  // accounts is array
-  accountMove(wallet, source, accounts) {
-    const { moved } = this.rpc({
-      action: 'account_move', wallet, source, accounts,
-    });
-    return moved;
-  }
-
-
-  accountRemove(wallet, account) {
-    const { removed } = this.rpc({ action: 'account_remove', wallet, account });
-    return removed;
-  }
-
-
-  accountRepresentative(account) {
-    const { representative } = this.rpc({ action: 'account_representative', account });
-    return representative;
-  }
-
-
-  accountRepresentativeSet(wallet, account, representative, work = '0000000000000000') {
-    const { block } = this.rpc({
-      action: 'account_representative_set', wallet, account, representative, work,
-    });
-    return block;
-  }
-
-
-  // String output
-  accountWeight(account, unit = 'raw') {
-    const { weight } = this.rpc({ action: 'account_weight', account });
-    return getUnit(weight, 'raw', unit);
-  }
-
-
-  // Array input
-  accountsBalances(accounts) {
-    const { balances } = this.rpc({ action: 'accounts_balances', accounts });
-    return balances;
-  }
-
-
-  accountsCreate(wallet, count = 1, work = true) {
-    const { accounts } = this.rpc({
-      action: 'accounts_create', wallet, count, work,
-    });
-    return accounts;
-  }
-
-
-  // Array input
-  accountsFrontiers(accounts) {
-    const { frontiers } = this.rpc({ action: 'accounts_frontiers', accounts });
-    return frontiers;
-  }
-
-  // Array input
-  accountsPending(accounts, count = '4096', _threshold = 0, unit = 'raw', source = false) {
-    let threshold = _threshold;
-    if (threshold !== 0)	{
-      threshold = getUnit(threshold, unit, 'raw');
-    }
-    const { blocks } = this.rpc({
-      action: 'accounts_pending', accounts, count, threshold, source,
-    });
-
-    if (source) {
-      for (const account in blocks) {
-        for (const hash in blocks[account]) {
-          blocks[account][hash].amount = getUnit(blocks[account][hash].amount, 'raw', unit);
-        }
-      }
-    } else if (threshold != 0) {
-      for (const account in blocks) {
-        for (const hash in blocks[account]) {
-          blocks[account][hash] = getUnit(blocks[account][hash], 'raw', unit);
-        }
-      }
-    }
-    return blocks;
-  }
-
+  rpc = body => axios.post(this.hostUrl, body);
 
   // String output
   availableSupply(unit = 'raw') {
@@ -197,7 +51,6 @@ export default class Rai {
     const { contents } = this.rpc({ action: 'block', hash });
     return JSON.parse(contents);
   }
-
 
   // Array input
   blocks(hashes) {
@@ -784,3 +637,5 @@ export default class Rai {
     return success;
   }
 }
+
+console.log(Rai)
