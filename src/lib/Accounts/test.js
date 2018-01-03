@@ -10,12 +10,21 @@ describe('Accounts', () => {
   test('accounts.balances', async () => {
     nock(testURL)
       .post('/', {
-        action: 'account_balance',
-        account: 'xrb_test',
+        action: 'accounts_balances',
+        accounts: ['xrb_test', 'xrb_test_2'],
       })
-      .reply(200, { balance: 100, pending: 0 });
+      .reply(200, {
+        xrb_test: { balance: 100, pending: 0 },
+        xrb_test_2: { balance: 1000, pending: 1000 },
+      });
 
-    const response = await rai.account.balance('xrb_test');
-    expect(response.data).toEqual({ balance: 100, pending: 0 });
+    const response = await rai.accounts.balances(['xrb_test', 'xrb_test_2']);
+
+    console.log(response);
+
+    expect(response).toEqual({
+      xrb_test: { balance: 100, pending: 0 },
+      xrb_test_2: { balance: 1000, pending: 1000 },
+    });
   });
 });

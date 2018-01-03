@@ -38,7 +38,10 @@ export default class Rai {
     this.accounts = Accounts.call(this, this.rpc);
   }
 
-  rpc = body => axios.post(this.hostUrl, body);
+  rpc = async (body) => {
+    const response = await axios.post(this.hostUrl, body);
+    return response.data;
+  };
 
   // String output
   availableSupply(unit = 'raw') {
@@ -637,5 +640,3 @@ export default class Rai {
     return success;
   }
 }
-
-console.log(Rai)

@@ -1,10 +1,9 @@
 import getUnit from '../../utils/getUnit';
 
 export default (rpc) => {
-  const balances = (accounts) => {
-    const { balances: _balances } = rpc({ action: 'accounts_balances', accounts });
-    return _balances;
-  };
+  const balances = accounts =>
+    rpc({ action: 'accounts_balances', accounts });
+
 
   const create = (wallet, count = 1, work = true) => {
     const { accounts } = rpc({
