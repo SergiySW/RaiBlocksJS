@@ -95,4 +95,125 @@ describe('Account', () => {
     const response = await rai.account.history({ account: 'xrb_wallet', count: 2 });
     expect(response).toEqual(expected);
   });
+
+  test('account.get', async () => {
+    nock(testURL)
+      .post('/', {
+        action: 'account_get',
+        key: 'xrb_key',
+      })
+      .reply(200, { account: 'xrb_account' });
+
+    const response = await rai.account.get({ key: 'xrb_key' });
+    expect(response).toEqual('xrb_account');
+  });
+
+  test('account.key', async () => {
+    nock(testURL)
+      .post('/', {
+        action: 'account_key',
+        account: 'xrb_account',
+      })
+      .reply(200, { key: 'xrb_key' });
+
+    const response = await rai.account.key({ account: 'xrb_account' });
+    expect(response).toEqual('xrb_key');
+  });
+
+  test('account.list', async () => {
+    nock(testURL)
+      .post('/', {
+        action: 'account_list',
+        wallet: 'xrb_wallet',
+      })
+      .reply(200, { accounts: ['xrb_account_1', 'xrb_account_2'] });
+
+    const response = await rai.account.list({ wallet: 'xrb_wallet' });
+    expect(response).toEqual(['xrb_account_1', 'xrb_account_2']);
+  });
+
+  test('account.move', async () => {
+    nock(testURL)
+      .post('/', {
+        action: 'account_move',
+        wallet: 'xrb_wallet',
+        source: 'source',
+        accounts: ['xrb_account_1'],
+      })
+      .reply(200, { moved: '1' });
+
+    const response = await rai.account.move({
+      wallet: 'xrb_wallet',
+      source: 'source',
+      accounts: ['xrb_account_1'],
+    });
+    expect(response).toEqual({ moved: '1' });
+  });
+
+  test('account.remove', async () => {
+    nock(testURL)
+      .post('/', {
+        action: 'account_remove',
+        wallet: 'xrb_wallet',
+        account: 'xrb_account',
+      })
+      .reply(200, { removed: '1' });
+
+    const response = await rai.account.remove({
+      wallet: 'xrb_wallet',
+      account: 'xrb_account',
+    });
+
+    expect(response).toEqual({ removed: '1' });
+  });
+
+  test('account.getRepresentative', async () => {
+    nock(testURL)
+      .post('/', {
+        action: 'account_representative',
+        account: 'xrb_account',
+      })
+      .reply(200, { representative: 'xrb_representative' });
+
+    const response = await rai.account.getRepresentative({
+      account: 'xrb_account',
+    });
+
+    expect(response).toEqual('xrb_representative');
+  });
+
+  test('account.setRepresentative', async () => {
+    nock(testURL)
+      .post('/', {
+        action: 'account_representative_set',
+        account: 'xrb_account',
+        wallet: 'xrb_wallet',
+        representative: 'xrb_representative',
+        work: '0000000000000000',
+      })
+      .reply(200, { block: 'xrb_block' });
+
+    const response = await rai.account.setRepresentative({
+      account: 'xrb_account',
+      wallet: 'xrb_wallet',
+      representative: 'xrb_representative',
+    });
+
+    expect(response).toEqual({ block: 'xrb_block' });
+  });
+
+  test('account.weight', async () => {
+    nock(testURL)
+      .post('/', {
+        action: 'account_weight',
+        account: 'xrb_account',
+      })
+      .reply(200, { weight: '10000' });
+
+    const response = await rai.account.weight({
+      account: 'xrb_account',
+    });
+
+    expect(response).toEqual('10000');
+  });
 });
