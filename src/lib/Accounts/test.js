@@ -20,8 +20,6 @@ describe('Accounts', () => {
 
     const response = await rai.accounts.balances(['xrb_test', 'xrb_test_2']);
 
-    console.log(response);
-
     expect(response).toEqual({
       xrb_test: { balance: 100, pending: 0 },
       xrb_test_2: { balance: 1000, pending: 1000 },
