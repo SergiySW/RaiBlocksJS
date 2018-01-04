@@ -1,35 +1,35 @@
 import getUnit from '../../utils/getUnit';
 
 export default (rpc) => {
-  const balances = accounts =>
+  const balances = ({ accounts }) =>
     rpc({ action: 'accounts_balances', accounts });
 
 
-  const create = (wallet, count = 1, work = true) => {
-    const { accounts } = rpc({
+  const create = async ({ wallet, count = 1, work = true }) => {
+    const { accounts } = await rpc({
       action: 'accounts_create', wallet, count, work,
     });
     return accounts;
   };
 
-  const frontiers = (accounts) => {
-    const { frontiers: _frontiers } = rpc({ action: 'accounts_frontiers', accounts });
+  const frontiers = async ({ accounts }) => {
+    const { frontiers: _frontiers } = await rpc({ action: 'accounts_frontiers', accounts });
     return _frontiers;
   };
 
-  const pending = ({
+  const pending = async ({
     accounts,
     count = '4096',
-    _threshold = 0,
+    threshold = 0,
     unit = 'raw',
     source = false,
   }) => {
-    let threshold = _threshold;
-    if (threshold !== 0)	{
-      threshold = getUnit(threshold, unit, 'raw');
+    let thresholdCopy = threshold;
+    if (thresholdCopy !== 0) {
+      thresholdCopy = getUnit(threshold, unit, 'raw');
     }
-    const { blocks } = rpc({
-      action: 'accounts_pending', accounts, count, threshold, source,
+    const { blocks } = await rpc({
+      action: 'accounts_pending', accounts, count, threshold: thresholdCopy, source,
     });
 
     if (source) {
