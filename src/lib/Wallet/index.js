@@ -129,6 +129,8 @@ export default (rpc) => {
 
   const republish = ({ wallet, count = 2 }) => rpc('wallet_republish', { wallet, count });
 
+  // alias for rai.wallet.passwordEnter
+  const unlock = ({ wallet, password }) => passwordEnter({ wallet, password });
 
   const workGet = ({ wallet }) => rpc('wallet_work_get', { wallet });
 
@@ -150,6 +152,7 @@ export default (rpc) => {
     getRepresentative,
     setRepresentative,
     republish,
+    unlock,
     workGet,
   };
 };

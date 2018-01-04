@@ -426,6 +426,26 @@ describe('Wallet', () => {
     expect(response).toEqual(expected);
   });
 
+  test('wallet.unlock', async () => {
+    const request = {
+      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
+      password: 'new_password_gary_bags_pizza_$kull',
+    };
+    const expected = {
+      valid: true,
+    };
+
+    mockServer.success({
+      request: Object.assign({}, request, {
+        action: 'password_enter',
+      }),
+      response: { valid: '1' },
+    });
+
+    const response = await rai.wallet.unlock(request);
+    expect(response).toEqual(expected);
+  });
+
   test('wallet.workGet', async () => {
     const request = {
       wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',

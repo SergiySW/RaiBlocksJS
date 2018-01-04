@@ -181,24 +181,6 @@ export default class Rai {
     return accounts;
   }
 
-  passwordChange(wallet, password) {
-    const { changed } = this.rpc({ action: 'password_change', wallet, password });
-    return changed;
-  }
-
-
-  passwordEnter(wallet, password) {
-    const { valid } = this.rpc({ action: 'password_enter', wallet, password });
-    return valid;
-  }
-
-
-  passwordValid(wallet) {
-    const { valid } = this.rpc({ action: 'password_valid', wallet });
-    return valid;
-  }
-
-
   paymentVegin(wallet) {
     const { account } = this.rpc({ action: 'payment_begin', wallet });
     return account;
@@ -373,11 +355,6 @@ export default class Rai {
   version() {
     const version = this.rpc({ action: 'version' });
     return version;
-  }
-
-
-  walletUnlock(wallet, password) {
-    return this.password_enter(wallet, password);
   }
 
   workCancel(hash) {
