@@ -35,7 +35,6 @@ export default (rpc) => {
     return _balances;
   };
 
-
   // Empty output
   const changeSeed = async ({ wallet, seed }) => {
     const response = await rpc('wallet_change_seed', { wallet, seed });
@@ -69,6 +68,21 @@ export default (rpc) => {
   const locked = async ({ wallet }) => {
     const { locked: isLocked } = await rpc('wallet_locked', { wallet });
     return { locked: Boolean(Number(isLocked)) };
+  };
+
+  const passwordChange = async ({ wallet, password }) => {
+    const { changed } = await rpc('password_change', { wallet, password });
+    return { changed: Boolean(Number(changed)) };
+  };
+
+  const passwordEnter = async ({ wallet, password }) => {
+    const { valid } = await rpc('password_enter', { wallet, password });
+    return { valid: Boolean(Number(valid)) };
+  };
+
+  const passwordValid = async ({ wallet }) => {
+    const { valid } = await rpc('password_valid', { wallet });
+    return { valid: Boolean(Number(valid)) };
   };
 
   const pending = async ({
@@ -129,6 +143,9 @@ export default (rpc) => {
     export: exportWallet,
     frontiers,
     locked,
+    passwordChange,
+    passwordEnter,
+    passwordValid,
     pending,
     getRepresentative,
     setRepresentative,

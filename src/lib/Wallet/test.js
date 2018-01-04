@@ -67,6 +67,7 @@ describe('Wallet', () => {
     expect(response).toEqual(expected);
   });
 
+
   test('wallet.changeSeed', async () => {
     const request = {
       wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
@@ -275,6 +276,65 @@ describe('Wallet', () => {
     });
 
     const response = await rai.wallet.locked(request);
+    expect(response).toEqual(expected);
+  });
+
+  test('wallet.passwordChange', async () => {
+    const request = {
+      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
+      password: 'new_password_gary_bags_pizza_$kull',
+    };
+    const expected = {
+      changed: true,
+    };
+
+    mockServer.success({
+      request: Object.assign({}, request, {
+        action: 'password_change',
+      }),
+      response: { changed: '1' },
+    });
+
+    const response = await rai.wallet.passwordChange(request);
+    expect(response).toEqual(expected);
+  });
+
+  test('wallet.passwordEnter', async () => {
+    const request = {
+      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
+      password: 'new_password_gary_bags_pizza_$kull',
+    };
+    const expected = {
+      valid: true,
+    };
+
+    mockServer.success({
+      request: Object.assign({}, request, {
+        action: 'password_enter',
+      }),
+      response: { valid: '1' },
+    });
+
+    const response = await rai.wallet.passwordEnter(request);
+    expect(response).toEqual(expected);
+  });
+
+  test('wallet.passwordValid', async () => {
+    const request = {
+      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
+    };
+    const expected = {
+      valid: true,
+    };
+
+    mockServer.success({
+      request: Object.assign({}, request, {
+        action: 'password_valid',
+      }),
+      response: { valid: '1' },
+    });
+
+    const response = await rai.wallet.passwordValid(request);
     expect(response).toEqual(expected);
   });
 
