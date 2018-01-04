@@ -21,7 +21,7 @@
 */
 
 import axios from 'axios';
-import getUnit from './utils/getUnit';
+import getConversion from './utils/getConversion';
 import methods from './lib';
 
 export default class Rai {
@@ -42,7 +42,7 @@ export default class Rai {
   // String output
   availableSupply(unit = 'raw') {
     const { available } = this.rpc({ action: 'available_supply' });
-    return getUnit(available, 'raw', unit);
+    return getConversion(available, 'raw', unit);
   }
 
   // Empty output
@@ -63,7 +63,7 @@ export default class Rai {
     const { delegators } = this.rpc({ action: 'delegators', account });
     if (unit !== 'raw')	{
       for (const delegator in delegators)	{
-        delegators[delegator] = getUnit(delegators[delegator], 'raw', unit);
+        delegators[delegator] = getConversion(delegators[delegator], 'raw', unit);
       }
     }
     return delegators;
@@ -102,7 +102,7 @@ export default class Rai {
   }
 
 
-  // Use getUnit instead of this function
+  // Use getConversion instead of this function
   // String input and output
   mraiFromRaw(_amount) {
     const { amount } = this.rpc({ action: 'mraiFromRaw', _amount });
@@ -110,7 +110,7 @@ export default class Rai {
   }
 
 
-  // Use getUnit instead of this function
+  // Use getConversion instead of this function
   // String input and output
   mraiToRaw(_amount) {
     const { amount } = this.rpc({ action: 'mraiToRaw', _amount });
@@ -118,7 +118,7 @@ export default class Rai {
   }
 
 
-  // Use getUnit instead of this function
+  // Use getConversion instead of this function
   // String input and output
   kraiFromRaw(_amount) {
     const { amount } = this.rpc({ action: 'kraiFromRaw', _amount });
@@ -126,7 +126,7 @@ export default class Rai {
   }
 
 
-  // Use getUnit instead of this function
+  // Use getConversion instead of this function
   // String input and output
   kraiToRaw(_amount) {
     const { amount } = this.rpc({ action: 'kraiToRaw', _amount });
@@ -134,7 +134,7 @@ export default class Rai {
   }
 
 
-  // Use getUnit instead of this function
+  // Use getConversion instead of this function
   // String input and output
   raiFromRaw(_amount) {
     const { amount } = this.rpc({ action: 'raiFromRaw', _amount });
@@ -142,7 +142,7 @@ export default class Rai {
   }
 
 
-  // Use getUnit instead of this function
+  // Use getConversion instead of this function
   // String input and output
   raiToRaw(_amount) {
     const { amount } = this.rpc({ action: 'raiToRaw', _amount });
@@ -216,7 +216,7 @@ export default class Rai {
   pending(account, count = '4096', _threshold = 0, unit = 'raw', source = false) {
     let threshold = _threshold;
     if (threshold !== 0) {
-      threshold = getUnit(threshold, unit, 'raw');
+      threshold = getConversion(threshold, unit, 'raw');
     }
 
     const { blocks } = this.rpc({
@@ -225,11 +225,11 @@ export default class Rai {
 
     if (source) {
       for (const hash in pending.blocks) {
-        blocks[hash].amount = getUnit(blocks[hash].amount, 'raw', unit);
+        blocks[hash].amount = getConversion(blocks[hash].amount, 'raw', unit);
       }
     } else if (threshold != 0) {
       for (const hash in blocks) {
-        blocks[hash] = getUnit(blocks[hash], 'raw', unit);
+        blocks[hash] = getConversion(blocks[hash], 'raw', unit);
       }
     }
     return blocks;
@@ -252,12 +252,12 @@ export default class Rai {
 
   receiveMinimum(unit = 'raw') {
     const { amount } = this.rpc({ action: 'receive_minimum' });
-    return getUnit(amount, 'raw', unit);
+    return getConversion(amount, 'raw', unit);
   }
 
 
   receiveMinimumSet(amount, unit = 'raw') {
-    const rawAmount = getUnit(amount, unit, 'raw');
+    const rawAmount = getConversion(amount, unit, 'raw');
     const { success } = this.rpc({ action: 'receive_minimum_set', amount: rawAmount });
     return success;
   }
@@ -267,7 +267,7 @@ export default class Rai {
     const { representatives } = this.rpc({ action: 'representatives', count, sorting });
     if (unit !== 'raw') {
       for (const represetative in representatives) {
-        representatives[represetative] = getUnit(representatives[represetative], 'raw', unit);
+        representatives[represetative] = getConversion(representatives[represetative], 'raw', unit);
       }
     }
     return representatives;
@@ -295,7 +295,7 @@ export default class Rai {
 
 
   send(wallet, source, destination, amount, unit = 'raw', work = '0000000000000000') {
-    const rawAmount = getUnit(amount, unit, 'raw');
+    const rawAmount = getConversion(amount, unit, 'raw');
     const { block } = this.rpc({
       action: 'send', wallet, source, destination, amount: rawAmount, work,
     });

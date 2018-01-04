@@ -1,4 +1,4 @@
-import getUnit from '../../utils/getUnit';
+import getConversion, { convertFromRaw } from '../../utils/getConversion';
 
 export default function Accounts(rpc) {
   const balances = ({ accounts }) =>
@@ -26,7 +26,11 @@ export default function Accounts(rpc) {
   }) => {
     let thresholdCopy = threshold;
     if (thresholdCopy !== 0) {
-      thresholdCopy = getUnit(threshold, unit, 'raw');
+      thresholdCopy = getConversion({
+        value: threshold,
+        from: unit,
+        to: 'raw',
+      });
     }
     const { blocks } = await rpc('accounts_pending', {
       accounts, count, threshold: thresholdCopy, source,
@@ -35,13 +39,13 @@ export default function Accounts(rpc) {
     if (source) {
       Object.keys(blocks).forEach((account) => {
         Object.keys(blocks[account]).forEach((hash) => {
-          blocks[account][hash].amount = getUnit(blocks[account][hash].amount, 'raw', unit);
+          blocks[account][hash].amount = convertFromRaw(blocks[account][hash].amount, unit);
         });
       });
     } else if (threshold !== 0) {
       Object.keys(blocks).forEach((account) => {
         Object.keys(blocks[account]).forEach((hash) => {
-          blocks[account][hash] = getUnit(blocks[account][hash], 'raw', unit);
+          blocks[account][hash] = convertFromRaw(blocks[account][hash], unit);
         });
       });
     }
@@ -54,4 +58,4 @@ export default function Accounts(rpc) {
     frontiers,
     pending,
   };
-};
+}

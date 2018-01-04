@@ -54,4 +54,4 @@ export default function Blocks(rpc) {
     process,
     get,
   };
-};
+}

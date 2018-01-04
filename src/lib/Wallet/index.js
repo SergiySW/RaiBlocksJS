@@ -1,4 +1,4 @@
-import getUnit from '../../utils/getUnit';
+import getConversion, { convertFromRaw } from '../../utils/getConversion';
 
 export default function Wallet(rpc) {
   const add = async ({ wallet, key, work = true }) => {
@@ -14,22 +14,26 @@ export default function Wallet(rpc) {
     const { balance, pending } = await rpc('wallet_balance_total', { wallet });
 
     return {
-      balance: getUnit(balance, 'raw', unit),
-      pending: getUnit(pending, 'raw', unit),
+      balance: convertFromRaw(balance, unit),
+      pending: convertFromRaw(pending, unit),
     };
   };
 
   const balances = async ({ wallet, unit = 'raw', threshold = 0 }) => {
     let newThreshold = threshold;
     if (newThreshold !== 0) {
-      newThreshold = getUnit(threshold, unit, 'raw');
+      newThreshold = getConversion({
+        value: threshold,
+        from: unit,
+        to: 'raw',
+      });
     }
 
     const { balances: _balances } = await rpc('wallet_balances', { wallet, threshold: newThreshold });
 
     Object.keys(_balances).forEach((account) => {
-      _balances[account].balance = getUnit(_balances[account].balance, 'raw', unit);
-      _balances[account].pending = getUnit(_balances[account].pending, 'raw', unit);
+      _balances[account].balance = convertFromRaw(_balances[account].balance, unit);
+      _balances[account].pending = convertFromRaw(_balances[account].pending, unit);
     });
 
     return _balances;
@@ -94,7 +98,7 @@ export default function Wallet(rpc) {
   }) => {
     let newThreshold = threshold;
     if (newThreshold !== 0) {
-      newThreshold = getUnit(threshold, unit, 'raw');
+      newThreshold = getConversion(threshold, unit, 'raw');
     }
     const { blocks } = await rpc('wallet_pending', {
       wallet, count, threshold: newThreshold, source,
@@ -103,13 +107,13 @@ export default function Wallet(rpc) {
     if (source) {
       Object.keys(blocks).forEach((account) => {
         Object.keys(blocks[account]).forEach((hash) => {
-          blocks[account][hash].amount = getUnit(blocks[account][hash].amount, 'raw', unit);
+          blocks[account][hash].amount = convertFromRaw(blocks[account][hash].amount, unit);
         });
       });
     } else if (threshold !== 0) {
       Object.keys(blocks).forEach((account) => {
         Object.keys(blocks[account]).forEach((hash) => {
-          blocks[account][hash] = getUnit(blocks[account][hash], 'raw', unit);
+          blocks[account][hash] = convertFromRaw(blocks[account][hash], unit);
         });
       });
     }
@@ -155,4 +159,4 @@ export default function Wallet(rpc) {
     unlock,
     workGet,
   };
-};
+}

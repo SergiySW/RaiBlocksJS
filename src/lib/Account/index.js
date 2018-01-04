@@ -1,4 +1,4 @@
-import getUnit from '../../utils/getUnit';
+import { convertFromRaw } from '../../utils/getConversion';
 
 export default function Account(rpc) {
   const balance = ({ account }) =>
@@ -27,9 +27,9 @@ export default function Account(rpc) {
     });
 
     if (unit !== 'raw') {
-      accountInfo.balance = getUnit(accountInfo.balance, 'raw', unit);
-      if (weight) accountInfo.weight = getUnit(accountInfo.weight, 'raw', unit);
-      if (pending) accountInfo.pending = getUnit(accountInfo.pending, 'raw', unit);
+      accountInfo.balance = convertFromRaw(accountInfo.balance, unit);
+      if (weight) accountInfo.weight = convertFromRaw(accountInfo.weight, unit);
+      if (pending) accountInfo.pending = convertFromRaw(accountInfo.pending, unit);
     }
 
     return accountInfo;
@@ -80,7 +80,7 @@ export default function Account(rpc) {
 
   const weight = async ({ account, unit = 'raw' }) => {
     const { weight: _weight } = await rpc('account_weight', { account });
-    return getUnit(_weight, 'raw', unit);
+    return convertFromRaw(_weight, unit);
   };
 
   return {
@@ -98,4 +98,4 @@ export default function Account(rpc) {
     setRepresentative,
     weight,
   };
-};
+}
