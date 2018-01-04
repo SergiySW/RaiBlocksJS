@@ -33,20 +33,20 @@ export default (rpc) => {
     });
 
     if (source) {
-      for (const account in blocks) {
-        for (const hash in blocks[account]) {
+      Object.keys(blocks).forEach((account) => {
+        Object.keys(blocks[account]).forEach((hash) => {
           blocks[account][hash].amount = getUnit(blocks[account][hash].amount, 'raw', unit);
-        }
-      }
-    } else if (threshold != 0) {
-      for (const account in blocks) {
-        for (const hash in blocks[account]) {
+        });
+      });
+    } else if (threshold !== 0) {
+      Object.keys(blocks).forEach((account) => {
+        Object.keys(blocks[account]).forEach((hash) => {
           blocks[account][hash] = getUnit(blocks[account][hash], 'raw', unit);
-        }
-      }
+        });
+      });
     }
     return blocks;
-  }
+  };
 
   return {
     balances,
