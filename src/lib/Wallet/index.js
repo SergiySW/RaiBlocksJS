@@ -1,6 +1,6 @@
 import getUnit from '../../utils/getUnit';
 
-export default (rpc) => {
+export default function Wallet(rpc) {
   const add = async ({ wallet, key, work = true }) => {
     const { account } = await rpc('wallet_add', {
       wallet, key, work,

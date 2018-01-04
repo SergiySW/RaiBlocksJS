@@ -1,6 +1,6 @@
 import getUnit from '../../utils/getUnit';
 
-export default (rpc) => {
+export default function Account(rpc) {
   const balance = ({ account }) =>
     rpc('account_balance', { account });
 

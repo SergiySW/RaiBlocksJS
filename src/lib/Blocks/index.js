@@ -1,4 +1,4 @@
-export default (rpc) => {
+export default function Blocks(rpc) {
   const account = ({ hash }) => rpc('block_account', { hash });
 
   const getCount = () => rpc('block_count');
