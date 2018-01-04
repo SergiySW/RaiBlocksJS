@@ -2,16 +2,16 @@ import getUnit from '../../utils/getUnit';
 
 export default (rpc) => {
   const balance = ({ account }) =>
-    rpc({ action: 'account_balance', account });
+    rpc('account_balance', { account });
 
 
   const blockCount = async ({ account }) => {
-    const { block_count: _blockCount } = await rpc({ action: 'account_block_count', account });
+    const { block_count: _blockCount } = await rpc('account_block_count', { account });
     return _blockCount;
   };
 
   const create = async ({ wallet, work = true }) => {
-    const { account } = await rpc({ action: 'account_create', wallet, work });
+    const { account } = await rpc('account_create', { wallet, work });
     return account;
   };
 
@@ -22,8 +22,8 @@ export default (rpc) => {
     weight = false,
     pending = false,
   }) => {
-    const accountInfo = await rpc({
-      action: 'account_info', account, representative, weight, pending,
+    const accountInfo = await rpc('account_info', {
+      account, representative, weight, pending,
     });
 
     if (unit !== 'raw') {
@@ -36,37 +36,35 @@ export default (rpc) => {
   };
 
   const history = async ({ account, count = '4096' }) => {
-    const { history: _history } = await rpc({ action: 'account_history', account, count: count.toString() });
+    const { history: _history } = await rpc('account_history', { account, count: count.toString() });
     return _history;
   };
 
   const get = async ({ key }) => {
-    const { account } = await rpc({ action: 'account_get', key });
+    const { account } = await rpc('account_get', { key });
     return account;
   };
 
   const key = async ({ account }) => {
-    const { key: _key } = await rpc({ action: 'account_key', account });
+    const { key: _key } = await rpc('account_key', { account });
     return _key;
   };
 
   const list = async ({ wallet }) => {
-    const { accounts } = await rpc({ action: 'account_list', wallet });
+    const { accounts } = await rpc('account_list', { wallet });
     return accounts;
   };
 
   const move = ({ wallet, source, accounts }) =>
-    rpc({
-      action: 'account_move', wallet, source, accounts,
-    });
+    rpc('account_move', { wallet, source, accounts });
 
 
   const remove = ({ wallet, account }) =>
-    rpc({ action: 'account_remove', wallet, account });
+    rpc('account_remove', { wallet, account });
 
 
   const getRepresentative = async ({ account }) => {
-    const { representative } = await rpc({ action: 'account_representative', account });
+    const { representative } = await rpc('account_representative', { account });
     return representative;
   };
 
@@ -75,14 +73,13 @@ export default (rpc) => {
     account,
     representative,
     work = '0000000000000000',
-  }) => {
-    return rpc({
-      action: 'account_representative_set', wallet, account, representative, work,
-    });
-  };
+  }) => rpc('account_representative_set', {
+    wallet, account, representative, work,
+  });
+
 
   const weight = async ({ account, unit = 'raw' }) => {
-    const { weight: _weight } = await rpc({ action: 'account_weight', account });
+    const { weight: _weight } = await rpc('account_weight', { account });
     return getUnit(_weight, 'raw', unit);
   };
 
