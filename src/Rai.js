@@ -45,125 +45,13 @@ export default class Rai {
     return getConversion(available, 'raw', unit);
   }
 
-  // Empty output
-  bootstrap(address = '::ffff:138.201.94.249', port = '7075') {
-    const { success } = this.rpc({ action: 'bootstrap', address, port });
-    return success;
-  }
-
-
-  // Empty output
-  bootstrapAny() {
-    const { success } = this.rpc({ action: 'bootstrap_any' });
-    return success;
-  }
-
-
-  delegators(account, unit = 'raw') {
-    const { delegators } = this.rpc({ action: 'delegators', account });
-    if (unit !== 'raw')	{
-      for (const delegator in delegators)	{
-        delegators[delegator] = getConversion(delegators[delegator], 'raw', unit);
-      }
-    }
-    return delegators;
-  }
-
-
-  // String output
-  delegatorsCount(account) {
-    const { count } = this.rpc({ action: 'delegators_count', account });
-    return count;
-  }
-
-
-  // Object output
-  deterministicKey(seed, index = 0) {
-    return this.rpc({ action: 'deterministic_key', seed, index });
-  }
-
-
-  frontiers(account = 'xrb_1111111111111111111111111111111111111111111111111117353trpda', count = '1048576') {
-    const { frontiers } = this.rpc({ action: 'frontiers', account, count });
-    return frontiers;
-  }
-
-
-  // String output
-  frontierCount() {
-    const { count } = this.rpc({ action: 'frontier_count' });
-    return count;
-  }
-
-
   history(hash, count = '4096') {
     const { history } = this.rpc({ action: 'history', hash, count });
     return history;
   }
 
-
-  // Use getConversion instead of this function
-  // String input and output
-  mraiFromRaw(_amount) {
-    const { amount } = this.rpc({ action: 'mraiFromRaw', _amount });
-    return amount;
-  }
-
-
-  // Use getConversion instead of this function
-  // String input and output
-  mraiToRaw(_amount) {
-    const { amount } = this.rpc({ action: 'mraiToRaw', _amount });
-    return amount;
-  }
-
-
-  // Use getConversion instead of this function
-  // String input and output
-  kraiFromRaw(_amount) {
-    const { amount } = this.rpc({ action: 'kraiFromRaw', _amount });
-    return amount;
-  }
-
-
-  // Use getConversion instead of this function
-  // String input and output
-  kraiToRaw(_amount) {
-    const { amount } = this.rpc({ action: 'kraiToRaw', _amount });
-    return amount;
-  }
-
-
-  // Use getConversion instead of this function
-  // String input and output
-  raiFromRaw(_amount) {
-    const { amount } = this.rpc({ action: 'raiFromRaw', _amount });
-    return amount;
-  }
-
-
-  // Use getConversion instead of this function
-  // String input and output
-  raiToRaw(_amount) {
-    const { amount } = this.rpc({ action: 'raiToRaw', _amount });
-    return amount;
-  }
-
-
   keepAlive(address = '::ffff:192.168.1.1', port = '7075') {
     return this.rpc({ action: 'keepalive', address, port });
-  }
-
-
-  // Object output
-  keyCreate() {
-    return this.rpc({ action: 'key_create' });
-  }
-
-
-  // Object output
-  keyExpand(key) {
-    return this.rpc({ action: 'key_expand', key });
   }
 
   ledger({
