@@ -8,37 +8,33 @@
 * RPC commands full list
 * https://github.com/clemahieu/raiblocks/wiki/RPC-protocol
 *
-*
-* set 'request' as string. Samples
-* {"action":"block_count})
-* '{"action":"block_count"}'
-*
 * set 'hostUrl' as string. Mask protocol://host:port. Default value is http://localhost:7076. Samples
 * http://localhost:7076
 * https://raiwallet.info:7077
 *
-* set 'async' as boolean. Default value is false
-* Note: Now only sync requests are available. Async for future developments
-*
 * Request sample
-* var rai = new Rai();
-* var block_count = rai.rpc({"action":"block_count"}), 'http://localhost:7076', fals);
+* ---------------------------
+* const rai = new Rai();
+* const blockCount = rai.rpc('block_count'); // raw rpc action
+* const blockCount = rai.blocks.count(); // convenience rpc method
 *
 */
 
 import axios from 'axios';
 import getUnit from './utils/getUnit';
-import Account from './lib/Account';
-import Accounts from './lib/Accounts';
+import methods from './lib';
 
 export default class Rai {
   constructor(hostUrl) {
     this.hostUrl = hostUrl || 'http://localhost:7076';
-    this.account = Account.call(this, this.rpc);
-    this.accounts = Accounts.call(this, this.rpc);
+
+    Object.keys(methods).forEach((method) => {
+      this[method] = methods[method].call(this, this.rpc);
+    });
   }
 
-  rpc = async (body) => {
+  rpc = async (action, data = {}) => {
+    const body = Object.assign({}, { action }, data);
     const response = await axios.post(this.hostUrl, body);
     return response.data;
   };
@@ -48,71 +44,6 @@ export default class Rai {
     const { available } = this.rpc({ action: 'available_supply' });
     return getUnit(available, 'raw', unit);
   }
-
-
-  block(hash) {
-    const { contents } = this.rpc({ action: 'block', hash });
-    return JSON.parse(contents);
-  }
-
-  // Array input
-  blocks(hashes) {
-    const { blocks } = this.rpc({ action: 'blocks', hashes });
-    for (const key in blocks) {
-      blocks[key] = JSON.parse(blocks[key]);
-    }
-    return blocks;
-  }
-
-
-  // Array input
-  blocksInfo(hashes, unit = 'raw', pending = false, source = false) {
-    const { blocks } = this.rpc({
-      action: 'blocks_info', hashes, pending, source,
-    });
-    for (const key in blocks) {
-      blocks[key].contents = JSON.parse(blocks[key].contents);
-      if (unit != 'raw')	blocks[key].amount = getUnit(blocks[key].amount, 'raw', unit);
-    }
-    return blocks;
-  }
-
-
-  blockAccount(hash) {
-    const { account } = this.rpc({ action: 'block_account', hash });
-    return account;
-  }
-
-
-  // Object output
-  blockCount() {
-    return this.rpc({ action: 'block_count' });
-  }
-
-
-  // Object output
-  blockCountType() {
-    return this.rpc({ action: 'block_count_type' });
-  }
-
-
-  // Object input, object output
-  /*  Sample block creation:
-      const blockData = {};
-      blockData.type = "open";
-      blockData.key = "0000000000000000000000000000000000000000000000000000000000000001",
-      blockData.account = xrb_3kdbxitaj7f6mrir6miiwtw4muhcc58e6tn5st6rfaxsdnb7gr4roudwn951";
-      blockData.representative = "xrb_1hza3f7wiiqa7ig3jczyxj5yo86yegcmqk3criaz838j91sxcckpfhbhhra1";
-      blockData.source = "19D3D919475DEED4696B5D13018151D1AF88B2BD3BCFF048B45031C1F36D1858";
-      const block = rpc.blockCreate(blockData);
-  */
-  blockCreate(_blockData) {
-    const blockData = _blockData;
-    blockData.action = 'block_create';
-    const createdBlock = this.rpc(JSON.stringify(blockData));
-    return JSON.parse(createdBlock.block);
-  }
-
 
   // Empty output
   bootstrap(address = '::ffff:138.201.94.249', port = '7075') {
@@ -125,12 +56,6 @@ export default class Rai {
   bootstrapAny() {
     const { success } = this.rpc({ action: 'bootstrap_any' });
     return success;
-  }
-
-
-  chain(block, count = '4096') {
-    const { blocks } = this.rpc({ action: 'chain', block, count });
-    return blocks;
   }
 
 
@@ -297,13 +222,6 @@ export default class Rai {
     });
 
     return status;
-  }
-
-
-  // block as Object
-  process(block) {
-    const { hash } = this.rpc({ action: 'process', block });
-    return hash;
   }
 
 
