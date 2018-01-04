@@ -5,6 +5,7 @@ import bootstrap from './Bootstrap';
 import delegators from './Delegators';
 import frontiers from './Frontiers';
 import keys from './Keys';
+import ledger from './Ledger';
 import wallet from './Wallet';
 
 export default {
@@ -15,5 +16,6 @@ export default {
   delegators,
   frontiers,
   keys,
+  ledger,
   wallet,
 };

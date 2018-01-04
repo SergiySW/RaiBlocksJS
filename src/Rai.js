@@ -45,28 +45,9 @@ export default class Rai {
     return getConversion(available, 'raw', unit);
   }
 
-  history(hash, count = '4096') {
-    const { history } = this.rpc({ action: 'history', hash, count });
-    return history;
-  }
 
   keepAlive(address = '::ffff:192.168.1.1', port = '7075') {
     return this.rpc({ action: 'keepalive', address, port });
-  }
-
-  ledger({
-    account = 'xrb_1111111111111111111111111111111111111111111111111117353trpda',
-    count = '1048576',
-    representative = false,
-    weight = false,
-    pending = false,
-    sorting = false,
-  }) {
-    const { accounts } = this.rpc({
-      action: 'ledger', account, count, representative, weight, pending, sorting,
-    });
-
-    return accounts;
   }
 
   paymentVegin(wallet) {
@@ -195,13 +176,6 @@ export default class Rai {
     const { success } = this.rpc({ action: 'stop' });
     return success;
   }
-
-
-  successors(block, count = '4096') {
-    const { blocks } = this.rpc({ action: 'successors', block, count });
-    return blocks;
-  }
-
 
   unchecked(count = '4096') {
     const { blocks } = this.rpc({ action: 'unchecked', count });
