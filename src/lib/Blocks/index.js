@@ -5,15 +5,15 @@ export default (rpc) => {
 
   const countByType = () => rpc('block_count_type');
 
-  const chain = ({ block, count }) => rpc('chain', { block, count });
+  const chain = ({ block, count = 1 }) => rpc('chain', { block, count });
 
   /*
     blockData: Object {
-      type: String 'open|send|recieve'|change,
-      key: String,
       account: String,
+      key: String,
       representative: String,
       source: String,
+      type: String 'open|send|recieve'|change,
     }
     see https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#offline-signing--create-block
   */
@@ -21,18 +21,18 @@ export default (rpc) => {
 
   /*
     block: Object {
-      type: String 'open|send|recieve'|change,
       account: String,
       representative: String,
-      source: String,
-      work: String,
       signature: String,
+      source: String,
+      type: String 'open|send|recieve'|change,
+      work: String,
     }
     see https://github.com/clemahieu/raiblocks/wiki/RPC-protocol#offline-signing--create-block
   */
   const process = block => rpc('process', { block });
 
-  const get = ({ hashes, info = false }) => {
+  const get = async (hashes, { info = false } = {}) => {
     if (Array.isArray(hashes)) {
       if (info) {
         return rpc('blocks_info', { hashes });
@@ -41,7 +41,8 @@ export default (rpc) => {
       return rpc('blocks', { hashes });
     }
 
-    return rpc('block', { hash: hashes });
+    const { contents } = await rpc('block', { hash: hashes });
+    return contents;
   };
 
   return {
