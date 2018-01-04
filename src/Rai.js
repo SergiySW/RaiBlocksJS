@@ -35,7 +35,7 @@ export default class Rai {
 
   rpc = async (action, data = {}) => {
     const body = Object.assign({}, { action }, data);
-    const response = await axios.post(this.hostUrl, body);
+    const response = await axios.post(this.hostUrl, JSON.stringify(body));
     return response.data;
   };
 
@@ -376,137 +376,9 @@ export default class Rai {
   }
 
 
-  walletAdd(wallet, key, work = true) {
-    const { account } = this.rpc({
-      action: 'wallet_add', wallet, key, work,
-    });
-    return account;
-  }
-
-
-  // Object output
-  walletBalanceTotal(wallet, unit = 'raw') {
-    const { balance, pending } = this.rpc({ action: 'wallet_balance_total', wallet });
-    return {
-      balance: getUnit(balance, 'raw', unit),
-      pending: getUnit(pending, 'raw', unit),
-    };
-  }
-
-
-  walletBalances(wallet, unit = 'raw', _threshold = 0) {
-    let threshold = _threshold;
-    if (threshold !== 0)	{
-      threshold = getUnit(threshold, unit, 'raw');
-    }
-
-    const { balances } = this.rpc({ action: 'wallet_balances', wallet, threshold });
-
-    for (const account in balances) {
-      balances[account].balance = getUnit(balances[account].balance, 'raw', unit);
-      balances[account].pending = getUnit(balances[account].pending, 'raw', unit);
-    }
-    return balances;
-  }
-
-
-  // Empty output
-  walletChangeSeed(wallet, seed) {
-    const { success } = this.rpc({ action: 'wallet_change_seed', wallet, seed });
-    return success;
-  }
-
-
-  walletContains(wallet, account) {
-    const { exists } = this.rpc({ action: 'wallet_contains', wallet, account });
-    return exists;
-  }
-
-
-  walletCreate() {
-    const { wallet } = this.rpc({ action: 'wallet_create' });
-    return wallet;
-  }
-
-
-  walletDestroy(wallet) {
-    return this.rpc({ action: 'wallet_destroy', wallet });
-  }
-
-
-  // Return as array or as JSON/Object?
-  walletExport(wallet) {
-    const { json } = this.rpc({ action: 'wallet_export', wallet });
-    return json;
-  }
-
-
-  walletFrontiers(wallet) {
-    const { frontiers } = this.rpc({ action: 'wallet_frontiers', wallet });
-    return frontiers;
-  }
-
-
-  walletLocked(wallet) {
-    const { locked } = this.rpc({ action: 'wallet_locked', wallet });
-    return locked;
-  }
-
-
-  walletPending(wallet, count = '4096', _threshold = 0, unit = 'raw', source = false) {
-    let threshold = _threshold;
-    if (threshold !== 0) {
-      threshold = getUnit(threshold, unit, 'raw');
-    }
-    const { blocks } = this.rpc({
-      action: 'wallet_pending', wallet, count, threshold, source,
-    });
-
-    if (source) {
-      for (const account in blocks) {
-        for (const hash in blocks[account]) {
-          blocks[account][hash].amount = getUnit(blocks[account][hash].amount, 'raw', unit);
-        }
-      }
-    } else if (threshold != 0) {
-      for (const account in blocks) {
-        for (const hash in blocks[account]) {
-          blocks[account][hash] = getUnit(blocks[account][hash], 'raw', unit);
-        }
-      }
-    }
-    return blocks;
-  }
-
-
-  walletRepresentative(wallet) {
-    const { representative } = this.rpc({ action: 'wallet_representative', wallet });
-    return representative;
-  }
-
-
-  walletRepresentativeSet(wallet, representative) {
-    const { set } = this.rpc({ action: 'wallet_representative_set', wallet, representative });
-    return set;
-  }
-
-
-  walletRepublish(wallet, count = 2) {
-    const { blocks } = this.rpc({ action: 'wallet_republish', wallet, count });
-    return blocks;
-  }
-
-
   walletUnlock(wallet, password) {
     return this.password_enter(wallet, password);
   }
-
-
-  walletWorkGet(wallet) {
-    const { works } = this.rpc({ action: 'wallet_work_get', wallet });
-    return works;
-  }
-
 
   workCancel(hash) {
     return this.rpc({ action: 'work_cancel', hash });
