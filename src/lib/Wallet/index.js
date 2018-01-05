@@ -1,4 +1,5 @@
 import getConversion, { convertFromRaw } from '../../utils/getConversion';
+import getSuccessResponse from '../../utils/getSuccessResponse';
 
 export default function Wallet(rpc) {
   const add = async ({ wallet, key, work = true }) => {
@@ -42,10 +43,7 @@ export default function Wallet(rpc) {
   // Empty output
   const changeSeed = async ({ wallet, seed }) => {
     const response = await rpc('wallet_change_seed', { wallet, seed });
-    if (Object.prototype.hasOwnProperty.call(response, 'success')) {
-      return { success: true };
-    }
-    return { success: false };
+    return getSuccessResponse(response);
   };
 
 

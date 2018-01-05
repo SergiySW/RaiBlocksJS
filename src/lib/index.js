@@ -6,6 +6,7 @@ import delegators from './Delegators';
 import frontiers from './Frontiers';
 import keys from './Keys';
 import ledger from './Ledger';
+import network from './Network';
 import wallet from './Wallet';
 
 export default {
@@ -17,5 +18,6 @@ export default {
   frontiers,
   keys,
   ledger,
+  network,
   wallet,
 };
