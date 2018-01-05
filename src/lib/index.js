@@ -7,6 +7,7 @@ import frontiers from './Frontiers';
 import keys from './Keys';
 import ledger from './Ledger';
 import network from './Network';
+import node from './Node';
 import wallet from './Wallet';
 
 export default {
@@ -19,5 +20,6 @@ export default {
   keys,
   ledger,
   network,
+  node,
   wallet,
 };
