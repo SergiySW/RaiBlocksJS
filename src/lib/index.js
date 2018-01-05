@@ -9,6 +9,15 @@ import ledger from './Ledger';
 import network from './Network';
 import node from './Node';
 import payment from './Payment';
+import peers from './Peers';
+import pending from './Pending';
+import proofOfWork from './ProofOfWork';
+import receiving from './Receiving';
+import representatives from './Representatives';
+import sending from './Sending';
+import uncheckedBlocks from './UncheckedBlocks';
+
+
 import wallet from './Wallet';
 
 export default {
@@ -23,5 +32,12 @@ export default {
   network,
   node,
   payment,
+  peers,
+  pending,
+  proofOfWork,
+  receiving,
+  representatives,
+  sending,
+  uncheckedBlocks,
   wallet,
 };
