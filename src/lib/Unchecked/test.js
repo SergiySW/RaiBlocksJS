@@ -1,5 +1,5 @@
-import mockServer from '../../../test/mockServer';
-import rai from '../../../test/mockRai';
+import mockServer from '../../../mocks/mockServer';
+import rai from '../../../mocks/mockRai';
 
 describe('Unchecked', () => {
   test('unchecked.clear', async () => {
