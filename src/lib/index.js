@@ -14,7 +14,7 @@ import pending from './Pending';
 import proofOfWork from './ProofOfWork';
 import receive from './Receive';
 import representatives from './Representatives';
-import sending from './Sending';
+import send from './Send';
 import uncheckedBlocks from './UncheckedBlocks';
 
 
@@ -37,7 +37,7 @@ export default {
   proofOfWork,
   receive,
   representatives,
-  sending,
+  send,
   uncheckedBlocks,
   wallet,
 };
