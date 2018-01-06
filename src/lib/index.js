@@ -12,7 +12,7 @@ import payment from './Payment';
 import peers from './Peers';
 import pending from './Pending';
 import proofOfWork from './ProofOfWork';
-import receiving from './Receiving';
+import receive from './Receive';
 import representatives from './Representatives';
 import sending from './Sending';
 import uncheckedBlocks from './UncheckedBlocks';
@@ -35,7 +35,7 @@ export default {
   peers,
   pending,
   proofOfWork,
-  receiving,
+  receive,
   representatives,
   sending,
   uncheckedBlocks,
