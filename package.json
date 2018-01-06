@@ -1,6 +1,6 @@
 {
-  "name": "raiblocksjs",
-  "version": "1.0.0",
+  "name": "raiblocks-rpc",
+  "version": "0.1.0",
   "description": "Raiblocks RPC client",
   "main": "index.js",
   "scripts": {
