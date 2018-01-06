@@ -1,0 +1,48 @@
+{
+  "name": "raiblocksjs",
+  "version": "1.0.0",
+  "description": "Raiblocks RPC client",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orrybaram/RaiBlocksJS.git"
+  },
+  "keywords": [
+    "Raiblocks",
+    "crypto",
+    "rpc"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/orrybaram/RaiBlocksJS/issues"
+  },
+  "homepage": "https://github.com/orrybaram/RaiBlocksJS#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-watch": "^2.0.7",
+    "eslint": "^4.14.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "husky": "^0.14.3",
+    "jest": "^22.0.4",
+    "nock": "^9.1.5"
+  },
+  "dependencies": {
+    "axios": "^0.17.1",
+    "bignumber.js": "^5.0.0",
+    "blakejs": "^1.1.0",
+    "nacl": "^0.1.3"
+  },
+  "jest": {
+    "testURL": "http://xrb.wallet.test"
+  }
+}
