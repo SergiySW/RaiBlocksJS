@@ -2,88 +2,133 @@ import mockServer from '../../../test/mockServer';
 import rai from '../../../test/mockRai';
 
 describe('Pending', () => {
-  test('pending.begin', async () => {
+  test('pending.get', async () => {
     const expected = {
-      account: 'xrb_3e3j5tkog48pnny9dmfzj1r16pg8t1e76dz5tmac6iq689wyjfpi00000000'
+      blocks: ['000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F'],
     };
 
     const request = {
-      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F'
+      account: 'xrb_1111111111111111111111111111111111111111111111111117353trpda',
+      count: '1',
     };
 
     mockServer.success({
       request: Object.assign({}, request, {
-        action: 'pending_begin',
+        action: 'pending',
       }),
       response: expected,
     });
 
-    const response = await rai.pending.begin(request);
+    const response = await rai.pending.get(request);
     expect(response).toEqual(expected);
   });
 
-  test('pending.init', async () => {
+  test('pending.get w/threshold', async () => {
     const expected = {
-      status: 'Ready',
+      blocks: {
+        '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F': '6000000000000000000000000000000'
+      },
     };
 
     const request = {
-      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F'
+      account: 'xrb_1111111111111111111111111111111111111111111111111117353trpda',
+      count: '1',
+      threshold: '100000000',
     };
 
     mockServer.success({
       request: Object.assign({}, request, {
-        action: 'pending_init',
+        action: 'pending',
       }),
       response: expected,
     });
 
-    const response = await rai.pending.init(request);
+    const response = await rai.pending.get(request);
     expect(response).toEqual(expected);
   });
 
-  test('pending.end', async () => {
+  test('pending.get w/source', async () => {
     const expected = {
-      success: true,
+      blocks: {
+        '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F': {
+          amount: '6000000000000000000000000000000',
+          source: 'xrb_3dcfozsmekr1tr9skf1oa5wbgmxt81qepfdnt7zicq5x3hk65fg4fqj58mbr',
+        }
+      }
+    };
+
+    const request = {
+      account: 'xrb_1111111111111111111111111111111111111111111111111117353trpda',
+      count: '1',
+      source: true,
+    };
+
+    mockServer.success({
+      request: Object.assign({}, request, {
+        action: 'pending',
+      }),
+      response: expected,
+    });
+
+    const response = await rai.pending.get(request);
+    expect(response).toEqual(expected);
+  });
+
+  test('pending.exists', async () => {
+    const expected = {
+      exists: true,
+    };
+
+    const request = {
+      hash: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F'
+    };
+
+    mockServer.success({
+      request: Object.assign({}, request, {
+        action: 'pending_exists',
+      }),
+      response: expected,
+    });
+
+    const response = await rai.pending.exists(request);
+    expect(response).toEqual(expected);
+  });
+
+  test('pending.search', async () => {
+    const expected = {
+      started: true,
     };
 
     const request = {
       wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
-      account: 'xrb_3e3j5tkog48pnny9dmfzj1r16pg8t1e76dz5tmac6iq689wyjfpi00000000'
     };
 
     mockServer.success({
       request: Object.assign({}, request, {
-        action: 'pending_end',
+        action: 'search_pending',
       }),
-      response: {},
+      response: { started: '1' },
     });
 
-    const response = await rai.pending.end(request);
+    const response = await rai.pending.search(request);
     expect(response).toEqual(expected);
   });
 
-  test('pending.wait', async () => {
+  test('pending.search all (no args)', async () => {
     const expected = {
       success: true,
     };
 
-    const request = {
-      account: 'xrb_3e3j5tkog48pnny9dmfzj1r16pg8t1e76dz5tmac6iq689wyjfpi00000000',
-      amount: '1',
-      timeout: '1000',
-    };
-
     mockServer.success({
-      request: Object.assign({}, request, {
-        action: 'pending_wait',
-      }),
+      request: {
+        action: 'search_pending_all',
+      },
       response: {
-        status: 'success',
+        success: '1',
       },
     });
 
-    const response = await rai.pending.wait(request);
+    const response = await rai.pending.search();
     expect(response).toEqual(expected);
   });
 });
