@@ -2,88 +2,88 @@ import mockServer from '../../../test/mockServer';
 import rai from '../../../test/mockRai';
 
 describe('ProofOfWork', () => {
-  test('proofOfWork.begin', async () => {
+  test('proofOfWork.cancel', async () => {
     const expected = {
-      account: 'xrb_3e3j5tkog48pnny9dmfzj1r16pg8t1e76dz5tmac6iq689wyjfpi00000000'
+      success: true,
     };
 
     const request = {
-      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F'
+      hash: '718CC2121C3E641059BC1C2CFC45666C99E8AE922F7A807B7D07B62C995D79E2',
     };
 
     mockServer.success({
       request: Object.assign({}, request, {
-        action: 'proofOfWork_begin',
+        action: 'work_cancel',
       }),
-      response: expected,
+      response: {},
     });
 
-    const response = await rai.proofOfWork.begin(request);
+    const response = await rai.proofOfWork.cancel(request);
     expect(response).toEqual(expected);
   });
 
-  test('proofOfWork.init', async () => {
+  test('proofOfWork.generate', async () => {
     const expected = {
-      status: 'Ready',
+      work: '2bf29ef00786a6bc',
     };
 
     const request = {
-      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F'
+      hash: '718CC2121C3E641059BC1C2CFC45666C99E8AE922F7A807B7D07B62C995D79E2',
     };
 
     mockServer.success({
       request: Object.assign({}, request, {
-        action: 'proofOfWork_init',
+        action: 'work_generate',
       }),
       response: expected,
     });
 
-    const response = await rai.proofOfWork.init(request);
+    const response = await rai.proofOfWork.generate(request);
     expect(response).toEqual(expected);
   });
 
-  test('proofOfWork.end', async () => {
+  test('proofOfWork.get', async () => {
+    const expected = {
+      work: '2bf29ef00786a6bc',
+    };
+
+    const request = {
+      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
+      account: 'xrb_3e3j5tkog48pnny9dmfzj1r16pg8t1e76dz5tmac6iq689wyjfpi00000000',
+    };
+
+    mockServer.success({
+      request: Object.assign({}, request, {
+        action: 'work_get',
+      }),
+      response: expected,
+    });
+
+    const response = await rai.proofOfWork.get(request);
+    expect(response).toEqual(expected);
+  });
+
+  test('proofOfWork.set', async () => {
     const expected = {
       success: true,
     };
 
     const request = {
       wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
-      account: 'xrb_3e3j5tkog48pnny9dmfzj1r16pg8t1e76dz5tmac6iq689wyjfpi00000000'
-    };
-
-    mockServer.success({
-      request: Object.assign({}, request, {
-        action: 'proofOfWork_end',
-      }),
-      response: {},
-    });
-
-    const response = await rai.proofOfWork.end(request);
-    expect(response).toEqual(expected);
-  });
-
-  test('proofOfWork.wait', async () => {
-    const expected = {
-      success: true,
-    };
-
-    const request = {
       account: 'xrb_3e3j5tkog48pnny9dmfzj1r16pg8t1e76dz5tmac6iq689wyjfpi00000000',
-      amount: '1',
-      timeout: '1000',
+      work: '0000000',
     };
 
     mockServer.success({
       request: Object.assign({}, request, {
-        action: 'proofOfWork_wait',
+        action: 'work_set',
       }),
       response: {
-        status: 'success',
+        success: '',
       },
     });
 
-    const response = await rai.proofOfWork.wait(request);
+    const response = await rai.proofOfWork.set(request);
     expect(response).toEqual(expected);
   });
 });
