@@ -15,7 +15,7 @@ import proofOfWork from './ProofOfWork';
 import receive from './Receive';
 import representatives from './Representatives';
 import send from './Send';
-import uncheckedBlocks from './UncheckedBlocks';
+import unchecked from './Unchecked';
 
 
 import wallet from './Wallet';
@@ -38,6 +38,6 @@ export default {
   receive,
   representatives,
   send,
-  uncheckedBlocks,
+  unchecked,
   wallet,
 };
