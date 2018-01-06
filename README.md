@@ -7,13 +7,13 @@ https://github.com/clemahieu/raiblocks/wiki/RPC-protocol
 
 # Installation
 ```
-yarn add raiblocks-rpc
+yarn add raiblocks-js
 ```
 
 # Usage
 ### Basic implementation
 ```javascript
-import Rai from 'raiblocks-rpc';
+import Rai from 'raiblocks-js';
 
 const rai = new Rai(); // creates default connection to localhost:7076
 const blockCount = rai.blocks.count(); // returns Promise with a response object
