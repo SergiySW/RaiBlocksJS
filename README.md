@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/orrybaram/RaiBlocksJS.png?branch=master)](https://travis-ci.org/orrybaram/RaiBlocksJS)
+
+
 # RaiBlocksJS
 An isomorphic async library that interfaces with the RaiBlocks RPC protocol
 https://github.com/clemahieu/raiblocks/wiki/RPC-protocol
