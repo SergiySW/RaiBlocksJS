@@ -4,18 +4,21 @@ import rai from '../../../mocks/mockRai';
 describe('Ledger', () => {
   test('ledger.get', async () => {
     const expected = {
-      private: '9F0E444C69F77A49BD0BE89DB92C38FE713E0963165CCA12FAF5712D7657120F',
-      public: 'C008B814A7D269A1FA3C6528B19201A24D797912DB9996FF02A1FF356E45552B',
-      account: 'xrb_3i1aq1cchnmbn9x5rsbap8b15akfh7wj7pwskuzi7ahz8oq6cobd99d4r3b7',
+      accounts: {
+        xrb_11119gbh8hb4hj1duf7fdtfyf5s75okzxdgupgpgm1bj78ex3kgy7frt3s9n: {
+          frontier: 'E71AF3E9DD86BBD8B4620EFA63E065B34D358CFC091ACB4E103B965F95783321',
+          open_block: '643B77F1ECEFBDBE1CC909872964C1DBBE23A6149BD3CEF2B50B76044659B60F',
+          representative_block: '643B77F1ECEFBDBE1CC909872964C1DBBE23A6149BD3CEF2B50B76044659B60F',
+          balance: '0',
+          modified_timestamp: '1511476234',
+          block_count: '2',
+        },
+      },
     };
 
     const request = {
       account: 'xrb_1111111111111111111111111111111111111111111111111111hifc8npp',
       count: '1',
-      representative: false,
-      weight: false,
-      pending: false,
-      sorting: false,
     };
 
     mockServer.success({
@@ -26,6 +29,37 @@ describe('Ledger', () => {
     });
 
     const response = await rai.ledger.get(request);
+    expect(response).toEqual(expected);
+  });
+
+  test('ledger.get default count', async () => {
+    const expected = {
+      accounts: {
+        xrb_11119gbh8hb4hj1duf7fdtfyf5s75okzxdgupgpgm1bj78ex3kgy7frt3s9n: {
+          frontier: 'E71AF3E9DD86BBD8B4620EFA63E065B34D358CFC091ACB4E103B965F95783321',
+          open_block: '643B77F1ECEFBDBE1CC909872964C1DBBE23A6149BD3CEF2B50B76044659B60F',
+          representative_block: '643B77F1ECEFBDBE1CC909872964C1DBBE23A6149BD3CEF2B50B76044659B60F',
+          balance: '0',
+          modified_timestamp: '1511476234',
+          block_count: '2',
+        },
+        note: '... imagine 4095 more ...',
+      },
+    };
+
+    const request = {
+      account: 'xrb_1111111111111111111111111111111111111111111111111111hifc8npp',
+      count: '4096',
+    };
+
+    mockServer.success({
+      request: Object.assign({}, request, {
+        action: 'ledger',
+      }),
+      response: expected,
+    });
+
+    const response = await rai.ledger.get({ account: 'xrb_1111111111111111111111111111111111111111111111111111hifc8npp' });
     expect(response).toEqual(expected);
   });
 
@@ -55,6 +89,35 @@ describe('Ledger', () => {
     expect(response).toEqual(expected);
   });
 
+  test('ledger.history default count', async () => {
+    const expected = {
+      history: [{
+        hash: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
+        type: 'receive',
+        account: 'xrb_3e3j5tkog48pnny9dmfzj1r16pg8t1e76dz5tmac6iq689wyjfpi00000000',
+        amount: '100000000000000000000000000000000',
+      },
+      {
+        note: '... imagine 4095 more ...',
+      }],
+    };
+
+    const request = {
+      hash: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
+      count: '4096',
+    };
+
+    mockServer.success({
+      request: Object.assign({}, request, {
+        action: 'history',
+      }),
+      response: expected,
+    });
+
+    const response = await rai.ledger.history({ hash: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F' });
+    expect(response).toEqual(expected);
+  });
+
   test('ledger.successors', async () => {
     const expected = {
       blocks: [
@@ -75,6 +138,30 @@ describe('Ledger', () => {
     });
 
     const response = await rai.ledger.succesors(request);
+    expect(response).toEqual(expected);
+  });
+
+  test('ledger.successors default count', async () => {
+    const expected = {
+      blocks: [
+        'A170D51B94E00371ACE76E35AC81DC9405D5D04D4CEBC399AEACE07AE05DD293',
+        '... 4095 more ...',
+      ],
+    };
+
+    const request = {
+      block: '991CF190094C00F0B68E2E5F75F6BEE95A2E0BD93CEAA4A6734DB9F19B728948',
+      count: '4096',
+    };
+
+    mockServer.success({
+      request: Object.assign({}, request, {
+        action: 'succesors',
+      }),
+      response: expected,
+    });
+
+    const response = await rai.ledger.succesors({ block: '991CF190094C00F0B68E2E5F75F6BEE95A2E0BD93CEAA4A6734DB9F19B728948' });
     expect(response).toEqual(expected);
   });
 });
