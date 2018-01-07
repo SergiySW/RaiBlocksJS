@@ -19,7 +19,7 @@ const rai = new Rai(); // creates default connection to localhost:7076
 const blockCount = rai.blocks.count(); // returns Promise with a response object
 blockCount.then(res => console.log(res)) // => { count: '1000', unchecked: '10' }
 
-const accountWeight = rai.account.weight('xrb_35jjmmmh81kydepzeuf9oec8hzkay7msr6yxagzxpcht7thwa5bus5tomgz9');
+const accountWeight = rai.account.weight({ account: 'xrb_35jjmmmh81kydepzeuf9oec8hzkay7msr6yxagzxpcht7thwa5bus5tomgz9' });
 accountWeight.then(res => console.log(res)) // => 1000000
 
 ```
@@ -36,7 +36,7 @@ accountWeight.then(res => console.log(res)) // => 1000000
 
 ### Connecting to a custom node
 ```javascript
-const rai = new Rai('xrb.example-node.io:3000');
+const rai = new Rai('https://xrb.example-node.io:3000');
 
 ```
 
