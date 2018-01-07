@@ -10,6 +10,10 @@ https://github.com/clemahieu/raiblocks/wiki/RPC-protocol
 yarn add raiblocks-js
 ```
 
+# Note
+To test locally, you'll need to setup your own node.
+See instructions here: https://github.com/clemahieu/raiblocks/wiki/Docker-node
+
 # Usage
 ### Basic implementation
 ```javascript
