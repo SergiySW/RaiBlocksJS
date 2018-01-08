@@ -1,5 +1,6 @@
 import mockServer from '../../../mocks/mockServer';
 import rai from '../../../mocks/mockRai';
+import { convertFromRaw } from '../../utils/getConversion';
 
 describe('Account', () => {
   test('account.balance', async () => {
@@ -57,9 +58,6 @@ describe('Account', () => {
       request: {
         action: 'account_info',
         account: 'xrb_test',
-        representative: false,
-        weight: false,
-        pending: false,
       },
       response: expected,
     });
@@ -67,6 +65,68 @@ describe('Account', () => {
     const response = await rai.account.info({
       account: 'xrb_test',
     });
+    expect(response).toEqual(expected);
+  });
+
+  test('account.info { unit: `xrb` }', async () => {
+    const expected = {
+      frontier: 'frontier_hash',
+      open_block: 'open_block_hash',
+      representative_block: 'representative_block_hash',
+      balance: '82100232',
+      modified_timestamp: '1501793775',
+      block_count: '33',
+    };
+
+    mockServer.success({
+      request: {
+        action: 'account_info',
+        account: 'xrb_test',
+      },
+      response: expected,
+    });
+
+    const response = await rai.account.info({
+      account: 'xrb_test',
+      unit: 'XRB',
+    });
+
+    expected.balance = convertFromRaw('82100232', 'XRB');
+    expect(response).toEqual(expected);
+  });
+
+  test('account.info { unit: `xrb` } w/weight and pending', async () => {
+    const expected = {
+      frontier: 'frontier_hash',
+      open_block: 'open_block_hash',
+      representative_block: 'representative_block_hash',
+      balance: '82100232',
+      modified_timestamp: '1501793775',
+      block_count: '33',
+      weight: '110557703093564966460912964485513217',
+      pending: '2309370929000000000000000000000000',
+    };
+
+    mockServer.success({
+      request: {
+        action: 'account_info',
+        account: 'xrb_test',
+        weight: true,
+        pending: true,
+      },
+      response: expected,
+    });
+
+    const response = await rai.account.info({
+      account: 'xrb_test',
+      unit: 'XRB',
+      weight: true,
+      pending: true,
+    });
+
+    expected.balance = convertFromRaw(expected.balance, 'XRB');
+    expected.weight = convertFromRaw(expected.weight, 'XRB');
+    expected.pending = convertFromRaw(expected.pending, 'XRB');
     expect(response).toEqual(expected);
   });
 
@@ -94,6 +154,30 @@ describe('Account', () => {
     });
 
     const response = await rai.account.history({ account: 'xrb_wallet', count: 2 });
+    expect(response).toEqual(expected);
+  });
+
+  test('account.history default count', async () => {
+    const expected = [{
+      hash: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
+      type: 'receive',
+      account: 'xrb_3e3j5tkog48pnny9dmfzj1r16pg8t1e76dz5tmac6iq689wyjfpi00000000',
+      amount: '100000000000000000000000000000000',
+    },
+    {
+      note: '4095 more items ...',
+    }];
+
+    mockServer.success({
+      request: {
+        action: 'account_history',
+        account: 'xrb_wallet',
+        count: '4096',
+      },
+      response: { history: expected },
+    });
+
+    const response = await rai.account.history({ account: 'xrb_wallet' });
     expect(response).toEqual(expected);
   });
 
