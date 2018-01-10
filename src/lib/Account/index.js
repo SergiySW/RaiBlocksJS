@@ -1,5 +1,4 @@
 import { convertFromRaw } from '../../utils/getConversion';
-import removeEmptyObjectPropterties from '../../utils/removeEmptyObjectProperties';
 
 export default function Account(rpc) {
   const balance = ({ account }) =>
@@ -23,9 +22,9 @@ export default function Account(rpc) {
     weight,
     pending,
   }) => {
-    const accountInfo = await rpc('account_info', removeEmptyObjectPropterties({
+    const accountInfo = await rpc('account_info', {
       account, representative, weight, pending,
-    }));
+    });
 
     if (unit !== 'raw') {
       accountInfo.balance = convertFromRaw(accountInfo.balance, unit);

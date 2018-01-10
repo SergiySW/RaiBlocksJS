@@ -77,7 +77,7 @@ describe('Blocks', () => {
       request: {
         action: 'chain',
         block: '000HGHJGSHD1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B248',
-        count: 4,
+        count: '4',
       },
       response: expected,
     });

@@ -30,9 +30,8 @@ describe('Accounts', () => {
     mockServer.success({
       request: {
         action: 'accounts_create',
-        wallet: 'wrb_wallet',
-        count: 2,
-        work: true,
+        wallet: 'xrb_wallet',
+        count: '2',
       },
       response: {
         accounts: expected,
@@ -40,8 +39,31 @@ describe('Accounts', () => {
     });
 
     const response = await rai.accounts.create({
-      wallet: 'wrb_wallet',
+      wallet: 'xrb_wallet',
       count: 2,
+    });
+
+    expect(response).toEqual(expected);
+  });
+
+  test('accounts.create 1 account by default', async () => {
+    const expected = [
+      'xrb_account_1',
+    ];
+
+    mockServer.success({
+      request: {
+        action: 'accounts_create',
+        wallet: 'xrb_wallet',
+        count: '1',
+      },
+      response: {
+        accounts: expected,
+      },
+    });
+
+    const response = await rai.accounts.create({
+      wallet: 'xrb_wallet',
     });
 
     expect(response).toEqual(expected);
@@ -78,9 +100,8 @@ describe('Accounts', () => {
       request: {
         action: 'accounts_pending',
         accounts: ['xrb_test', 'xrb_test_2'],
-        count: 1,
-        threshold: 0,
-        source: false,
+        count: '1',
+        threshold: '0',
       },
       response: {
         blocks: expected,

@@ -5,7 +5,7 @@ export default function Accounts(rpc) {
     rpc('accounts_balances', { accounts });
 
 
-  const create = async ({ wallet, count = 1, work = true }) => {
+  const create = async ({ wallet, count = 1, work = null }) => {
     const { accounts } = await rpc('accounts_create', {
       wallet, count, work,
     });
@@ -19,10 +19,10 @@ export default function Accounts(rpc) {
 
   const pending = async ({
     accounts,
-    count = '4096',
+    count = 4096,
     threshold = 0,
     unit = 'raw',
-    source = false,
+    source = null,
   }) => {
     let thresholdCopy = threshold;
     if (thresholdCopy !== 0) {

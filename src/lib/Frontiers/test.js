@@ -11,7 +11,7 @@ describe('Frontiers', () => {
 
     const request = {
       account: 'xrb_1111111111111111111111111111111111111111111111111117353trpda',
-      count: 1,
+      count: '1',
     };
 
     mockServer.success({
@@ -21,13 +21,16 @@ describe('Frontiers', () => {
       response: expected,
     });
 
-    const response = await rai.frontiers.get(request);
+    const response = await rai.frontiers.get({
+      account: 'xrb_1111111111111111111111111111111111111111111111111117353trpda',
+      count: 1,
+    });
     expect(response).toEqual(expected);
   });
 
   test('frontiers.count', async () => {
     const expected = {
-      count: '1000',
+      count: 1000,
     };
 
     mockServer.success({

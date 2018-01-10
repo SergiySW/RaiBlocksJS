@@ -11,7 +11,7 @@ describe('Keys', () => {
 
     const request = {
       seed: '0000000000000000000000000000000000000000000000000000000000000000',
-      index: 0,
+      index: '0',
     };
 
     mockServer.success({
@@ -21,7 +21,10 @@ describe('Keys', () => {
       response: expected,
     });
 
-    const response = await rai.keys.deterministic(request);
+    const response = await rai.keys.deterministic({
+      seed: '0000000000000000000000000000000000000000000000000000000000000000',
+      index: 0,
+    });
     expect(response).toEqual(expected);
   });
 

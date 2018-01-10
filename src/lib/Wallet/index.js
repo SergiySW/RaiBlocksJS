@@ -91,30 +91,11 @@ export default function Wallet(rpc) {
     wallet,
     count = '4096',
     threshold = 0,
-    unit = 'raw',
-    source = false,
+    source = null,
   }) => {
-    let newThreshold = threshold;
-    if (newThreshold !== 0) {
-      newThreshold = getConversion(threshold, unit, 'raw');
-    }
     const { blocks } = await rpc('wallet_pending', {
-      wallet, count, threshold: newThreshold, source,
+      wallet, count, threshold, source,
     });
-
-    if (source) {
-      Object.keys(blocks).forEach((account) => {
-        Object.keys(blocks[account]).forEach((hash) => {
-          blocks[account][hash].amount = convertFromRaw(blocks[account][hash].amount, unit);
-        });
-      });
-    } else if (threshold !== 0) {
-      Object.keys(blocks).forEach((account) => {
-        Object.keys(blocks[account]).forEach((hash) => {
-          blocks[account][hash] = convertFromRaw(blocks[account][hash], unit);
-        });
-      });
-    }
     return { blocks };
   };
 

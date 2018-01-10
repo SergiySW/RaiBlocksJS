@@ -1,5 +1,3 @@
-import removeEmptyObjectProperties from '../../utils/removeEmptyObjectProperties';
-
 export default function Keys(rpc) {
   const get = ({
     account,
@@ -8,14 +6,14 @@ export default function Keys(rpc) {
     weight,
     pending,
     sorting,
-  }) => rpc('ledger', removeEmptyObjectProperties({
+  }) => rpc('ledger', {
     account,
     count,
     representative,
     weight,
     pending,
     sorting,
-  }));
+  });
 
   const history = ({ hash, count = '4096' }) => rpc('history', { hash, count });
 

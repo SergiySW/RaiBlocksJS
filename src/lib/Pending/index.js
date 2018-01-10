@@ -1,5 +1,3 @@
-import removeEmptyObjectProperties from '../../utils/removeEmptyObjectProperties';
-
 export default function Pending(rpc) {
   const get = async ({
     account,
@@ -7,12 +5,12 @@ export default function Pending(rpc) {
     threshold,
     source,
   }) => {
-    const response = await rpc('pending', removeEmptyObjectProperties({
+    const response = await rpc('pending', {
       account,
       count,
       threshold,
       source,
-    }));
+    });
     return response;
   };
 

@@ -53,7 +53,7 @@ describe('Wallet', () => {
     };
     const request = {
       wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
-      threshold: 0,
+      threshold: '0',
     };
 
     mockServer.success({
@@ -341,8 +341,8 @@ describe('Wallet', () => {
   test('wallet.pending', async () => {
     const request = {
       wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
-      count: 1,
-      threshold: 0,
+      count: '1',
+      threshold: '0',
       source: false,
     };
     const expected = {
@@ -405,7 +405,7 @@ describe('Wallet', () => {
   test('wallet.republish', async () => {
     const request = {
       wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
-      count: 2,
+      count: '2',
     };
     const expected = {
       blocks: [
