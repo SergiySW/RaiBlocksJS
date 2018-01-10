@@ -4,11 +4,8 @@ export default function Payment(rpc) {
   const init = ({ wallet }) => rpc('payment_init', { wallet });
 
   const end = async ({ wallet, account }) => {
-    const response = await rpc('payment_end', { wallet, account });
-    if (response) {
-      return { success: true };
-    }
-    return { success: false };
+    await rpc('payment_end', { wallet, account });
+    return { success: true };
   };
 
   const wait = async ({ account, amount, timeout = 5000 }) => {
