@@ -3,6 +3,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/orrybaram/RaiBlocksJS/badge.svg?branch=master)](https://coveralls.io/github/orrybaram/RaiBlocksJS?branch=master)
 
 
+![Imgur](https://i.imgur.com/y4djCR9.png?3)
 # RaiBlocksJS
 An isomorphic async library that interfaces with the RaiBlocks RPC protocol
 https://github.com/clemahieu/raiblocks/wiki/RPC-protocol
