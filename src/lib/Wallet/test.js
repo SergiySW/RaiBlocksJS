@@ -53,7 +53,7 @@ describe('Wallet', () => {
     };
     const request = {
       wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
-      threshold: '0',
+      threshold: '1000',
     };
 
     mockServer.success({
@@ -64,6 +64,29 @@ describe('Wallet', () => {
     });
 
     const response = await rai.wallet.balances(request);
+    expect(response).toEqual(expected);
+  });
+
+  test('wallet.balances default threshold', async () => {
+    const expected = {
+      xrb_3e3j5tkog48pnny9dmfzj1r16pg8t1e76dz5tmac6iq689wyjfpi00000000: {
+        balance: '10000',
+        pending: '10000',
+      },
+    };
+    const request = {
+      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
+      threshold: '0',
+    };
+
+    mockServer.success({
+      request: Object.assign({}, request, {
+        action: 'wallet_balances',
+      }),
+      response: { balances: expected },
+    });
+
+    const response = await rai.wallet.balances({ wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F' });
     expect(response).toEqual(expected);
   });
 
@@ -346,6 +369,32 @@ describe('Wallet', () => {
     expect(response).toEqual(expected);
   });
 
+  test('wallet.pending default args', async () => {
+    const request = {
+      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
+      count: 4096,
+      threshold: 0,
+    };
+    const expected = {
+      blocks: {
+        xrb_1111111111111111111111111111111111111111111111111117353trpda: ['142A538F36833D1CC78B94E11C766F75818F8B940771335C6C1B8AB880C5BB1D'],
+        xrb_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3: ['4C1FEEF0BEA7F50BE35489A1233FE002B212DEA554B55B1B470D78BD8F210C74'],
+      },
+    };
+
+    mockServer.success({
+      request: Object.assign({}, request, {
+        action: 'wallet_pending',
+      }),
+      response: expected,
+    });
+
+    const response = await rai.wallet.pending({
+      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
+    });
+    expect(response).toEqual(expected);
+  });
+
   test('wallet.getRepresentative', async () => {
     const request = {
       wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
@@ -388,6 +437,29 @@ describe('Wallet', () => {
   test('wallet.republish', async () => {
     const request = {
       wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
+      count: 1,
+    };
+    const expected = {
+      blocks: [
+        '991CF190094C00F0B68E2E5F75F6BEE95A2E0BD93CEAA4A6734DB9F19B728948',
+        'A170D51B94E00371ACE76E35AC81DC9405D5D04D4CEBC399AEACE07AE05DD293',
+      ],
+    };
+
+    mockServer.success({
+      request: Object.assign({}, request, {
+        action: 'wallet_republish',
+      }),
+      response: expected,
+    });
+
+    const response = await rai.wallet.republish(request);
+    expect(response).toEqual(expected);
+  });
+
+  test('wallet.republish default count', async () => {
+    const request = {
+      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
       count: '2',
     };
     const expected = {
@@ -405,7 +477,9 @@ describe('Wallet', () => {
       response: expected,
     });
 
-    const response = await rai.wallet.republish(request);
+    const response = await rai.wallet.republish({
+      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
+    });
     expect(response).toEqual(expected);
   });
 

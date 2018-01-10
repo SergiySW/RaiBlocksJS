@@ -94,7 +94,7 @@ describe('Pending', () => {
     expect(response).toEqual(expected);
   });
 
-  test.only('pending.exists false', async () => {
+  test('pending.exists false', async () => {
     const expected = {
       exists: false,
     };
@@ -134,6 +134,26 @@ describe('Pending', () => {
     expect(response).toEqual(expected);
   });
 
+  test('pending.search fails', async () => {
+    const expected = {
+      started: false,
+    };
+
+    const request = {
+      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
+    };
+
+    mockServer.success({
+      request: Object.assign({}, request, {
+        action: 'search_pending',
+      }),
+      response: { started: '0' },
+    });
+
+    const response = await rai.pending.search(request);
+    expect(response).toEqual(expected);
+  });
+
   test('pending.search all (no args)', async () => {
     const expected = {
       success: true,
@@ -145,6 +165,24 @@ describe('Pending', () => {
       },
       response: {
         success: '1',
+      },
+    });
+
+    const response = await rai.pending.search();
+    expect(response).toEqual(expected);
+  });
+
+  test('pending.search all (no args) fails', async () => {
+    const expected = {
+      success: false,
+    };
+
+    mockServer.success({
+      request: {
+        action: 'search_pending_all',
+      },
+      response: {
+        success: '0',
       },
     });
 

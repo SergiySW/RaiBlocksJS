@@ -2,11 +2,8 @@ import getSuccessResponse from '../../utils/getSuccessResponse';
 
 export default function ProofOfWork(rpc) {
   const cancel = async ({ hash }) => {
-    const response = await rpc('work_cancel', { hash });
-    if (response) {
-      return { success: true };
-    }
-    return { success: false };
+    await rpc('work_cancel', { hash });
+    return { success: true };
   };
 
   const generate = async ({ hash }) => {

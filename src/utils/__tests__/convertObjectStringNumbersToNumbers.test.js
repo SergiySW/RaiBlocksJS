@@ -25,7 +25,7 @@ test('convertObjectNumbersToStrings', () => {
 });
 
 test('convertObjectNumbersToStrings is null', () => {
-  const actual = convertObjectStringNumbersToNumbers(null);
+  const actual = convertObjectStringNumbersToNumbers();
   const expected = {};
 
   expect(actual).toEqual(expected);

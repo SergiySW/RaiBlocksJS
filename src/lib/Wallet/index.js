@@ -1,4 +1,4 @@
-import getConversion, { convertFromRaw } from '../../utils/getConversion';
+import { convertFromRaw } from '../../utils/getConversion';
 import getSuccessResponse from '../../utils/getSuccessResponse';
 
 export default function Wallet(rpc) {
@@ -20,23 +20,8 @@ export default function Wallet(rpc) {
     };
   };
 
-  const balances = async ({ wallet, unit = 'raw', threshold = 0 }) => {
-    let newThreshold = threshold;
-    if (newThreshold !== 0) {
-      newThreshold = getConversion({
-        value: threshold,
-        from: unit,
-        to: 'raw',
-      });
-    }
-
-    const { balances: _balances } = await rpc('wallet_balances', { wallet, threshold: newThreshold });
-
-    Object.keys(_balances).forEach((account) => {
-      _balances[account].balance = convertFromRaw(_balances[account].balance, unit);
-      _balances[account].pending = convertFromRaw(_balances[account].pending, unit);
-    });
-
+  const balances = async ({ wallet, threshold = 0 }) => {
+    const { balances: _balances } = await rpc('wallet_balances', { wallet, threshold });
     return _balances;
   };
 
@@ -86,7 +71,7 @@ export default function Wallet(rpc) {
 
   const pending = async ({
     wallet,
-    count = '4096',
+    count = 4096,
     threshold = 0,
     source = null,
   }) => {
