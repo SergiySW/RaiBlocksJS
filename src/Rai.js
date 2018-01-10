@@ -22,6 +22,8 @@
 
 import axios from 'axios';
 import methods from './lib';
+import removeEmptyObjectProperties from './utils/removeEmptyObjectProperties';
+import convertObjectNumbersToStrings from './utils/convertObjectNumbersToStrings';
 
 export default class Rai {
   constructor(hostUrl) {
@@ -32,7 +34,10 @@ export default class Rai {
     });
   }
 
-  rpc = async (action, data = {}) => {
+  rpc = async (action, _data = {}) => {
+    let data = removeEmptyObjectProperties(_data);
+    data = convertObjectNumbersToStrings(data);
+
     const body = Object.assign({}, { action }, data);
     const response = await axios.post(this.hostUrl, JSON.stringify(body));
     return response.data;
