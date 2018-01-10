@@ -90,6 +90,32 @@ describe('Blocks', () => {
     expect(response).toEqual(expected);
   });
 
+  test('blocks.chain default count', async () => {
+    const expected = {
+      blocks: [
+        '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3',
+        '000D1BAEC8EC208142C99059B3987123klJSNL123901280AKLMLL_L:SBDS891',
+        '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B248124124ASASF12',
+        '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A27712312321',
+      ],
+    };
+
+    mockServer.success({
+      request: {
+        action: 'chain',
+        block: '000HGHJGSHD1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B248',
+        count: '1',
+      },
+      response: expected,
+    });
+
+    const response = await rai.blocks.chain({
+      block: '000HGHJGSHD1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B248',
+    });
+
+    expect(response).toEqual(expected);
+  });
+
   test('blocks.create', async () => {
     const expected = {
       hash: 'hash',
