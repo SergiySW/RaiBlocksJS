@@ -1,5 +1,7 @@
+[![npm version](https://badge.fury.io/js/raiblocks-js.svg)](https://badge.fury.io/js/raiblocks-js)
 [![Build Status](https://travis-ci.org/orrybaram/RaiBlocksJS.png?branch=master)](https://travis-ci.org/orrybaram/RaiBlocksJS)
 [![Coverage Status](https://coveralls.io/repos/github/orrybaram/RaiBlocksJS/badge.svg?branch=master)](https://coveralls.io/github/orrybaram/RaiBlocksJS?branch=master)
+
 
 # RaiBlocksJS
 An isomorphic async library that interfaces with the RaiBlocks RPC protocol
