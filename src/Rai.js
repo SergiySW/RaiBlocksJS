@@ -24,6 +24,7 @@ import axios from 'axios';
 import methods from './lib';
 import removeEmptyObjectProperties from './utils/removeEmptyObjectProperties';
 import convertObjectNumbersToStrings from './utils/convertObjectNumbersToStrings';
+import convertObjectStringNumbersToNumbers from './utils/convertObjectStringNumbersToNumbers';
 
 export default class Rai {
   constructor(hostUrl) {
@@ -40,6 +41,6 @@ export default class Rai {
 
     const body = Object.assign({}, { action }, data);
     const response = await axios.post(this.hostUrl, JSON.stringify(body));
-    return response.data;
+    return convertObjectStringNumbersToNumbers(response.data);
   };
 }

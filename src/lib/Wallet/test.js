@@ -182,23 +182,6 @@ describe('Wallet', () => {
     expect(response).toEqual(expected);
   });
 
-  test('wallet.destroy failed', async () => {
-    const request = {
-      wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
-    };
-    const expected = { success: false };
-
-    mockServer.success({
-      request: Object.assign({}, request, {
-        action: 'wallet_destroy',
-      }),
-      response: null,
-    });
-
-    const response = await rai.wallet.destroy(request);
-    expect(response).toEqual(expected);
-  });
-
   test('wallet.export', async () => {
     const request = {
       wallet: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',

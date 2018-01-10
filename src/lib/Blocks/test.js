@@ -29,8 +29,8 @@ describe('Blocks', () => {
 
   test('blocks.count', async () => {
     const expected = {
-      count: '1000',
-      unchecked: '10',
+      count: 1000,
+      unchecked: 10,
     };
 
     mockServer.success({
@@ -46,10 +46,10 @@ describe('Blocks', () => {
 
   test('blocks.countByType', async () => {
     const expected = {
-      send: '1000',
-      receive: '900',
-      open: '100',
-      change: '50',
+      send: 1000,
+      receive: 900,
+      open: 100,
+      change: 50,
     };
 
     mockServer.success({

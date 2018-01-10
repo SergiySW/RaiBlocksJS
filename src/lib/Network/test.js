@@ -4,7 +4,7 @@ import rai from '../../../mocks/mockRai';
 describe('Network', () => {
   test('network.availableSupply', async () => {
     const expected = {
-      available: '10000',
+      available: 10000,
     };
 
     mockServer.success({
@@ -25,7 +25,7 @@ describe('Network', () => {
 
     const request = {
       address: '::ffff:192.168.1.1',
-      port: '1024',
+      port: 1024,
     };
 
     mockServer.success({

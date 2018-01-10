@@ -26,7 +26,7 @@ describe('Receive', () => {
 
   test('receive.minimum', async () => {
     const expected = {
-      amount: '100000000',
+      amount: 100000000,
     };
 
     mockServer.success({

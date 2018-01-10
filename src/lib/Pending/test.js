@@ -26,7 +26,7 @@ describe('Pending', () => {
   test('pending.get w/threshold', async () => {
     const expected = {
       blocks: {
-        '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F': '6000000000000000000000000000000'
+        '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F': '6000000000000000000000000000000',
       },
     };
 
@@ -53,8 +53,8 @@ describe('Pending', () => {
         '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F': {
           amount: '6000000000000000000000000000000',
           source: 'xrb_3dcfozsmekr1tr9skf1oa5wbgmxt81qepfdnt7zicq5x3hk65fg4fqj58mbr',
-        }
-      }
+        },
+      },
     };
 
     const request = {
@@ -80,7 +80,7 @@ describe('Pending', () => {
     };
 
     const request = {
-      hash: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F'
+      hash: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
     };
 
     mockServer.success({
@@ -88,6 +88,26 @@ describe('Pending', () => {
         action: 'pending_exists',
       }),
       response: expected,
+    });
+
+    const response = await rai.pending.exists(request);
+    expect(response).toEqual(expected);
+  });
+
+  test.only('pending.exists false', async () => {
+    const expected = {
+      exists: false,
+    };
+
+    const request = {
+      hash: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
+    };
+
+    mockServer.success({
+      request: Object.assign({}, request, {
+        action: 'pending_exists',
+      }),
+      response: { exists: '0' },
     });
 
     const response = await rai.pending.exists(request);

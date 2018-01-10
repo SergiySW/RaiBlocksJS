@@ -56,11 +56,8 @@ export default function Wallet(rpc) {
   const create = () => rpc('wallet_create');
 
   const destroy = async ({ wallet }) => {
-    const response = await rpc('wallet_destroy', { wallet });
-    if (response) {
-      return { success: true };
-    }
-    return { success: false };
+    await rpc('wallet_destroy', { wallet });
+    return { success: true };
   };
 
   const exportWallet = ({ wallet }) => rpc('wallet_export', { wallet });

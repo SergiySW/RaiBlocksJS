@@ -1,11 +1,11 @@
 import mockServer from '../../../mocks/mockServer';
 import rai from '../../../mocks/mockRai';
 
-describe('Network', () => {
+describe('Node', () => {
   test('node.version', async () => {
     const expected = {
-      rpc_version: '1',
-      store_version: '2',
+      rpc_version: 1,
+      store_version: 2,
       node_vendor: 'RaiBlocks 7.5.0',
     };
 

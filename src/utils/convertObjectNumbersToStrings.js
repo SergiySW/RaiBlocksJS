@@ -1,6 +1,8 @@
 
-export default data =>
-  Object.keys(data).reduce((_result, key) => {
+export default (data) => {
+  if (!data) return {};
+
+  return Object.keys(data).reduce((_result, key) => {
     const result = _result;
     if (typeof data[key] === 'number') {
       result[key] = data[key].toString();
@@ -9,4 +11,4 @@ export default data =>
     result[key] = data[key];
     return result;
   }, {});
-
+};

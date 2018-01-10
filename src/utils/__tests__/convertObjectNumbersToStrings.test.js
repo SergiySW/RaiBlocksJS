@@ -23,3 +23,10 @@ test('convertObjectNumbersToStrings', () => {
 
   expect(actual).toEqual(expected);
 });
+
+test('convertObjectNumbersToStrings null data', () => {
+  const actual = convertObjectNumbersToStrings(null);
+  const expected = {};
+
+  expect(actual).toEqual(expected);
+});

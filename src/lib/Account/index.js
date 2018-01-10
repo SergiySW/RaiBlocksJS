@@ -17,7 +17,6 @@ export default function Account(rpc) {
 
   const info = async ({
     account,
-    unit = 'raw',
     representative,
     weight,
     pending,
@@ -25,12 +24,6 @@ export default function Account(rpc) {
     const accountInfo = await rpc('account_info', {
       account, representative, weight, pending,
     });
-
-    if (unit !== 'raw') {
-      accountInfo.balance = convertFromRaw(accountInfo.balance, unit);
-      if (weight) accountInfo.weight = convertFromRaw(accountInfo.weight, unit);
-      if (pending) accountInfo.pending = convertFromRaw(accountInfo.pending, unit);
-    }
 
     return accountInfo;
   };

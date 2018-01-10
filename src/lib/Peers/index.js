@@ -9,9 +9,8 @@ export default function Peers(rpc) {
   const getWorkPeers = () => rpc('work_peers');
 
   const clearWorkPeers = async () => {
-    const response = await rpc('work_peers_clear');
-    if (response) return { success: true };
-    return { success: false };
+    await rpc('work_peers_clear');
+    return { success: true };
   };
 
   const get = () => rpc('peers');
