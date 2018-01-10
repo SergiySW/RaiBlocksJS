@@ -1,4 +1,4 @@
-import getConversion, { convertFromRaw } from '../../utils/getConversion';
+import getConversion from '../../utils/getConversion';
 
 export default function Accounts(rpc) {
   const balances = ({ accounts }) =>
@@ -36,19 +36,6 @@ export default function Accounts(rpc) {
       accounts, count, threshold: thresholdCopy, source,
     });
 
-    if (source) {
-      Object.keys(blocks).forEach((account) => {
-        Object.keys(blocks[account]).forEach((hash) => {
-          blocks[account][hash].amount = convertFromRaw(blocks[account][hash].amount, unit);
-        });
-      });
-    } else if (threshold !== 0) {
-      Object.keys(blocks).forEach((account) => {
-        Object.keys(blocks[account]).forEach((hash) => {
-          blocks[account][hash] = convertFromRaw(blocks[account][hash], unit);
-        });
-      });
-    }
     return blocks;
   };
 

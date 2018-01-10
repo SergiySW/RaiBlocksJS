@@ -115,4 +115,55 @@ describe('Accounts', () => {
 
     expect(response).toEqual(expected);
   });
+
+  test('accounts.pending with default count', async () => {
+    const expected = {
+      xrb_test: ['pending_block_1'],
+      note: '... 4095 more pending blocks ...',
+    };
+
+    mockServer.success({
+      request: {
+        action: 'accounts_pending',
+        accounts: ['xrb_test', 'xrb_test_2'],
+        count: '4096',
+        threshold: '0',
+      },
+      response: {
+        blocks: expected,
+      },
+    });
+
+    const response = await rai.accounts.pending({
+      accounts: ['xrb_test', 'xrb_test_2'],
+    });
+
+    expect(response).toEqual(expected);
+  });
+
+  test('accounts.pending with threshold', async () => {
+    const expected = {
+      xrb_test: ['pending_block_1'],
+      note: '... 4095 more pending blocks ...',
+    };
+
+    mockServer.success({
+      request: {
+        action: 'accounts_pending',
+        accounts: ['xrb_test', 'xrb_test_2'],
+        count: '4096',
+        threshold: '1000',
+      },
+      response: {
+        blocks: expected,
+      },
+    });
+
+    const response = await rai.accounts.pending({
+      accounts: ['xrb_test', 'xrb_test_2'],
+      threshold: 1000,
+    });
+
+    expect(response).toEqual(expected);
+  });
 });
