@@ -57,6 +57,9 @@
   },
   "jest": {
     "testURL": "http://xrb.wallet.test",
+    "testPathIgnorePatterns": [
+      "<rootDir>/dist/"
+    ],
     "coverageThreshold": {
       "global": {
         "branches": 100,
