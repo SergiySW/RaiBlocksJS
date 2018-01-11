@@ -2,13 +2,15 @@
   "name": "raiblocks-js",
   "version": "0.3.2",
   "description": "Raiblocks RPC client",
-  "main": "index.js",
+  "main": "dist/Rai.js",
   "scripts": {
-    "test": "jest --coverage",
+    "build": "rm -rf dist && babel src --out-dir dist",
+    "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "lint": "eslint lib",
     "precommit": "lint-staged",
     "prepush": "yarn test",
-    "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls"
+    "prepublish": "yarn build",
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
