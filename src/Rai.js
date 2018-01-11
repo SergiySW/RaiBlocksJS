@@ -25,6 +25,7 @@ import methods from './lib';
 import removeEmptyObjectProperties from './utils/removeEmptyObjectProperties';
 import convertObjectNumbersToStrings from './utils/convertObjectNumbersToStrings';
 import convertObjectStringNumbersToNumbers from './utils/convertObjectStringNumbersToNumbers';
+import getConversion from './utils/getConversion';
 
 export default class Rai {
   constructor(hostUrl) {
@@ -33,6 +34,8 @@ export default class Rai {
     Object.keys(methods).forEach((method) => {
       this[method] = methods[method].call(this, this.rpc);
     });
+
+    this.getConversion = getConversion;
   }
 
   rpc = async (action, _data = {}) => {

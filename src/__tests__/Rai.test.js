@@ -14,4 +14,13 @@ describe('Rai', () => {
 
     expect(raiLocal.hostUrl).toBe('http://localhost:7076');
   });
+
+  test('.getConversion', () => {
+    const actual = rai.getConversion({
+      value: 1234,
+      from: 'raw',
+      to: 'XRB',
+    });
+    expect(actual).toBe('0.000000000000000000000000001234');
+  });
 });
