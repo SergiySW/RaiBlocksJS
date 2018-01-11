@@ -1,10 +1,14 @@
 const path = require('path');
 
 module.exports = {
-  entry: './index.js',
+  entry: [
+    'babel-polyfill',
+    './src/Rai.js',
+  ],
   output: {
-    filename: 'build.js',
     path: path.resolve(__dirname, 'dist'),
+    filename: 'build.js',
+    libraryTarget: 'umd',
   },
   module: {
     rules: [
