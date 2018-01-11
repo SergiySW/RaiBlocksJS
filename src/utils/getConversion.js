@@ -4,41 +4,29 @@ const throwError = (type, value) => {
   throw new Error(`'${value}' is not a valid ${type} type`);
 };
 
+const units = {
+  Trai: 36,
+  Grai: 33,
+  XRB: 30,
+  Mrai: 30,
+  krai: 27,
+  rai: 24,
+  mrai: 21,
+  urai: 18,
+  prai: 15,
+  raw: 0,
+};
+
 export default function getConversion({ value, from, to }) {
-  let result = new BigNumber(value);
+  if (units[from] === undefined) throwError('from', from);
+  if (units[to] === undefined) throwError('to', to);
 
-  // Step 1: to RAW
-  switch (from) {
-    case 'Trai': result = result.shift(36); break; // draft
-    case 'Grai': result = result.shift(33); break;
-    case 'XRB': result = result.shift(30); break;
-    case 'Mrai': result = result.shift(30); break;
-    case 'krai': result = result.shift(27); break;
-    case 'rai': result = result.shift(24); break;
-    case 'mrai': result = result.shift(21); break;
-    case 'urai': result = result.shift(18); break;
-    case 'prai': result = result.shift(15); break; // draft
-    case 'raw': break;
-    default: throwError('from', from);
-  }
+  const bigNumber = new BigNumber(value);
 
-  // Step 2: to output
-  switch (to) {
-    case 'Trai': result = result.shift(-36); break; // draft
-    case 'Grai': result = result.shift(-33); break;
-    case 'XRB': result = result.shift(-30); break;
-    case 'Mrai': result = result.shift(-30); break;
-    case 'krai': result = result.shift(-27); break;
-    case 'rai': result = result.shift(-24); break;
-    case 'mrai': result = result.shift(-21); break;
-    case 'urai': result = result.shift(-18); break;
-    case 'prai': result = result.shift(-15); break; // draft
-    case 'raw': break;
-    default: throwError('to', to);
-  }
+  const getRaw = bigNumber.shift(units[from]);
+  const getOutput = getRaw.shift(units[to] * -1);
 
-  result = result.toFixed();
-  return result;
+  return getOutput.toFixed();
 }
 
 export const convertFromRaw = (value, unit) =>
