@@ -50,6 +50,19 @@ const rai = new Rai('https://xrb.example-node.io:3000');
 
 ```
 
+### A note about import vs require:
+  If you are not using es modules,
+  you'll need to reference the default value:
+
+  ```js
+    const { default: Rai } = require('raiblocks-js');
+  ```
+
+# Roadmap
+* Add 'extended' features from https://github.com/SergiySW/RaiBlocksJS/blob/master/rai.extended.js
+* Finish documentation
+
+
 # Methods
   ## rai.account
   * ##### balance()
