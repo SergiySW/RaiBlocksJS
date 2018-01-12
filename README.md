@@ -21,6 +21,10 @@ To test locally, you'll need to setup your own node.
 See instructions here: https://github.com/clemahieu/raiblocks/wiki/Docker-node
 
 # Usage
+
+### Boilerplate
+https://gist.github.com/orrybaram/b1c4b724b134c8b7fb0cafe52cb5f6c6
+
 ### Basic implementation
 ```javascript
 import Rai from 'raiblocks-js';
