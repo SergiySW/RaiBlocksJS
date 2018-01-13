@@ -157,12 +157,6 @@ Rai.prototype.account_validate = function (account) {
 };
 
 
-function pow_threshold(Uint8Array) {
-  if ((Uint8Array[0] == 255) && (Uint8Array[1] == 255) && (Uint8Array[2] == 255) && (Uint8Array[3] >= 192))	return true;
-  return false;
-}
-
-
 Rai.prototype.pow_initiate = function (threads, worker_path = '') {
   return XRB.pow_initiate(threads, worker_path);
 };

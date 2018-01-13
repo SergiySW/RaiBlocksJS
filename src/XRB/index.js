@@ -30,15 +30,6 @@ const minus = (base, _minus) => {
 };
 
 // Use for RAW
-const plus = (base, _plus) => {
-  let value = new BigNumber(base.toString());
-  const bigPlus = new BigNumber(_plus.toString());
-  value = value.plus(bigPlus);
-  value = value.toFixed(0);
-  return value;
-};
-
-// Use for RAW
 const rawToHex = (raw) => {
   let value = new BigNumber(raw.toString());
   value = value.toString(16).toUpperCase();
@@ -50,19 +41,72 @@ const rawToHex = (raw) => {
   return value;
 };
 
+const accountKey = (account) => {
+  if ((account.startsWith('xrb_1') || account.startsWith('xrb_3')) && (account.length === 64)) {
+    const accountCrop = account.substring(4, 64);
+    const isValid = /^[13456789abcdefghijkmnopqrstuwxyz]+$/.test(accountCrop);
+    if (isValid) {
+      const keyUint4 = arrayCrop(uint5ToUint4(stringToUint5(accountCrop.substring(0, 52))));
+      const hashUint4 = uint5ToUint4(stringToUint5(accountCrop.substring(52, 60)));
+      const keyArray = uint4ToUint8(keyUint4);
+      const blakeHash = blake2b(keyArray, null, 5).reverse();
+      if (areArraysEqual(hashUint4, uint8ToUint4(blakeHash))) {
+        const key = uint4ToHex(keyUint4);
+        return key;
+      }
+
+      throw new Error('Invalid account');
+    }
+
+    throw new Error('Invalid symbols');
+  }
+
+  throw new Error('Invalid account');
+};
+
+const accountGet = (key) => {
+  const isValid = /^[0123456789ABCDEF]+$/.test(key);
+  if (isValid && (key.length == 64)) {
+    const keyArray = hexToUint8(key);
+    const bytes = uint4ToUint5(arrayExtend(uint8ToUint4(keyArray)));
+    const blakeHash = blake2b(keyArray, null, 5).reverse();
+    const hashBytes = uint4ToUint5(uint8ToUint4(blakeHash));
+    const account = `xrb_${uint5ToString(bytes)}${uint5ToString(hashBytes)}`;
+    return account;
+  }
+
+  throw new Error('Invalid public key');
+};
+
 const accountValidate = (account) => {
   const valid = accountKey(account);
-  if (valid)	return true;
+  if (valid) return true;
   return false;
 };
 
-const powInitiate = (threads, workerPath = '') => {
-  if (isNaN(threads)) { threads = self.navigator.hardwareConcurrency - 1; }
+const powInitiate = (_threads, workerPath = '') => {
+  if (!window || !window.Worker || !window.navigator) return false;
+  let threads = _threads;
+  if (Number.isNaN(Number(threads))) {
+    threads = window.navigator.hardwareConcurrency - 1;
+  }
   const workers = [];
   for (let i = 0; i < threads; i += 1) {
     workers[i] = new Worker(`${workerPath}rai.pow.js`);
   }
   return workers;
+};
+
+const powThreshold = (Uint8Array) => {
+  if (
+    (Uint8Array[0] === 255)
+    && (Uint8Array[1] === 255)
+    && (Uint8Array[2] === 255)
+    && (Uint8Array[3] >= 192)
+  ) {
+    return true;
+  }
+  return false;
 };
 
 const powValidate = (powHex, hashHex) => {
@@ -92,7 +136,7 @@ const powValidate = (powHex, hashHex) => {
 
 const seedKey = (seedHex, index = 0) => {
   const isValidHash = /^[0123456789ABCDEF]+$/.test(seedHex);
-  if (isValidHash && (seedHex.length == 64)) {
+  if (isValidHash && (seedHex.length === 64)) {
     const seed = hexToUint8(seedHex);
     if (Number.isInteger(index)) {
       const uint8 = intToUint8(index, 4);
@@ -135,29 +179,26 @@ const checkSignature = (hexMessage, hexSignature, publicKeyOrXRBAccount) => {
   throw new Error('Invalid public key or XRB account.');
 };
 
+const publicFromPrivateKey = (secretKey) => {
+  if (!/[0-9A-F]{64}/i.test(secretKey)) {
+    throw new Error('Invalid secret key. Should be a 32 byte hex string.');
+  }
+
+  return uint8ToHex(nacl.sign.keyPair.fromSecretKey(hexToUint8(secretKey)).publicKey);
+};
+
 const keyAccount = privateKey => accountGet(publicFromPrivateKey(privateKey));
 
 const signBlock = (blockHash, secretKey) => {
   if (!/[0-9A-F]{64}/i.test(secretKey)) {
-    error = 'Invalid secret key. Should be a 32 byte hex string.';
-    return false;
+    throw new Error('Invalid secret key. Should be a 32 byte hex string.');
   }
 
   if (!/[0-9A-F]{64}/i.test(blockHash)) {
-    error = 'Invalid block hash. Should be a 32 byte hex string.';
-    return false;
+    throw new Error('Invalid block hash. Should be a 32 byte hex string.');
   }
 
   return uint8ToHex(nacl.sign.detached(hexToUint8(blockHash), hexToUint8(secretKey)));
-};
-
-const publicFromPrivateKey = (secretKey) => {
-  if (!/[0-9A-F]{64}/i.test(secretKey)) {
-    error = 'Invalid secret key. Should be a 32 byte hex string.';
-    return false;
-  }
-
-  return uint8ToHex(nacl.sign.keyPair.fromSecretKey(hexToUint8(secretKey)).publicKey);
 };
 
 const seedKeys = (seedHex, count = 1) => {
@@ -189,17 +230,21 @@ const powTerminate = (workers) => {
   }
 };
 
+const onWorkerMessage = (worker, workers, hash, callback) => (e) => {
+  const result = e.data;
+  if (result) {
+    powTerminate(workers);
+    callback(result);
+  } else worker.postMessage(hash);
+};
+
+
 const powCallback = (workers, hash, callback) => {
-  if ((hash instanceof Uint8Array) && (hash.length == 32) && (typeof callback === 'function')) {
+  if ((hash instanceof Uint8Array) && (hash.length === 32) && (typeof callback === 'function')) {
     const threads = workers.length;
     for (let i = 0; i < threads; i += 1) {
-      workers[i].onmessage = (e) => {
-        result = e.data;
-        if (result) {
-          powTerminate(workers);
-          callback(result);
-        } else workers[i].postMessage(hash);
-      };
+      const worker = workers[i];
+      worker.onmessage = onWorkerMessage(worker, workers, hash, callback);
     }
   } else if (typeof callback !== 'function') {
     throw new Error('Invalid callback function');
@@ -232,48 +277,22 @@ const pow = (hashHex, threads, callback, workerPath) => {
   throw new Error('Invalid hash');
 };
 
-const accountKey = (account) => {
-  if ((account.startsWith('xrb_1') || account.startsWith('xrb_3')) && (account.length === 64)) {
-    const accountCrop = account.substring(4, 64);
-    const isValid = /^[13456789abcdefghijkmnopqrstuwxyz]+$/.test(accountCrop);
-    if (isValid) {
-      const keyUint4 = arrayCrop(uint5ToUint4(stringToUint5(accountCrop.substring(0, 52))));
-      const hashUint4 = uint5ToUint4(stringToUint5(accountCrop.substring(52, 60)));
-      const keyArray = uint4ToUint8(keyUint4);
-      const blakeHash = blake2b(keyArray, null, 5).reverse();
-      if (areArraysEqual(hashUint4, uint8ToUint4(blakeHash))) {
-        const key = uint4ToHex(keyUint4);
-        return key;
-      }
+const computeBlockHash = (_blockType, _parameters) => {
+  const parameters = _parameters;
+  let blockType = _blockType;
 
-      throw new Error('Invalid account');
-    }
-
-    throw new Error('Invalid symbols');
+  if ((typeof parameters.destination !== 'undefined') && (parameters.destination.startsWith('xrb_'))) {
+    parameters.destination = accountKey(parameters.destination);
   }
-
-  throw new Error('Invalid account');
-};
-
-const accountGet = (key) => {
-  const isValid = /^[0123456789ABCDEF]+$/.test(key);
-  if (isValid && (key.length == 64)) {
-    const keyArray = hexToUint8(key);
-    const bytes = uint4ToUint5(arrayExtend(uint8ToUint4(keyArray)));
-    const blakeHash = blake2b(keyArray, null, 5).reverse();
-    const hashBytes = uint4ToUint5(uint8ToUint4(blakeHash));
-    const account = `xrb_${uint5ToString(bytes)}${uint5ToString(hashBytes)}`;
-    return account;
+  if ((typeof parameters.representative !== 'undefined') && (parameters.representative.startsWith('xrb_'))) {
+    parameters.representative = accountKey(parameters.representative);
   }
-
-  throw new Error('Invalid public key');
-};
-
-const computeBlockHash = (blockType, parameters) => {
-  if ((typeof parameters.destination !== 'undefined') && (parameters.destination.startsWith('xrb_')))	parameters.destination = accountKey(parameters.destination);
-  if ((typeof parameters.representative !== 'undefined') && (parameters.representative.startsWith('xrb_')))	parameters.representative = accountKey(parameters.representative);
-  if ((typeof parameters.account !== 'undefined') && (parameters.account.startsWith('xrb_')))	parameters.account = accountKey(parameters.account);
-  if ((typeof parameters.type !== 'undefined') && (blockType == null)) blockType = parameters.type;
+  if ((typeof parameters.account !== 'undefined') && (parameters.account.startsWith('xrb_'))) {
+    parameters.account = accountKey(parameters.account);
+  }
+  if ((typeof parameters.type !== 'undefined') && (blockType == null)) {
+    blockType = parameters.type;
+  }
 
   if (
     blockType === 'send' && (
@@ -296,10 +315,10 @@ const computeBlockHash = (blockType, parameters) => {
   }
 
   let hash;
-
+  let context;
   switch (blockType) {
     case 'send':
-      var context = blake2bInit(32, null);
+      context = blake2bInit(32, null);
       blake2bUpdate(context, hexToUint8(parameters.previous));
       blake2bUpdate(context, hexToUint8(parameters.destination));
       blake2bUpdate(context, hexToUint8(parameters.balance));
@@ -307,14 +326,14 @@ const computeBlockHash = (blockType, parameters) => {
       break;
 
     case 'receive':
-      var context = blake2bInit(32, null);
+      context = blake2bInit(32, null);
       blake2bUpdate(context, hexToUint8(parameters.previous));
       blake2bUpdate(context, hexToUint8(parameters.source));
       hash = uint8ToHex(blake2bFinal(context));
       break;
 
     case 'open':
-      var context = blake2bInit(32, null);
+      context = blake2bInit(32, null);
       blake2bUpdate(context, hexToUint8(parameters.source));
       blake2bUpdate(context, hexToUint8(parameters.representative));
       blake2bUpdate(context, hexToUint8(parameters.account));
@@ -322,7 +341,7 @@ const computeBlockHash = (blockType, parameters) => {
       break;
 
     case 'change':
-      var context = blake2bInit(32, null);
+      context = blake2bInit(32, null);
       blake2bUpdate(context, hexToUint8(parameters.previous));
       blake2bUpdate(context, hexToUint8(parameters.representative));
       hash = uint8ToHex(blake2bFinal(context));
@@ -390,7 +409,14 @@ const send = (privateKey, work, previous, destination, oldBalance, amount, unit 
 };
 
 export default {
-  plus,
-  minus,
-  rawToHex,
+  accountValidate,
+  change,
+  checkSignature,
+  open,
+  pow,
+  powValidate,
+  receive,
+  seedKey,
+  seedKeys,
+  send,
 };
