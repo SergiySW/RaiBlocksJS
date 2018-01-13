@@ -4,7 +4,7 @@ const webpack = require('webpack');
 module.exports = {
   entry: [
     'babel-polyfill',
-    './src/Rai.js',
+    './src/Rai/index.js',
   ],
   output: {
     path: path.resolve(__dirname, 'dist'),
