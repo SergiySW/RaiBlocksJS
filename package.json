@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rm -rf dist && webpack",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
-    "lint": "eslint lib",
+    "lint": "eslint src",
     "precommit": "lint-staged",
     "prepush": "yarn test",
     "prepublish": "yarn build",

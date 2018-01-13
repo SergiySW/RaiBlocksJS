@@ -31,7 +31,7 @@ describe('Unchecked', () => {
     };
 
     const request = {
-      hash: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F'
+      hash: '000D1BAEC8EC208142C99059B393051BAC8380F9B5A2E6B2489A277D81789F3F',
     };
 
     mockServer.success({
