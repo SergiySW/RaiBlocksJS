@@ -43,7 +43,11 @@ export default class Rai {
     data = convertObjectNumbersToStrings(data);
 
     const body = Object.assign({}, { action }, data);
-    const response = await axios.post(this.hostUrl, JSON.stringify(body));
-    return convertObjectStringNumbersToNumbers(response.data);
+    try {
+      const response = await axios.post(this.hostUrl, JSON.stringify(body));
+      return convertObjectStringNumbersToNumbers(response.data);
+    } catch (err) {
+      return err;
+    }
   };
 }
