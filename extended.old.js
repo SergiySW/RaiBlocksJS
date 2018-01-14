@@ -219,15 +219,4 @@ Rai.prototype.checkSignature = function (hexMessage, hexSignature, publicKeyOrXR
 };
 
 
-/**
- * Computes the block hash given its type and the required parameters
- * Parameters should be hex encoded (block hashes, accounts (its public key) and balances)
- *
- * @param {string} blockType - send, receive, change and open
- * @param {object} parameters - {previous: "", destination: "", balance: ""}	 (send)
- *								{previous: "", source: ""}						 (receive)
- *								{previous: "", representative: "" } 			 (change)
- *								{source:   "", representative: "", account: "" } (open)
- * @returns {string} The block hash
- */
 
