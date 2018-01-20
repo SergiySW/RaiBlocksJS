@@ -16,6 +16,8 @@ import {
 
 import { areArraysEqual, arrayCrop, arrayExtend } from '../utils/arrays';
 
+export const isValidHash = hash => /^[0123456789ABCDEF]+$/.test(hash) && hash.length === 64;
+
 // Use for RAW
 const minus = (base, _minus) => {
   let value = new BigNumber(base.toString());
@@ -68,10 +70,9 @@ export const getAccountKey = (account) => {
 };
 
 export const getAccount = (key) => {
-  const isValid = /^[0123456789ABCDEF]+$/.test(key);
-
-  if (!isValid) throw new Error('Invalid: Public key is not a valid hex');
-  if (key.length !== 64) throw new Error('Invalid: Public is not 64 bit');
+  if (!isValidHash(key)) {
+    throw new Error('Invalid: Public key is not a valid hash');
+  }
 
   const keyArray = hexToUint8(key);
   const bytes = uint4ToUint5(arrayExtend(uint8ToUint4(keyArray)));
@@ -113,47 +114,45 @@ const powThreshold = (Uint8Array) => {
 };
 
 const powValidate = (powHex, hashHex) => {
-  const isValidHash = /^[0123456789ABCDEF]+$/.test(hashHex);
-  if (isValidHash && (hashHex.length == 64)) {
-    const hash = hexToUint8(hashHex);
-    const isValidPOW = /^[0123456789ABCDEFabcdef]+$/.test(powHex);
-    if (isValidPOW && (powHex.length == 16)) {
-      const pow = hexToUint8(powHex);
-      const context = blake2bInit(8, null);
-      blake2bUpdate(context, pow.reverse());
-      blake2bUpdate(context, hash);
-      const check = blake2bFinal(context).reverse();
-
-      if (powThreshold(check)) {
-        return true;
-      }
-
-      return false;
-    }
-
-    throw new Error('Invalid work');
+  if (!isValidHash(hashHex)) {
+    throw new Error('Invalid: hash hex is not a valid hash');
   }
 
-  throw new Error('Invalid hash');
+  const hash = hexToUint8(hashHex);
+  const isValidPOW = /^[0123456789ABCDEFabcdef]+$/.test(powHex);
+  if (isValidPOW && (powHex.length == 16)) {
+    const pow = hexToUint8(powHex);
+    const context = blake2bInit(8, null);
+    blake2bUpdate(context, pow.reverse());
+    blake2bUpdate(context, hash);
+    const check = blake2bFinal(context).reverse();
+
+    if (powThreshold(check)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  throw new Error('Invalid work');
 };
 
 export const seedKey = (seedHex, index = 0) => {
-  const isValidHash = /^[0123456789ABCDEF]+$/.test(seedHex);
-  if (isValidHash && (seedHex.length === 64)) {
-    const seed = hexToUint8(seedHex);
-    if (Number.isInteger(index)) {
-      const uint8 = intToUint8(index, 4);
-      const context = blake2bInit(32, null);
-      blake2bUpdate(context, seed);
-      blake2bUpdate(context, uint8.reverse());
-      const key = uint8ToHex(blake2bFinal(context));
-      return key;
-    }
-
-    throw new Error('Invalid index');
+  if (!isValidHash(seedHex)) {
+    throw new Error('Invalid seed');
   }
 
-  throw new Error('Invalid seed');
+  const seed = hexToUint8(seedHex);
+  if (Number.isInteger(index)) {
+    const uint8 = intToUint8(index, 4);
+    const context = blake2bInit(32, null);
+    blake2bUpdate(context, seed);
+    blake2bUpdate(context, uint8.reverse());
+    const key = uint8ToHex(blake2bFinal(context));
+    return key;
+  }
+
+  throw new Error('Invalid index');
 };
 
 const checkSignature = (hexMessage, hexSignature, publicKeyOrXRBAccount) => {
@@ -205,25 +204,24 @@ const signBlock = (blockHash, secretKey) => {
 };
 
 const seedKeys = (seedHex, count = 1) => {
-  const isValidHash = /^[0123456789ABCDEF]+$/.test(seedHex);
-  if (isValidHash && (seedHex.length == 64)) {
-    const seed = hexToUint8(seedHex);
-    if (Number.isInteger(count)) {
-      const keys = [];
-      for (let index = 0; index < count; index += 1) {
-        const uint8 = intToUint8(index, 4);
-        const context = blake2bInit(32, null);
-        blake2bUpdate(context, seed);
-        blake2bUpdate(context, uint8.reverse());
-        keys.push(uint8ToHex(blake2bFinal(context)));
-      }
-      return keys;
-    }
-
-    throw new Error('Invalid count');
+  if (!isValidHash(seedHex)) {
+    throw new Error('Invalid seed');
   }
 
-  throw new Error('Invalid seed');
+  const seed = hexToUint8(seedHex);
+  if (Number.isInteger(count)) {
+    const keys = [];
+    for (let index = 0; index < count; index += 1) {
+      const uint8 = intToUint8(index, 4);
+      const context = blake2bInit(32, null);
+      blake2bUpdate(context, seed);
+      blake2bUpdate(context, uint8.reverse());
+      keys.push(uint8ToHex(blake2bFinal(context)));
+    }
+    return keys;
+  }
+
+  throw new Error('Invalid count');
 };
 
 const powTerminate = (workers) => {
@@ -268,16 +266,15 @@ const powStart = (workers, hash) => {
 };
 
 const pow = (hashHex, threads, callback, workerPath) => {
-  const isValid = /^[0123456789ABCDEF]+$/.test(hashHex);
-  if (isValid && (hashHex.length === 64)) {
-    const hash = hexToUint8(hashHex);
-    const workers = powInitiate(threads, workerPath);
-    powStart(workers, hash);
-
-    return powCallback(workers, hash, callback);
+  if (!isValidHash(hashHex)) {
+    throw new Error('Invalid hash');
   }
 
-  throw new Error('Invalid hash');
+  const hash = hexToUint8(hashHex);
+  const workers = powInitiate(threads, workerPath);
+  powStart(workers, hash);
+
+  return powCallback(workers, hash, callback);
 };
 
 /**

@@ -1,5 +1,16 @@
-import { getAccountKey, getAccount, seedKey } from '../';
+import { getAccountKey, getAccount, seedKey, isValidHash } from '../';
 
+describe('isValidHash', () => {
+  test('return false if if hash doesnt match regex', () => {
+    const validatedHash = isValidHash('!008B814A7D269A1FA3C6528B19201A24D797912DB9996FF02A1FF356E45552B');
+    expect(validatedHash).toBeFalsy();
+  });
+
+  test('return false if hash is not 64 chars long', () => {
+    const validatedHash = isValidHash('1234ADEFEFEF');
+    expect(validatedHash).toBeFalsy();
+  });
+});
 
 describe('getAccountKey', () => {
   describe('throws on invalid account', () => {
@@ -37,14 +48,9 @@ describe('getAccountKey', () => {
 });
 
 describe('getAccount', () => {
-  test('throws if key doesnt match regex', () => {
+  test('throws if key is invalid', () => {
     const test = () => getAccount('!008B814A7D269A1FA3C6528B19201A24D797912DB9996FF02A1FF356E45552B');
-    expect(test).toThrowError('Invalid: Public key is not a valid hex');
-  });
-
-  test('throws if key is not 64 chars long', () => {
-    const test = () => getAccount('1234ADEFEFEF');
-    expect(test).toThrowError('Invalid: Public is not 64 bit');
+    expect(test).toThrowError('Invalid: Public key is not a valid hash');
   });
 
   test('returns account', () => {
