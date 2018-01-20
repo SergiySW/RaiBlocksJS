@@ -41,7 +41,7 @@ const rawToHex = (raw) => {
   return value;
 };
 
-export const validateAccountKey = (account) => {
+export const getAccountKey = (account) => {
   if ((
     !account.startsWith('xrb_1')
     || !account.startsWith('xrb_3')
@@ -67,22 +67,22 @@ export const validateAccountKey = (account) => {
   throw new Error('Invalid symbols');
 };
 
-const accountGet = (key) => {
+export const getAccount = (key) => {
   const isValid = /^[0123456789ABCDEF]+$/.test(key);
-  if (isValid && (key.length == 64)) {
-    const keyArray = hexToUint8(key);
-    const bytes = uint4ToUint5(arrayExtend(uint8ToUint4(keyArray)));
-    const blakeHash = blake2b(keyArray, null, 5).reverse();
-    const hashBytes = uint4ToUint5(uint8ToUint4(blakeHash));
-    const account = `xrb_${uint5ToString(bytes)}${uint5ToString(hashBytes)}`;
-    return account;
-  }
 
-  throw new Error('Invalid public key');
+  if (!isValid) throw new Error('Invalid: Public key is not a valid hex');
+  if (key.length !== 64) throw new Error('Invalid: Public is not 64 bit');
+
+  const keyArray = hexToUint8(key);
+  const bytes = uint4ToUint5(arrayExtend(uint8ToUint4(keyArray)));
+  const blakeHash = blake2b(keyArray, null, 5).reverse();
+  const hashBytes = uint4ToUint5(uint8ToUint4(blakeHash));
+  const account = `xrb_${uint5ToString(bytes)}${uint5ToString(hashBytes)}`;
+  return account;
 };
 
 const accountValidate = (account) => {
-  const valid = validateAccountKey(account);
+  const valid = getAccountKey(account);
   if (valid) return true;
   return false;
 };
@@ -137,7 +137,7 @@ const powValidate = (powHex, hashHex) => {
   throw new Error('Invalid hash');
 };
 
-const seedKey = (seedHex, index = 0) => {
+export const seedKey = (seedHex, index = 0) => {
   const isValidHash = /^[0123456789ABCDEF]+$/.test(seedHex);
   if (isValidHash && (seedHex.length === 64)) {
     const seed = hexToUint8(seedHex);
@@ -170,7 +170,7 @@ const checkSignature = (hexMessage, hexSignature, publicKeyOrXRBAccount) => {
     );
   }
 
-  const pubKey = validateAccountKey(publicKeyOrXRBAccount);
+  const pubKey = getAccountKey(publicKeyOrXRBAccount);
   if (pubKey) {
     // it's a XRB account
     return nacl.sign.detached.verify(
@@ -190,7 +190,7 @@ const publicFromPrivateKey = (secretKey) => {
   return uint8ToHex(nacl.sign.keyPair.fromSecretKey(hexToUint8(secretKey)).publicKey);
 };
 
-const keyAccount = privateKey => accountGet(publicFromPrivateKey(privateKey));
+const keyAccount = privateKey => getAccount(publicFromPrivateKey(privateKey));
 
 const signBlock = (blockHash, secretKey) => {
   if (!/[0-9A-F]{64}/i.test(secretKey)) {
@@ -297,13 +297,13 @@ const computeBlockHash = (_blockType, _parameters) => {
   let blockType = _blockType;
 
   if ((typeof parameters.destination !== 'undefined') && (parameters.destination.startsWith('xrb_'))) {
-    parameters.destination = validateAccountKey(parameters.destination);
+    parameters.destination = getAccountKey(parameters.destination);
   }
   if ((typeof parameters.representative !== 'undefined') && (parameters.representative.startsWith('xrb_'))) {
-    parameters.representative = validateAccountKey(parameters.representative);
+    parameters.representative = getAccountKey(parameters.representative);
   }
   if ((typeof parameters.account !== 'undefined') && (parameters.account.startsWith('xrb_'))) {
-    parameters.account = validateAccountKey(parameters.account);
+    parameters.account = getAccountKey(parameters.account);
   }
   if ((typeof parameters.type !== 'undefined') && (blockType == null)) {
     blockType = parameters.type;
