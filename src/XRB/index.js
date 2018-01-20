@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
-import blake2b, { blake2bFinal, blake2bInit, blake2bUpdate } from 'blakejs';
-import nacl from 'nacl';
+import { blake2b, blake2bFinal, blake2bInit, blake2bUpdate } from 'blakejs';
+import nacl from 'tweetnacl';
 import {
   uint8ToUint4,
   uint4ToUint8,
@@ -41,27 +41,30 @@ const rawToHex = (raw) => {
   return value;
 };
 
-const accountKey = (account) => {
-  if ((account.startsWith('xrb_1') || account.startsWith('xrb_3')) && (account.length === 64)) {
-    const accountCrop = account.substring(4, 64);
-    const isValid = /^[13456789abcdefghijkmnopqrstuwxyz]+$/.test(accountCrop);
-    if (isValid) {
-      const keyUint4 = arrayCrop(uint5ToUint4(stringToUint5(accountCrop.substring(0, 52))));
-      const hashUint4 = uint5ToUint4(stringToUint5(accountCrop.substring(52, 60)));
-      const keyArray = uint4ToUint8(keyUint4);
-      const blakeHash = blake2b(keyArray, null, 5).reverse();
-      if (areArraysEqual(hashUint4, uint8ToUint4(blakeHash))) {
-        const key = uint4ToHex(keyUint4);
-        return key;
-      }
-
-      throw new Error('Invalid account');
-    }
-
-    throw new Error('Invalid symbols');
+export const validateAccountKey = (account) => {
+  if ((
+    !account.startsWith('xrb_1')
+    || !account.startsWith('xrb_3')
+  )
+    && (account.length !== 64)
+  ) {
+    throw new Error('Invalid account');
   }
 
-  throw new Error('Invalid account');
+  const accountCrop = account.substring(4, 64);
+  const isValid = /^[123456789abcdefghijkmnopqrstuwxyz]+$/.test(accountCrop);
+  if (!isValid) throw new Error('Invalid account');
+
+  const keyUint4 = arrayCrop(uint5ToUint4(stringToUint5(accountCrop.substring(0, 52))));
+  const hashUint4 = uint5ToUint4(stringToUint5(accountCrop.substring(52, 60)));
+  const keyArray = uint4ToUint8(keyUint4);
+  const blakeHash = blake2b(keyArray, null, 5).reverse();
+
+  if (areArraysEqual(hashUint4, uint8ToUint4(blakeHash))) {
+    return uint4ToHex(keyUint4);
+  }
+
+  throw new Error('Invalid symbols');
 };
 
 const accountGet = (key) => {
@@ -79,7 +82,7 @@ const accountGet = (key) => {
 };
 
 const accountValidate = (account) => {
-  const valid = accountKey(account);
+  const valid = validateAccountKey(account);
   if (valid) return true;
   return false;
 };
@@ -167,7 +170,7 @@ const checkSignature = (hexMessage, hexSignature, publicKeyOrXRBAccount) => {
     );
   }
 
-  const pubKey = accountKey(publicKeyOrXRBAccount);
+  const pubKey = validateAccountKey(publicKeyOrXRBAccount);
   if (pubKey) {
     // it's a XRB account
     return nacl.sign.detached.verify(
@@ -294,13 +297,13 @@ const computeBlockHash = (_blockType, _parameters) => {
   let blockType = _blockType;
 
   if ((typeof parameters.destination !== 'undefined') && (parameters.destination.startsWith('xrb_'))) {
-    parameters.destination = accountKey(parameters.destination);
+    parameters.destination = validateAccountKey(parameters.destination);
   }
   if ((typeof parameters.representative !== 'undefined') && (parameters.representative.startsWith('xrb_'))) {
-    parameters.representative = accountKey(parameters.representative);
+    parameters.representative = validateAccountKey(parameters.representative);
   }
   if ((typeof parameters.account !== 'undefined') && (parameters.account.startsWith('xrb_'))) {
-    parameters.account = accountKey(parameters.account);
+    parameters.account = validateAccountKey(parameters.account);
   }
   if ((typeof parameters.type !== 'undefined') && (blockType == null)) {
     blockType = parameters.type;
