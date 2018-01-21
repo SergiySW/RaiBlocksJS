@@ -49,7 +49,8 @@
   "dependencies": {
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",
-    "blakejs": "^1.1.0"
+    "blakejs": "^1.1.0",
+    "tweetnacl": "https://github.com/jaimehgb/tweetnacl-js"
   },
   "lint-staged": {
     "*.js": [
@@ -61,9 +62,6 @@
     "testURL": "http://xrb.wallet.test",
     "testPathIgnorePatterns": [
       "<rootDir>/dist"
-    ],
-    "coveragePathIgnorePatterns": [
-      "<rootDir>/vendor"
     ],
     "coverageThreshold": {
       "global": {

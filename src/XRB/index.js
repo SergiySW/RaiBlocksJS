@@ -1,5 +1,5 @@
 import { blake2b, blake2bFinal, blake2bInit, blake2bUpdate } from 'blakejs';
-import nacl from '../../vendor/nacl';
+import nacl from '../../node_modules/tweetnacl/nacl';
 import {
   uint8ToUint4,
   uint4ToUint8,
