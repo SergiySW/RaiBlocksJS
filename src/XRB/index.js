@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { blake2b, blake2bFinal, blake2bInit, blake2bUpdate } from 'blakejs';
-import nacl from 'tweetnacl';
+import nacl from '../../vendor/nacl';
 import {
   uint8ToUint4,
   uint4ToUint8,
@@ -16,7 +16,10 @@ import {
 
 import { areArraysEqual, arrayCrop, arrayExtend } from '../utils/arrays';
 
-export const isValidHash = hash => /^[0123456789ABCDEF]+$/.test(hash) && hash.length === 64;
+export const isValidHash = (hash, bytes = 32) => {
+  if (bytes === 32) return /[0-9A-F]{64}/i.test(hash);
+  if (bytes === 64) return /[0-9A-F]{128}/i.test(hash);
+};
 
 // Use for RAW
 const minus = (base, _minus) => {
@@ -139,29 +142,28 @@ const powValidate = (powHex, hashHex) => {
 
 export const seedKey = (seedHex, index = 0) => {
   if (!isValidHash(seedHex)) {
-    throw new Error('Invalid seed');
+    throw new Error('Invalid: Seed is not a valid hash');
   }
+
+  if (!Number.isInteger(index)) throw new Error('Invalid: index is not an integer');
 
   const seed = hexToUint8(seedHex);
-  if (Number.isInteger(index)) {
-    const uint8 = intToUint8(index, 4);
-    const context = blake2bInit(32, null);
-    blake2bUpdate(context, seed);
-    blake2bUpdate(context, uint8.reverse());
-    const key = uint8ToHex(blake2bFinal(context));
-    return key;
-  }
+  const uint8 = intToUint8(index, 4);
+  const context = blake2bInit(32, null);
+  blake2bUpdate(context, seed);
+  blake2bUpdate(context, uint8.reverse());
 
-  throw new Error('Invalid index');
+  const key = uint8ToHex(blake2bFinal(context));
+  return key;
 };
 
-const checkSignature = (hexMessage, hexSignature, publicKeyOrXRBAccount) => {
-  if (!/[0-9A-F]{128}/i.test(hexSignature)) {
+export const checkSignature = (hexMessage, hexSignature, publicKeyOrXRBAccount) => {
+  if (!isValidHash(hexSignature, 64)) {
     throw new Error('Invalid signature. Needs to be a 64 byte hex encoded ed25519 signature.');
   }
 
-  if (/[0-9A-F]{64}/i.test(publicKeyOrXRBAccount)) {
-    // it's a 32 byte hex encoded key
+  // it's a 32 byte hex encoded key
+  if (isValidHash(publicKeyOrXRBAccount)) {
     return nacl.sign.detached.verify(
       hexToUint8(hexMessage),
       hexToUint8(hexSignature),
@@ -169,16 +171,15 @@ const checkSignature = (hexMessage, hexSignature, publicKeyOrXRBAccount) => {
     );
   }
 
+  // it's a XRB account
   const pubKey = getAccountKey(publicKeyOrXRBAccount);
   if (pubKey) {
-    // it's a XRB account
     return nacl.sign.detached.verify(
       hexToUint8(hexMessage),
       hexToUint8(hexSignature),
       hexToUint8(pubKey),
     );
   }
-  throw new Error('Invalid public key or XRB account.');
 };
 
 const publicFromPrivateKey = (secretKey) => {

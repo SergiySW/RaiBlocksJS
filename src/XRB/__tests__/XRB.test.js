@@ -1,4 +1,6 @@
-import { getAccountKey, getAccount, seedKey, isValidHash } from '../';
+
+
+import { getAccountKey, getAccount, seedKey, isValidHash, checkSignature } from '../';
 
 describe('isValidHash', () => {
   test('return false if if hash doesnt match regex', () => {
@@ -9,6 +11,17 @@ describe('isValidHash', () => {
   test('return false if hash is not 64 chars long', () => {
     const validatedHash = isValidHash('1234ADEFEFEF');
     expect(validatedHash).toBeFalsy();
+  });
+
+  test('return true if hash correct', () => {
+    const validatedHash = isValidHash('C008B814A7D269A1FA3C6528B19201A24D797912DB9996FF02A1FF356E45552B');
+    expect(validatedHash).toBeTruthy();
+  });
+
+  test('64 bytes: return true if hash correct', () => {
+    const hash = 'C008B814A7D269A1FA3C6528B19201A24D797912DB9996FF02A1FF356E45552BC008B814A7D269A1FA3C6528B19201A24D797912DB9996FF02A1FF356E45552B';
+    const validatedHash = isValidHash(hash, 64);
+    expect(validatedHash).toBeTruthy();
   });
 });
 
@@ -61,5 +74,45 @@ describe('getAccount', () => {
 });
 
 describe('seedKey', () => {
+  test('throws if seed is invalid', () => {
+    const test = () => seedKey('!008B814A7D269A1FA3C6528B19201A24D797912DB9996FF02A1FF356E45552B');
+    expect(test).toThrowError('Invalid: Seed is not a valid hash');
+  });
 
+  test('throws if index is not an integer', () => {
+    const test = () => seedKey('C008B814A7D269A1FA3C6528B19201A24D797912DB9996FF02A1FF356E45552B', null);
+    expect(test).toThrowError('Invalid: index is not an integer');
+  });
+
+  test('returns a seeded key', () => {
+    const key = seedKey('C008B814A7D269A1FA3C6528B19201A24D797912DB9996FF02A1FF356E45552B', 0);
+    expect(isValidHash(key)).toBeTruthy();
+  });
+});
+
+describe('checkSignature', () => {
+  const blockHash = 'B8C51B22BFE48B358C437BE5ACE3F203BD5938A5231F4F1C177488E879317B5E';
+  const account = 'xrb_39ymww61tksoddjh1e43mprw5r8uu1318it9z3agm7e6f96kg4ndqg9tuds4';
+  const pubKey = getAccountKey(account);
+  const signature = '0E5DC6C6CDBC96A9885B1DDB0E782BC04D9B2DCB107FDD4B8A3027695A3B3947BE8E6F413190AD304B8BC5129A50ECFB8DB918FAA3EEE2856C4449A329325E0A';
+
+  test('throws if signature is invalid', () => {
+    const test = () => checkSignature('!008B814A7D269A1FA3C6528B19201A24D797912DB9996FF02A1FF356E45552B');
+    expect(test).toThrowError('Invalid signature. Needs to be a 64 byte hex encoded ed25519 signature.');
+  });
+
+  test('throws if not an account or 32 byte key', () => {
+    const test = () => checkSignature('12323123', signature, '123241');
+    expect(test).toThrowError('Invalid account');
+  });
+
+  test('verifies hex encoded key', () => {
+    const verfication = checkSignature(blockHash, signature, account);
+    expect(verfication).toBeTruthy();
+  });
+
+  test('verifies account', () => {
+    const verfication = checkSignature(blockHash, signature, pubKey);
+    expect(verfication).toBeTruthy();
+  });
 });

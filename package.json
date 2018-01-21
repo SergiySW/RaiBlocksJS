@@ -49,8 +49,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",
-    "blakejs": "^1.1.0",
-    "tweetnacl": "^1.0.0"
+    "blakejs": "^1.1.0"
   },
   "lint-staged": {
     "*.js": [
