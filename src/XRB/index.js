@@ -17,10 +17,15 @@ import {
 import { areArraysEqual, arrayCrop, arrayExtend } from '../utils/arrays';
 
 export const isValidHash = (hash, bytes = 32) => {
+  if (bytes === 16) return /[0-9A-F]{32}\b/i.test(hash) && hash.length === (bytes * 2);
   if (bytes === 32) return /[0-9A-F]{64}\b/i.test(hash) && hash.length === (bytes * 2);
   if (bytes === 64) return /[0-9A-F]{128}/i.test(hash) && hash.length === (bytes * 2);
-  throw new Error(`Bytes must be 32 or 64, ${bytes} supplied`);
+  throw new Error(`Bytes must be 16, 32 or 64, ${bytes} supplied`);
 };
+
+export const isValidAccount = account =>
+  (account.startsWith('xrb_1') || account.startsWith('xrb_3')) && account.length === 64;
+
 
 // Use for RAW
 const minus = (base, _minus) => {
@@ -48,12 +53,7 @@ const rawToHex = (raw) => {
 };
 
 export const getAccountKey = (account) => {
-  if ((
-    !account.startsWith('xrb_1')
-    || !account.startsWith('xrb_3')
-  )
-    && (account.length !== 64)
-  ) {
+  if (!isValidAccount(account)) {
     throw new Error('Invalid account');
   }
 
@@ -90,55 +90,6 @@ const accountValidate = (account) => {
   const valid = getAccountKey(account);
   if (valid) return true;
   return false;
-};
-
-const powInitiate = (_threads, workerPath = '') => {
-  if (!window || !window.Worker || !window.navigator) return false;
-  let threads = _threads;
-  if (Number.isNaN(Number(threads))) {
-    threads = window.navigator.hardwareConcurrency - 1;
-  }
-  const workers = [];
-  for (let i = 0; i < threads; i += 1) {
-    workers[i] = new Worker(`${workerPath}rai.pow.js`);
-  }
-  return workers;
-};
-
-const powThreshold = (Uint8Array) => {
-  if (
-    (Uint8Array[0] === 255)
-    && (Uint8Array[1] === 255)
-    && (Uint8Array[2] === 255)
-    && (Uint8Array[3] >= 192)
-  ) {
-    return true;
-  }
-  return false;
-};
-
-const powValidate = (powHex, hashHex) => {
-  if (!isValidHash(hashHex)) {
-    throw new Error('Invalid: hash hex is not a valid hash');
-  }
-
-  const hash = hexToUint8(hashHex);
-  const isValidPOW = /^[0123456789ABCDEFabcdef]+$/.test(powHex);
-  if (isValidPOW && (powHex.length == 16)) {
-    const pow = hexToUint8(powHex);
-    const context = blake2bInit(8, null);
-    blake2bUpdate(context, pow.reverse());
-    blake2bUpdate(context, hash);
-    const check = blake2bFinal(context).reverse();
-
-    if (powThreshold(check)) {
-      return true;
-    }
-
-    return false;
-  }
-
-  throw new Error('Invalid work');
 };
 
 export const seedKey = (seedHex, index = 0) => {
@@ -205,25 +156,75 @@ export const signBlock = (blockHash, secretKey) => {
   return uint8ToHex(nacl.sign.detached(hexToUint8(blockHash), hexToUint8(secretKey)));
 };
 
-const seedKeys = (seedHex, count = 1) => {
+export const seedKeys = (seedHex, count = 1) => {
   if (!isValidHash(seedHex)) {
-    throw new Error('Invalid seed');
+    throw new Error('Invalid: Seed is not a valid hash');
+  }
+
+  if (!Number.isInteger(count)) {
+    throw new Error('Invalid: count is not an integer');
   }
 
   const seed = hexToUint8(seedHex);
-  if (Number.isInteger(count)) {
-    const keys = [];
-    for (let index = 0; index < count; index += 1) {
-      const uint8 = intToUint8(index, 4);
-      const context = blake2bInit(32, null);
-      blake2bUpdate(context, seed);
-      blake2bUpdate(context, uint8.reverse());
-      keys.push(uint8ToHex(blake2bFinal(context)));
-    }
-    return keys;
+
+  const keys = [];
+  for (let index = 0; index < count; index += 1) {
+    const uint8 = intToUint8(index, 4);
+    const context = blake2bInit(32, null);
+    blake2bUpdate(context, seed);
+    blake2bUpdate(context, uint8.reverse());
+    keys.push(uint8ToHex(blake2bFinal(context)));
+  }
+  return keys;
+};
+
+const powInitiate = (_threads, workerPath = '') => {
+  if (!window || !window.Worker || !window.navigator) return false;
+  let threads = _threads;
+  if (Number.isNaN(Number(threads))) {
+    threads = window.navigator.hardwareConcurrency - 1;
+  }
+  const workers = [];
+  for (let i = 0; i < threads; i += 1) {
+    workers[i] = new Worker(`${workerPath}rai.pow.js`);
+  }
+  return workers;
+};
+
+const powThreshold = (Uint8Array) => {
+  if (
+    (Uint8Array[0] === 255)
+    && (Uint8Array[1] === 255)
+    && (Uint8Array[2] === 255)
+    && (Uint8Array[3] >= 192)
+  ) {
+    return true;
+  }
+  return false;
+};
+
+const powValidate = (powHex, hashHex) => {
+  if (!isValidHash(hashHex)) {
+    throw new Error('Invalid: hash hex is not a valid hash');
   }
 
-  throw new Error('Invalid count');
+  const hash = hexToUint8(hashHex);
+  const isValidPOW = /^[0123456789ABCDEFabcdef]+$/.test(powHex);
+  if (isValidPOW && (powHex.length == 16)) {
+    const pow = hexToUint8(powHex);
+    const context = blake2bInit(8, null);
+    blake2bUpdate(context, pow.reverse());
+    blake2bUpdate(context, hash);
+    const check = blake2bFinal(context).reverse();
+
+    if (powThreshold(check)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  throw new Error('Invalid work');
 };
 
 const powTerminate = (workers) => {
@@ -240,7 +241,6 @@ const onWorkerMessage = (worker, workers, hash, callback) => (e) => {
     callback(result);
   } else worker.postMessage(hash);
 };
-
 
 const powCallback = (workers, hash, callback) => {
   if ((hash instanceof Uint8Array) && (hash.length === 32) && (typeof callback === 'function')) {
@@ -291,41 +291,53 @@ const pow = (hashHex, threads, callback, workerPath) => {
  * @returns {string} The block hash
  */
 
-const computeBlockHash = (_blockType, _parameters) => {
+export const computeBlockHash = (_blockType, _parameters) => {
   const parameters = _parameters;
   let blockType = _blockType;
 
-  if ((typeof parameters.destination !== 'undefined') && (parameters.destination.startsWith('xrb_'))) {
+  if (parameters.destination && isValidAccount(parameters.destination)) {
     parameters.destination = getAccountKey(parameters.destination);
   }
-  if ((typeof parameters.representative !== 'undefined') && (parameters.representative.startsWith('xrb_'))) {
+  if (parameters.representative && isValidAccount(parameters.representative)) {
     parameters.representative = getAccountKey(parameters.representative);
   }
-  if ((typeof parameters.account !== 'undefined') && (parameters.account.startsWith('xrb_'))) {
+  if (parameters.account && isValidAccount(parameters.account)) {
     parameters.account = getAccountKey(parameters.account);
   }
-  if ((typeof parameters.type !== 'undefined') && (blockType == null)) {
+  if (parameters.type && blockType === null) {
     blockType = parameters.type;
   }
 
-  if (
-    blockType === 'send' && (
-      !/[0-9A-F]{64}/i.test(parameters.previous) ||
-      !/[0-9A-F]{64}/i.test(parameters.destination) ||
-      !/[0-9A-F]{32}/i.test(parameters.balance)
-    ) || blockType === 'receive' && (
-      !/[0-9A-F]{64}/i.test(parameters.previous) ||
-      !/[0-9A-F]{64}/i.test(parameters.source)
-    ) || blockType === 'open' && (
-      !/[0-9A-F]{64}/i.test(parameters.source) ||
-      !/[0-9A-F]{64}/i.test(parameters.representative) ||
-      !/[0-9A-F]{64}/i.test(parameters.account)
-    ) || blockType === 'change' && (
-      !/[0-9A-F]{64}/i.test(parameters.previous) ||
-      !/[0-9A-F]{64}/i.test(parameters.representative)
-    )
-  ) {
-    throw new Error('Invalid parameters.');
+  if (blockType === 'send') {
+    if (
+      !isValidHash(parameters.previous)
+      || !isValidHash(parameters.destination)
+      || !isValidHash(parameters.balance, 16)
+    ) {
+      throw new Error('Invalid `send` parameters. Expected previous, destination and balance');
+    }
+  } else if (blockType === 'receive') {
+    if (
+      !isValidHash(parameters.previous)
+      || !isValidHash(parameters.source)
+    ) {
+      throw new Error('Invalid `receive` parameters. Expected previous and source');
+    }
+  } else if (blockType === 'open') {
+    if (
+      !isValidHash(parameters.source)
+      || !isValidHash(parameters.representative)
+      || !isValidHash(parameters.account)
+    ) {
+      throw new Error('Invalid `open` parameters. Expected source, representative, and account');
+    }
+  } else if (blockType === 'change') {
+    if (
+      !isValidHash(parameters.previous)
+      || !isValidHash(parameters.representative)
+    ) {
+      throw new Error('Invalid `change` parameters. Expected previous and representative');
+    }
   }
 
   let hash;
