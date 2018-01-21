@@ -1,6 +1,6 @@
 
 
-import { getAccountKey, getAccount, seedKey, isValidHash, checkSignature, publicFromPrivateKey, getAccountFromPrivateKey, signBlock, seedKeys, isValidAccount, computeBlockHash } from '../';
+import { getAccountKey, getAccount, seedKey, isValidHash, checkSignature, publicFromPrivateKey, getAccountFromPrivateKey, signBlock, seedKeys, isValidAccount, computeBlockHash, open, receive, change, send } from '../';
 
 describe('isValidAccount', () => {
   test('return false when account isnt 64 characters', () => {
@@ -343,6 +343,109 @@ describe('computeBlockHash', () => {
       };
       const hash = computeBlockHash('change', params);
       expect(isValidHash(hash)).toBeTruthy();
+    });
+  });
+});
+
+describe('open', () => {
+  const block = open({
+    privateKey: 'B8C51B22BFE48B358C437BE5ACE3F203BD5938A5231F4F1C177488E879317B5E',
+    work: '7b4199da8c51bac8',
+    source: 'A170D51B94E00371ACE76E35AC81DC9405D5D04D4CEBC399AEACE07AE05DD293',
+  });
+
+  describe('block with default representative', () => {
+    test('block.account is valid', () => {
+      expect(isValidHash(block.account)).toBeTruthy();
+    });
+    test('block.signature is valid', () => {
+      expect(isValidHash(block.signature, 64)).toBeTruthy();
+    });
+  });
+
+  describe('block with custom representative', () => {
+    block.representative = 'xrb_1awsn43we17c1oshdru4azeqjz9wii41dy8npubm4rg11so7dx3jtqgoeahy';
+    test('block.account is valid', () => {
+      expect(isValidHash(block.account)).toBeTruthy();
+    });
+    test('block.signature is valid', () => {
+      expect(isValidHash(block.signature, 64)).toBeTruthy();
+    });
+  });
+});
+
+describe('receive', () => {
+  const block = receive({
+    privateKey: 'B8C51B22BFE48B358C437BE5ACE3F203BD5938A5231F4F1C177488E879317B5E',
+    work: '7b4199da8c51bac8',
+    source: 'A170D51B94E00371ACE76E35AC81DC9405D5D04D4CEBC399AEACE07AE05DD293',
+    previous: '9B28339C2426642B11A8477F83CF40442CB13B89FEC8173673F8D1AF41FF2827',
+  });
+
+  test('block.signature is valid', () => {
+    expect(isValidHash(block.signature, 64)).toBeTruthy();
+  });
+});
+
+describe('change', () => {
+  const params = {
+    privateKey: 'B8C51B22BFE48B358C437BE5ACE3F203BD5938A5231F4F1C177488E879317B5E',
+    work: '7b4199da8c51bac8',
+    previous: '9B28339C2426642B11A8477F83CF40442CB13B89FEC8173673F8D1AF41FF2827',
+  };
+
+  describe('block with default representative', () => {
+    const block = change(params);
+    test('block.signature is valid', () => {
+      expect(isValidHash(block.signature, 64)).toBeTruthy();
+    });
+  });
+
+  describe('block with custom representative', () => {
+    params.representative = 'xrb_1awsn43we17c1oshdru4azeqjz9wii41dy8npubm4rg11so7dx3jtqgoeahy';
+    const block = change(params);
+    test('block.signature is valid', () => {
+      expect(isValidHash(block.signature, 64)).toBeTruthy();
+    });
+  });
+});
+
+describe('send', () => {
+  const params = {
+    privateKey: 'B8C51B22BFE48B358C437BE5ACE3F203BD5938A5231F4F1C177488E879317B5E',
+    work: '7b4199da8c51bac8',
+    previous: '9B28339C2426642B11A8477F83CF40442CB13B89FEC8173673F8D1AF41FF2827',
+    destination: 'xrb_3dcfozsmekr1tr9skf1oa5wbgmxt81qepfdnt7zicq5x3hk65fg4fqj58mbr',
+    oldBalance: '423000000000000000000000000000000',
+    amount: '3000000000000000000000000000000',
+  };
+
+  describe('block with default representative', () => {
+    const block = send(params);
+    test('block.signature is valid', () => {
+      expect(isValidHash(block.signature, 64)).toBeTruthy();
+    });
+  });
+
+  describe('block with custom unit', () => {
+    params.unit = 'XRB';
+    params.oldBalance = '423';
+    params.amount = '3';
+    const block = send(params);
+
+    test('block.signature is valid', () => {
+      expect(isValidHash(block.signature, 64)).toBeTruthy();
+    });
+  });
+
+  describe('sending more than availble in account', () => {
+    params.unit = 'XRB';
+    params.oldBalance = '423';
+    params.amount = '432';
+    const testCase = () => send(params);
+
+    test('it will throw an error', () => {
+      expect(testCase).toThrowError('Subtraction will result in negative value');
     });
   });
 });

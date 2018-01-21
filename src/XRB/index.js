@@ -13,7 +13,7 @@ import {
   hexToUint8,
   intToUint8,
 } from '../utils/uint';
-
+import { convertToRaw } from '../utils/getConversion';
 import { areArraysEqual, arrayCrop, arrayExtend } from '../utils/arrays';
 
 export const isValidHash = (hash, bytes = 32) => {
@@ -28,11 +28,11 @@ export const isValidAccount = account =>
 
 
 // Use for RAW
-const minus = (base, _minus) => {
+const subtract = (base, minus) => {
   let value = new BigNumber(base.toString());
-  const bigMinus = new BigNumber(_minus.toString());
+  const bigMinus = new BigNumber(minus.toString());
   if (bigMinus.greaterThan(value)) {
-    throw new Error('Incorrect amount');
+    throw new Error('Subtraction will result in negative value');
   }
 
   value = value.minus(bigMinus);
@@ -86,12 +86,6 @@ export const getAccount = (key) => {
   return account;
 };
 
-const accountValidate = (account) => {
-  const valid = getAccountKey(account);
-  if (valid) return true;
-  return false;
-};
-
 export const seedKey = (seedHex, index = 0) => {
   if (!isValidHash(seedHex)) {
     throw new Error('Invalid: Seed is not a valid hash');
@@ -125,13 +119,11 @@ export const checkSignature = (hexMessage, hexSignature, publicKeyOrXRBAccount) 
 
   // it's a XRB account
   const pubKey = getAccountKey(publicKeyOrXRBAccount);
-  if (pubKey) {
-    return nacl.sign.detached.verify(
-      hexToUint8(hexMessage),
-      hexToUint8(hexSignature),
-      hexToUint8(pubKey),
-    );
-  }
+  return nacl.sign.detached.verify(
+    hexToUint8(hexMessage),
+    hexToUint8(hexSignature),
+    hexToUint8(pubKey),
+  );
 };
 
 export const publicFromPrivateKey = (secretKey) => {
@@ -210,7 +202,7 @@ const powValidate = (powHex, hashHex) => {
 
   const hash = hexToUint8(hashHex);
   const isValidPOW = /^[0123456789ABCDEFabcdef]+$/.test(powHex);
-  if (isValidPOW && (powHex.length == 16)) {
+  if (isValidPOW && (powHex.length === 16)) {
     const pow = hexToUint8(powHex);
     const context = blake2bInit(8, null);
     blake2bUpdate(context, pow.reverse());
@@ -257,7 +249,7 @@ const powCallback = (workers, hash, callback) => {
 };
 
 const powStart = (workers, hash) => {
-  if ((hash instanceof Uint8Array) && (hash.length == 32)) {
+  if ((hash instanceof Uint8Array) && (hash.length === 32)) {
     const threads = workers.length;
     for (let i = 0; i < threads; i += 1) {
       workers[i].postMessage(hash);
@@ -381,61 +373,87 @@ export const computeBlockHash = (_blockType, _parameters) => {
 };
 
 
-const open = (privateKey, work, source, representative = 'xrb_16k5pimotz9zehjk795wa4qcx54mtusk8hc5mdsjgy57gnhbj3hj6zaib4ic') => {
-  const block = {};
-  block.type = 'open';
-  block.source = source;
-  block.representative = representative;
+export const open = ({
+  privateKey,
+  work,
+  source,
+  representative = 'xrb_16k5pimotz9zehjk795wa4qcx54mtusk8hc5mdsjgy57gnhbj3hj6zaib4ic',
+}) => {
+  const block = {
+    type: 'open',
+    source,
+    representative,
+    work,
+  };
+
   block.account = getAccountFromPrivateKey(privateKey);
   const hash = computeBlockHash(null, block);
-  block.account = getAccountFromPrivateKey(privateKey);
-  block.work = work;
   block.signature = signBlock(hash, privateKey);
-  return (block);
+  return block;
 };
 
-const receive = (privateKey, work, source, previous) => {
-  const block = {};
-  block.type = 'receive';
-  block.source = source;
-  block.previous = previous;
+export const receive = ({
+  privateKey,
+  work,
+  source,
+  previous,
+}) => {
+  const block = {
+    type: 'receive',
+    source,
+    previous,
+    work,
+  };
+
   const hash = computeBlockHash(null, block);
-  block.work = work;
   block.signature = signBlock(hash, privateKey);
-  return (block);
+  return block;
 };
 
-const change = (privateKey, work, previous, representative = 'xrb_16k5pimotz9zehjk795wa4qcx54mtusk8hc5mdsjgy57gnhbj3hj6zaib4ic') => {
-  const block = {};
-  block.type = 'change';
-  block.previous = previous;
-  block.representative = representative;
+export const change = ({
+  privateKey,
+  work,
+  previous,
+  representative = 'xrb_16k5pimotz9zehjk795wa4qcx54mtusk8hc5mdsjgy57gnhbj3hj6zaib4ic',
+}) => {
+  const block = {
+    type: 'change',
+    work,
+    previous,
+    representative,
+  };
   const hash = computeBlockHash(null, block);
-  block.representative = representative;
-  block.work = work;
   block.signature = signBlock(hash, privateKey);
   return (block);
 };
 
 // new_balance in RAW
-const send = (privateKey, work, previous, destination, oldBalance, amount, unit = 'raw') => {
+export const send = ({
+  privateKey,
+  work,
+  previous,
+  destination,
+  oldBalance,
+  amount,
+  unit = 'raw',
+}) => {
   const block = {};
   block.type = 'send';
   block.previous = previous;
   block.destination = destination;
-  const oldRaw = unit(oldBalance, unit, 'raw');
-  const amountRaw = unit(amount, unit, 'raw');
-  const balance = minus(oldRaw, amountRaw);
+  block.work = work;
+
+  const oldRaw = convertToRaw(oldBalance, unit);
+  const amountRaw = convertToRaw(amount, unit);
+  const balance = subtract(oldRaw, amountRaw);
+
   block.balance = rawToHex(balance);
   const hash = computeBlockHash(null, block);
-  block.destination = destination;
-  block.work = work;
   block.signature = signBlock(hash, privateKey);
-  return (block);
+  return block;
 };
 
 export default {
-  accountValidate,
   change,
   checkSignature,
   open,

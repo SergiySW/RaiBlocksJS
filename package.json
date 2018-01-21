@@ -60,8 +60,10 @@
   "jest": {
     "testURL": "http://xrb.wallet.test",
     "testPathIgnorePatterns": [
-      "<rootDir>/dist/",
-      "<rootDir>/vendor/"
+      "<rootDir>/dist"
+    ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/vendor"
     ],
     "coverageThreshold": {
       "global": {
