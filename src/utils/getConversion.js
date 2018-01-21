@@ -29,6 +29,9 @@ export default function getConversion({ value, from, to }) {
   return getOutput.toFixed();
 }
 
+export const convertToRaw = (value, unit) =>
+  getConversion({ value, from: unit, to: 'raw' });
+
 export const convertFromRaw = (value, unit) =>
   getConversion({ value, from: 'raw', to: unit });
 

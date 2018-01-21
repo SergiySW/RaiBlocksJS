@@ -1,4 +1,4 @@
-import getConversion, { convertFromRaw } from '../getConversion';
+import getConversion, { convertFromRaw, convertToRaw } from '../getConversion';
 
 describe('getConversion', () => {
   test('raw -> raw', () => {
@@ -78,5 +78,17 @@ describe('convertFromRaw', () => {
   test('mrai', () => {
     const actual = convertFromRaw(1234, 'mrai');
     expect(actual).toBe('0.000000000000000001234');
+  });
+});
+
+describe('convertToRaw', () => {
+  test('XRB', () => {
+    const actual = convertToRaw('0.000000000000000000000000001234', 'XRB');
+    expect(actual).toBe('1234');
+  });
+
+  test('mrai', () => {
+    const actual = convertToRaw('0.000000000000000001234', 'mrai');
+    expect(actual).toBe('1234');
   });
 });
