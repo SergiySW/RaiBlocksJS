@@ -17,8 +17,9 @@ import {
 import { areArraysEqual, arrayCrop, arrayExtend } from '../utils/arrays';
 
 export const isValidHash = (hash, bytes = 32) => {
-  if (bytes === 32) return /[0-9A-F]{64}/i.test(hash);
-  if (bytes === 64) return /[0-9A-F]{128}/i.test(hash);
+  if (bytes === 32) return /[0-9A-F]{64}\b/i.test(hash) && hash.length === (bytes * 2);
+  if (bytes === 64) return /[0-9A-F]{128}/i.test(hash) && hash.length === (bytes * 2);
+  throw new Error(`Bytes must be 32 or 64, ${bytes} supplied`);
 };
 
 // Use for RAW
@@ -182,17 +183,17 @@ export const checkSignature = (hexMessage, hexSignature, publicKeyOrXRBAccount) 
   }
 };
 
-const publicFromPrivateKey = (secretKey) => {
-  if (!/[0-9A-F]{64}/i.test(secretKey)) {
+export const publicFromPrivateKey = (secretKey) => {
+  if (!isValidHash(secretKey)) {
     throw new Error('Invalid secret key. Should be a 32 byte hex string.');
   }
 
   return uint8ToHex(nacl.sign.keyPair.fromSecretKey(hexToUint8(secretKey)).publicKey);
 };
 
-const keyAccount = privateKey => getAccount(publicFromPrivateKey(privateKey));
+export const getAccountFromPrivateKey = privateKey => getAccount(publicFromPrivateKey(privateKey));
 
-const signBlock = (blockHash, secretKey) => {
+export const signBlock = (blockHash, secretKey) => {
   if (!/[0-9A-F]{64}/i.test(secretKey)) {
     throw new Error('Invalid secret key. Should be a 32 byte hex string.');
   }
@@ -373,9 +374,9 @@ const open = (privateKey, work, source, representative = 'xrb_16k5pimotz9zehjk79
   block.type = 'open';
   block.source = source;
   block.representative = representative;
-  block.account = keyAccount(privateKey);
+  block.account = getAccountFromPrivateKey(privateKey);
   const hash = computeBlockHash(null, block);
-  block.account = keyAccount(privateKey);
+  block.account = getAccountFromPrivateKey(privateKey);
   block.work = work;
   block.signature = signBlock(hash, privateKey);
   return (block);

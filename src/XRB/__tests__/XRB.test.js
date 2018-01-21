@@ -1,8 +1,13 @@
 
 
-import { getAccountKey, getAccount, seedKey, isValidHash, checkSignature } from '../';
+import { getAccountKey, getAccount, seedKey, isValidHash, checkSignature, publicFromPrivateKey, getAccountFromPrivateKey, signBlock } from '../';
 
 describe('isValidHash', () => {
+  test('throw error if bytes isnt 32 or 64', () => {
+    const test = () => isValidHash('C008B814A7D269A1FA3C6528B19201A24D797912DB9996FF02A1FF356E45552B', 33);
+    expect(test).toThrowError('Bytes must be 32 or 64, 33 supplied');
+  });
+
   test('return false if if hash doesnt match regex', () => {
     const validatedHash = isValidHash('!008B814A7D269A1FA3C6528B19201A24D797912DB9996FF02A1FF356E45552B');
     expect(validatedHash).toBeFalsy();
@@ -114,5 +119,39 @@ describe('checkSignature', () => {
   test('verifies account', () => {
     const verfication = checkSignature(blockHash, signature, pubKey);
     expect(verfication).toBeTruthy();
+  });
+});
+
+describe('publicFromPrivateKey', () => {
+  test('throws if not an account or 32 byte key', () => {
+    const test = () => publicFromPrivateKey('12323123');
+    expect(test).toThrowError('Invalid secret key. Should be a 32 byte hex string.');
+  });
+  test('return public key', () => {
+    const key = publicFromPrivateKey('B8C51B22BFE48B358C437BE5ACE3F203BD5938A5231F4F1C177488E879317B5E');
+    expect(isValidHash(key)).toBeTruthy();
+  });
+});
+
+describe('getAccountFromPrivateKey', () => {
+  test('return account', () => {
+    const key = getAccountFromPrivateKey('B8C51B22BFE48B358C437BE5ACE3F203BD5938A5231F4F1C177488E879317B5E');
+    expect(key.substr(0, 3)).toBe('xrb');
+  });
+});
+
+describe('signBlock', () => {
+  test('throws if secret key is invalid', () => {
+    const test = () => signBlock('B8C51B22BFE48B358C437BE5ACE3F203BD5938A5231F4F1C177488E879317B5E', '123342');
+    expect(test).toThrowError('Invalid secret key. Should be a 32 byte hex string.');
+  });
+  test('throws if block hash is invalid', () => {
+    const test = () => signBlock('123232', 'B8C51B22BFE48B358C437BE5ACE3F203BD5938A5231F4F1C177488E879317B5E');
+    expect(test).toThrowError('Invalid block hash. Should be a 32 byte hex string.');
+  });
+  test('return public key', () => {
+    const key = signBlock('B8C51B22BFE48B358C437BE5ACE3F203BD5938A5231F4F1C177488E879317B5E', 'B8C51B22BFE48B358C437BE5ACE3F203BD5938A5231F4F1C177488E879317B5E');
+    console.log(key.length);
+    expect(isValidHash(key, 64)).toBeTruthy();
   });
 });
