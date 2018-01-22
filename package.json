@@ -50,7 +50,9 @@
     "axios": "^0.17.1",
     "bignumber.js": "^5.0.0",
     "blakejs": "^1.1.0",
-    "tweetnacl": "https://github.com/jaimehgb/tweetnacl-js"
+    "cpus": "^1.0.0",
+    "tweetnacl": "https://github.com/jaimehgb/tweetnacl-js",
+    "workerpool": "^2.3.0"
   },
   "lint-staged": {
     "*.js": [
