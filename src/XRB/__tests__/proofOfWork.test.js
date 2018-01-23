@@ -2,13 +2,23 @@
  * @jest-environment node
  */
 
-import runPowWorkers from '../proofOfWork';
+import runPowWorkers, { spinUpWorkers } from '../proofOfWork';
 
 beforeAll(() => {
   jest.setTimeout(20000);
 });
 
 describe('proofOfWork', () => {
+  test('spinUpWorkers', async () => {
+    const result = await spinUpWorkers({
+      scriptPath: `${__dirname}/mockWorker.js`,
+      functionName: 'add',
+      functionArgs: [1, 2],
+      errorMessage: 'Error: problem adding',
+    });
+    expect(result).toBe(3);
+  });
+
   describe('runPowWorkers', () => {
     test('throws if hashHex is invalid', async () => {
       expect.assertions(1);
