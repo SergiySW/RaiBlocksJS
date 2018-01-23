@@ -4,14 +4,18 @@ import workerPool from 'workerpool';
 import { isValidHash } from './utils';
 import { hexToUint8 } from '../utils/uint';
 
-function threshold(Uint8Array) {
-  return (
-    Uint8Array[0] === 255
-    && Uint8Array[1] === 255
-    && Uint8Array[2] === 255
-    && Uint8Array[3] >= 192
-  );
-}
+const isValidPOW = powHex => /^[0123456789ABCDEFabcdef]+$/.test(powHex) && powHex.length === 16;
+
+const isValidHashArray = hash => hash instanceof Uint8Array && hash.length === 32;
+
+const noop = () => {};
+
+export const powThreshold = Uint8Array => (
+  Uint8Array[0] === 255
+  && Uint8Array[1] === 255
+  && Uint8Array[2] === 255
+  && Uint8Array[3] >= 192
+);
 
 function randomUint() {
   const array = new Uint8Array(8);
@@ -33,7 +37,7 @@ function generator256(hash) {
   return false;
 }
 
-onmessage = function (ev) {
+const onmessage = function (ev) {
   for (let i = 0; i < 4096; i++) {
     const generate = generator256(ev.data);
     if (generate) {
@@ -43,6 +47,8 @@ onmessage = function (ev) {
   }
   postMessage(false);
 };
+
+// ------------------------------------------------------
 
 const powInitiate = (_threads, workerPath = '') => {
   let threads = _threads;
@@ -56,40 +62,25 @@ const powInitiate = (_threads, workerPath = '') => {
   return workers;
 };
 
-const powThreshold = (Uint8Array) => {
-  if (
-    (Uint8Array[0] === 255)
-    && (Uint8Array[1] === 255)
-    && (Uint8Array[2] === 255)
-    && (Uint8Array[3] >= 192)
-  ) {
-    return true;
-  }
-  return false;
-};
-
 export const powValidate = (powHex, hashHex) => {
   if (!isValidHash(hashHex)) {
     throw new Error('Invalid: hash hex is not a valid hash');
   }
+  if (!isValidPOW(powHex)) throw new Error('Invalid work');
 
   const hash = hexToUint8(hashHex);
-  const isValidPOW = /^[0123456789ABCDEFabcdef]+$/.test(powHex);
-  if (isValidPOW && (powHex.length === 16)) {
-    const pow = hexToUint8(powHex);
-    const context = blake2bInit(8, null);
-    blake2bUpdate(context, pow.reverse());
-    blake2bUpdate(context, hash);
-    const check = blake2bFinal(context).reverse();
+  const pow = hexToUint8(powHex);
+  const context = blake2bInit(8, null);
 
-    if (powThreshold(check)) {
-      return true;
-    }
+  blake2bUpdate(context, pow.reverse());
+  blake2bUpdate(context, hash);
+  const check = blake2bFinal(context).reverse();
 
-    return false;
+  if (powThreshold(check)) {
+    return true;
   }
 
-  throw new Error('Invalid work');
+  return false;
 };
 
 const powTerminate = (workers) => {
@@ -107,34 +98,31 @@ const onWorkerMessage = (worker, workers, hash, callback) => (e) => {
   } else worker.postMessage(hash);
 };
 
-const powCallback = (workers, hash, callback) => {
-  if ((hash instanceof Uint8Array) && (hash.length === 32) && (typeof callback === 'function')) {
-    const threads = workers.length;
-    for (let i = 0; i < threads; i += 1) {
-      const worker = workers[i];
-      worker.onmessage = onWorkerMessage(worker, workers, hash, callback);
-    }
-  } else if (typeof callback !== 'function') {
-    throw new Error('Invalid callback function');
-  } else {
+export const powCallback = (workers, hash, callback = noop) => {
+  if (!isValidHashArray(hash)) {
     throw new Error('Invalid hash array');
+  }
+  const threads = workers.length;
+  for (let i = 0; i < threads; i += 1) {
+    const worker = workers[i];
+    worker.onmessage = onWorkerMessage(worker, workers, hash, callback);
   }
 };
 
-const powStart = (workers, hash) => {
-  if ((hash instanceof Uint8Array) && (hash.length === 32)) {
-    const threads = workers.length;
-    for (let i = 0; i < threads; i += 1) {
-      workers[i].postMessage(hash);
-    }
-  } else {
+export const powStart = (workers, hash) => {
+  if (!isValidHashArray(hash)) {
     throw new Error('Invalid hash array');
+  }
+
+  const threads = workers.length;
+  for (let i = 0; i < threads; i += 1) {
+    workers[i].postMessage(hash);
   }
 };
 
 export default (hashHex, threads, callback, workerPath) => {
   if (!isValidHash(hashHex)) {
-    throw new Error('Invalid hash');
+    throw new Error('Invalid: hash hex is not a valid hash');
   }
 
   const hash = hexToUint8(hashHex);
