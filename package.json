@@ -51,6 +51,7 @@
     "bignumber.js": "^5.0.0",
     "blakejs": "^1.1.0",
     "cpus": "^1.0.0",
+    "get-random-values": "^1.2.0",
     "tweetnacl": "https://github.com/jaimehgb/tweetnacl-js",
     "workerpool": "^2.3.0"
   },

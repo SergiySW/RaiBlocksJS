@@ -1,6 +1,7 @@
 import { blake2bInit, blake2bUpdate, blake2bFinal } from 'blakejs';
 import cpus from 'cpus';
 import workerPool from 'workerpool';
+import getRandomValues from 'get-random-values';
 import { isValidHash } from './utils';
 import { hexToUint8 } from '../utils/uint';
 
@@ -19,7 +20,7 @@ export const powThreshold = Uint8Array => (
 
 function randomUint() {
   const array = new Uint8Array(8);
-  self.crypto.getRandomValues(array);
+  getRandomValues(array);
   return array;
 }
 
@@ -31,7 +32,7 @@ function generator256(hash) {
     blake2bUpdate(context, random);
     blake2bUpdate(context, hash);
     const blakeRandom = blake2bFinal(context).reverse();
-    const check = threshold(blakeRandom);
+    const check = powThreshold(blakeRandom);
     if (check) return random.reverse();
   }
   return false;
@@ -79,7 +80,6 @@ export const powValidate = (powHex, hashHex) => {
   if (powThreshold(check)) {
     return true;
   }
-
   return false;
 };
 
