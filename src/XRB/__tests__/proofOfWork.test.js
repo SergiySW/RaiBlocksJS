@@ -2,6 +2,7 @@
  * @jest-environment node
  */
 
+import path from 'path';
 import runPowWorkers, { spinUpWorkers } from '../proofOfWork';
 
 beforeAll(() => {
@@ -11,7 +12,7 @@ beforeAll(() => {
 describe('proofOfWork', () => {
   test('spinUpWorkers', async () => {
     const result = await spinUpWorkers({
-      scriptPath: `${__dirname}/mockWorker.js`,
+      scriptPath: path.resolve(__dirname, '../../../', 'mocks', 'mockWorker.js'),
       functionName: 'add',
       functionArgs: [1, 2],
       errorMessage: 'Error: problem adding',
@@ -40,7 +41,7 @@ describe('proofOfWork', () => {
       }
     });
 
-    test('run workers with default 4096 attempts', async () => {
+    test.skip('run workers with default 4096 attempts', async () => {
       try {
         await runPowWorkers({
           hashHex: 'CB69CCAF7B573DA26158DFC815F04C2830A85D402553D25D06558CE7657C1337',
@@ -51,4 +52,3 @@ describe('proofOfWork', () => {
     });
   });
 });
-

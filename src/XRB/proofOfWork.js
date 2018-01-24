@@ -5,7 +5,7 @@ import { hexToUint8 } from '../utils/uint';
 export const spinUpWorkers = async ({
   scriptPath,
   functionName,
-  functionArgs = [],
+  functionArgs,
   threads = null,
   errorMessage,
 }) => {
