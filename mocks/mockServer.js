@@ -11,6 +11,13 @@ const success = ({ request, response }) => {
     .reply(200, convertObjectStringNumbersToNumbers(response));
 };
 
+const error = ({ request }) => {
+  nock(testURL)
+    .post('/', convertObjectNumbersToStrings(request))
+    .replyWithError('Error!');
+};
+
 export default {
   success,
+  error,
 };
