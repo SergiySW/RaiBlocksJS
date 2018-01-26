@@ -90,8 +90,8 @@ var wallet = prompt( " Enter wallet from config.json "); // replace promt with y
 var host = "http://localhost:7076"; // default host
 var rai = new Rai(host); // connection
 
-var hash_explorer = "https://raiblockscommunity.net/explorer/index.php?h=";
-var acc_explorer = "https://raiblockscommunity.net/account/index.php?acc=";
+var hash_explorer = "https://raiblocks.net/explorer/index.php?h=";
+var acc_explorer = "https://raiblocks.net/account/index.php?acc=";
 
 // Initialization global variables
 rai.initialize();
@@ -128,7 +128,7 @@ function check_blocks_callback(response) {
 function blocks_callback(response) {
 	block_count = response.count;
 	$('#block_count').append(block_count);
-	community.json("https://raiblockscommunity.net/page/summary.php?json=1", JSON.stringify({}), check_blocks_callback);
+	community.json("https://raiblocks.net/page/summary.php?json=1", JSON.stringify({}), check_blocks_callback);
 }
 rai.rpc(JSON.stringify({"action":"block_count"}), blocks_callback);
 

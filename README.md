@@ -8,7 +8,7 @@ If your node/wallet version < 7.6.0 use file versions uploaded before 15/01/2017
 * **rai.rpc.js** contains very basic RPC request tool + all RPC commands as JS functions
 * ~~**rai.core.js** contains all RPC commands as JS functions~~ merged with rai.rpc.js
 * **rai.extended.js** contains some extended functions not available in current RPC implementation
-* **rai.community.js** contains requests to RaiBlocksCommunity.net website
+* **rai.community.js** contains requests to RaiBlocks.net website
 * **sample.html** RaiBlocksJS tech demo wallet skeleton
 
 # Usage sample
