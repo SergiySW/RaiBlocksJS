@@ -63,8 +63,9 @@ const rai = new Rai('https://xrb.example-node.io:3000');
   ```
 
 # Roadmap
-* Add 'extended' features from https://github.com/SergiySW/RaiBlocksJS/blob/master/rai.extended.js
-* Finish documentation
+- [x] Mercury ~~Add 'extended' features from https://github.com/SergiySW/RaiBlocksJS/blob/master/rai.extended.js~~
+- [ ] convert to yarn workspaces and create package for bootstrap project
+- [ ] Finish documentation
 
 
 # Methods
