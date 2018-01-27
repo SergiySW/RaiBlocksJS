@@ -15,6 +15,7 @@ import {
 import { isValidAccount, isValidHash, subtract, rawToHex } from './utils';
 import { convertToRaw } from '../utils/getConversion';
 import { areArraysEqual, arrayCrop, arrayExtend } from '../utils/arrays';
+import proofOfWork from './proofOfWork';
 
 export const getAccountKey = (account) => {
   if (!isValidAccount(account)) {
@@ -320,6 +321,7 @@ export default {
   change,
   checkSignature,
   open,
+  proofOfWork,
   receive,
   seedKey,
   seedKeys,

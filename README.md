@@ -69,126 +69,138 @@ const rai = new Rai('https://xrb.example-node.io:3000');
 
 # Methods
   ## rai.account
-  * ##### balance()
-  * ##### blockCount()
-  * ##### create()
-  * ##### info()
-  * ##### history()
-  * ##### get()
-  * ##### key()
-  * ##### list()
-  * ##### move()
-  * ##### remove()
-  * ##### getRepresentative()
-  * ##### setRepresentative()
-  * ##### weight()
+  #### balance()
+  #### blockCount()
+  #### create()
+  #### info()
+  #### history()
+  #### get()
+  #### key()
+  #### list()
+  #### move()
+  #### remove()
+  #### getRepresentative()
+  #### setRepresentative()
+  #### weight()
 
   ## rai.accounts
-  * ##### balances()
-  * ##### create()
-  * ##### frontiers()
-  * ##### pending()
+  #### balances()
+  #### create()
+  #### frontiers()
+  #### pending()
 
   ## rai.blocks
-  * ##### account()
-  * ##### count: getCount()
-  * ##### countByType()
-  * ##### chain()
-  * ##### create()
-  * ##### process()
-  * ##### get()
+  #### account()
+  #### count: getCount()
+  #### countByType()
+  #### chain()
+  #### create()
+  #### process()
+  #### get()
 
   ## rai.bootstrap()
-  #####
+  ####
 
   ## rai.delegators
-  * ##### count()
-  * ##### get()
+  #### count()
+  #### get()
 
   ## rai.frontiers
-  * ##### count: ()
-  * ##### get()
+  #### count: ()
+  #### get()
 
   ## rai.keys
-  * ##### create()
-  * ##### deterministic()
-  * ##### expand()
+  #### create()
+  #### deterministic()
+  #### expand()
 
   ## rai.ledger
-  * ##### get()
-  * ##### history()
-  * ##### succesors()
+  #### get()
+  #### history()
+  #### succesors()
 
   ## rai.network
-  * ##### availableSupply()
-  * ##### keepAlive()
-  * ##### republish()
+  #### availableSupply()
+  #### keepAlive()
+  #### republish()
 
   ## rai.node
-  * ##### version()
-  * ##### stop()
+  #### version()
+  #### stop()
 
   ## rai.payment
-  * ##### begin()
-  * ##### init()
-  * ##### end()
-  * ##### wait()
+  #### begin()
+  #### init()
+  #### end()
+  #### wait()
 
   ## rai.peers
-  * ##### addWorkPeer()
-  * ##### getWorkPeers()
-  * ##### clearWorkPeers()
-  * ##### get()
+  #### addWorkPeer()
+  #### getWorkPeers()
+  #### clearWorkPeers()
+  #### get()
 
   ## rai.pending
-  * ##### get()
-  * ##### exists()
-  * ##### search()
+  #### get()
+  #### exists()
+  #### search()
 
   ## rai.proofOfWork
-  * ##### cancel()
-  * ##### get()
-  * ##### generate()
-  * ##### set()
+  #### cancel()
+  #### get()
+  #### generate()
+  #### set()
 
   ## rai.receive
-  * ##### get()
-  * ##### minimum()
-  * ##### setMinimum()
+  #### get()
+  #### minimum()
+  #### setMinimum()
 
   ## rai.representatives
-  * ##### get()
-  * ##### wallet()
-  * ##### walletSet()
+  #### get()
+  #### wallet()
+  #### walletSet()
 
   ## rai.send()
 
   ## rai.unchecked
-  * ##### clear()
-  * ##### get()
-  * ##### keys()
-  * ##### list()
+  #### clear()
+  #### get()
+  #### keys()
+  #### list()
 
   ## rai.wallet
-  * ##### add()
-  * ##### balanceTotal()
-  * ##### balances()
-  * ##### changeSeed()
-  * ##### contains()
-  * ##### create()
-  * ##### destroy()
-  * ##### export: exportWallet()
-  * ##### frontiers()
-  * ##### locked()
-  * ##### passwordChange()
-  * ##### passwordEnter()
-  * ##### passwordValid()
-  * ##### pending()
-  * ##### getRepresentative()
-  * ##### setRepresentative()
-  * ##### republish()
-  * ##### unlock()
-  * ##### workGet()
+  #### add()
+  #### balanceTotal()
+  #### balances()
+  #### changeSeed()
+  #### contains()
+  #### create()
+  #### destroy()
+  #### export: exportWallet()
+  #### frontiers()
+  #### locked()
+  #### passwordChange()
+  #### passwordEnter()
+  #### passwordValid()
+  #### pending()
+  #### getRepresentative()
+  #### setRepresentative()
+  #### republish()
+  #### unlock()
+  #### workGet()
+
+# Extended Methods
+  ## rai.extended
+  #### change()
+  #### checkSignature()
+  #### open()
+  #### proofOfWork()
+  #### receive()
+  #### seedKey()
+  #### seedKeys()
+  #### send()
+
 
 RPC improvement progress here:
 https://github.com/clemahieu/raiblocks/issues/29

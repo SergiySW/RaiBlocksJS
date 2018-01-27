@@ -32,4 +32,25 @@ describe('Rai', () => {
     });
     expect(actual).toBe('0.000000000000000000000000001234');
   });
+
+  test('extended methods are avaliable', () => {
+    const expectedMethodNames = [
+      'change',
+      'checkSignature',
+      'open',
+      'proofOfWork',
+      'receive',
+      'seedKey',
+      'seedKeys',
+      'send',
+    ];
+
+    const actualMethodNames = Object.keys(rai.extended);
+
+    expect(expectedMethodNames).toEqual(actualMethodNames);
+
+    actualMethodNames.forEach((method) => {
+      expect(typeof rai.extended[method]).toBe('function');
+    });
+  });
 });

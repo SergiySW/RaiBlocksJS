@@ -22,6 +22,7 @@
 
 import axios from 'axios';
 import methods from './methods';
+import extendedMethods from '../extended';
 import removeEmptyObjectProperties from '../utils/removeEmptyObjectProperties';
 import convertObjectNumbersToStrings from '../utils/convertObjectNumbersToStrings';
 import convertObjectStringNumbersToNumbers from '../utils/convertObjectStringNumbersToNumbers';
@@ -33,6 +34,12 @@ export default class Rai {
 
     Object.keys(methods).forEach((method) => {
       this[method] = methods[method].call(this, this.rpc);
+    });
+
+    this.extended = {};
+
+    Object.keys(extendedMethods).forEach((method) => {
+      this.extended[method] = extendedMethods[method].bind(this);
     });
 
     this.getConversion = getConversion;
