@@ -1,4 +1,4 @@
-import Rai from '../src/Rai';
+import Rai from '../dist/build';
 
 /*
   Note: in order for this to work, you'll need to be running a node locally on 127.0.0.0.1:7076

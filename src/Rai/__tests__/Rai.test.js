@@ -38,7 +38,6 @@ describe('Rai', () => {
       'change',
       'checkSignature',
       'open',
-      'proofOfWork',
       'receive',
       'seedKey',
       'seedKeys',
