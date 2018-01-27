@@ -62,11 +62,6 @@ const rai = new Rai('https://xrb.example-node.io:3000');
     const { default: Rai } = require('raiblocks-js');
   ```
 
-# Roadmap
-- [x] Mercury ~~Add 'extended' features from https://github.com/SergiySW/RaiBlocksJS/blob/master/rai.extended.js~~
-- [ ] convert to yarn workspaces and create package for bootstrap project
-- [ ] Finish documentation
-
 
 # Methods
   ## rai.account
