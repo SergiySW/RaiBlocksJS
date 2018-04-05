@@ -42,6 +42,7 @@ XRB.unit = function(input, input_unit, output_unit) {
 	// Step 1: to RAW
 	switch(input_unit) {
 		case 'raw': value = value; break;
+		case 'nano': value = value.shift(30); break;
 		case 'XRB': value = value.shift(30); break;
 		case 'Trai': value = value.shift(36); break; // draft
 		case 'Grai': value = value.shift(33); break;
@@ -57,6 +58,7 @@ XRB.unit = function(input, input_unit, output_unit) {
 	// Step 2: to output
 	switch(output_unit) {
 		case 'raw': value = value; break;
+		case 'nano': value = value.shift(-30); break;
 		case 'XRB': value = value.shift(-30); break;
 		case 'Trai': value = value.shift(-36); break; // draft
 		case 'Grai': value = value.shift(-33); break;
@@ -105,6 +107,7 @@ XRB.raw_to_hex = function(raw) {
 	return value;
 }
 
+var NANO = XRB;
 
 function Rai(url_base) {
 

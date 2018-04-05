@@ -694,3 +694,5 @@ XRB.send = function(private_key, work, previous, destination, old_balance, amoun
 	block.signature = XRB.signBlock(hash, private_key);
 	return(block);
 }
+
+NANO = XRB;
